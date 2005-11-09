@@ -1,0 +1,48 @@
+ ------
+ Maven 2 SableCC plugin 
+ ------
+ Jesse McConnell <jesse.mcconnell@gmail.com>
+ ------
+ Mon Aug 1 2005
+ ------
+
+Maven 2 SableCC plugin
+
+ This plugin is for processing grammer files into java sources.
+
+ SableCC is a great mechanism for specifying a grammer and then generating the 
+ supporting implementaion of java classes.  See http://www.sablecc.org for 
+ more information about SableCC itself.
+   
+ This plugin will process all *.grammer files in the sourceDirectory into a 
+ common generated sources output directory.  This will occur during the 
+ generate-resources phase and the sources directory will be added to the project
+ for the compile phase.
+ 
+Available Configuration Options:
+ 
+ * sourceDirectory - src/main/sablecc
+ 
+ * outputDirectory - target/generated-sources/sablecc
+ 
+ * timestampDirectory - target (used so grammers are not constantly regenerated)
+ 
+ []
+
+Usage:
+ 
+-------------------
+<project>
+   ...
+      <build>
+         <plugins>
+            <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-sablecc-plugin</artifactId>
+            </plugin>
+         </plugins>
+         ...
+      </build>
+   ...
+</project>
+-------------------
