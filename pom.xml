@@ -5,7 +5,7 @@
     <artifactId>mojo</artifactId>
     <version>3</version>
   </parent>
-  <artifactId>idlj-maven-plugin</artifactId>
+  <artifactId>maven-idlj-plugin</artifactId>
   <version>0.1-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>Maven CORBA IDL Compiler Plugin</name>
