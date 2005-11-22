@@ -27,23 +27,24 @@ import org.apache.maven.plugin.MojoExecutionException;
  *
  * @author maguro <adc@apache.org>
  * @version $Id$
- * @goal generate
- * @phase generate-sources
+ * @goal generate-test
+ * @phase generate-test-sources
  * @description CORBA IDL compiler plugin
  */
-public class IDLJMojo extends AbstractIDLJMojo
+public class TestIDLJMojo extends AbstractIDLJMojo
 {
+
     /**
      * the source directory containing *.idl files
      *
-     * @parameter expression="${basedir}/src/main/idl"
+     * @parameter expression="${basedir}/src/test/idl"
      */
     private String sourceDirectory;
 
     /**
      * the directory to output the generated sources to
      *
-     * @parameter expression="${project.build.directory}/generated-sources/idl"
+     * @parameter expression="${project.build.directory}/generated-test-sources/idl"
      */
     private String outputDirectory;
 
@@ -57,19 +58,14 @@ public class IDLJMojo extends AbstractIDLJMojo
         return outputDirectory;
     }
 
-    protected void setSourceDirectory(String sourceDirectory)
-    {
-        this.sourceDirectory = sourceDirectory;
-    }
-
     public void execute() throws MojoExecutionException
     {
         super.execute();
-        if (project != null)
+        if ( /*project != null*/ true)
         {
             getLog().debug("adding .dat resource");
-            projectHelper.addResource(project, outputDirectory, Collections.singletonList("**/**.dat"), new ArrayList());
-            project.addCompileSourceRoot(outputDirectory);
+            projectHelper.addTestResource(project, outputDirectory, Collections.singletonList("**/**.dat"), new ArrayList());
+            project.addTestCompileSourceRoot(outputDirectory);
         }
     }
 }
