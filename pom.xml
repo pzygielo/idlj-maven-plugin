@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.codehaus.mojo</groupId>
     <artifactId>mojo</artifactId>
-    <version>3</version>
+    <version>4</version>
   </parent>
   <artifactId>maven-idlj-plugin</artifactId>
   <version>0.1-SNAPSHOT</version>
@@ -31,15 +31,6 @@
       <artifactId>plexus-utils</artifactId>
       <version>1.0.1</version>
     </dependency>
-    <!--   
-    <dependency>
-      <groupId>sun.jdk</groupId>
-      <artifactId>tools</artifactId>
-      <version>1.4.2</version>
-      <scope>system</scope>
-      <systemPath>${java.home}/../lib/tools.jar</systemPath>
-    </dependency>
-    -->
   </dependencies>
 </project>
 
