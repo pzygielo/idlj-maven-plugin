@@ -41,6 +41,13 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
 {
 
     /**
+     * print out debug messages
+     *
+     * @parameter debug
+     */
+    private boolean debug;
+
+    /**
      * the Java JVM directory containing *.idl files
      *
      * @parameter expression="${java.home}/lib"
@@ -176,6 +183,16 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
             try
             {
                 getLog().info("Processing: " + idlFile.toString());
+
+                if (debug)
+                {
+                    String command = "idlj";
+                    for (int j = 0; j < arguments.size(); j++)
+                    {
+                        command += " " + arguments.get(j);
+                    }
+                    getLog().info("Executing: " + command);
+                }
 
                 compilerMainMethod.invoke(compilerClass, new Object[]{(String[]) arguments.toArray(new String[arguments.size()])});
 
