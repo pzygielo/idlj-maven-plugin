@@ -157,13 +157,15 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
 
             ArrayList arguments = new ArrayList();
 
-            arguments.add("-i");
-            arguments.add(javaIdlDirectory.toString());
             if (getSourceDirectory() != null)
             {
                 arguments.add("-i");
                 arguments.add(getSourceDirectory().toString());
             }
+
+            arguments.add("-i");
+            arguments.add(javaIdlDirectory.toString());
+
             arguments.add("-td");
             arguments.add(getOutputDirectory().toString());
 
