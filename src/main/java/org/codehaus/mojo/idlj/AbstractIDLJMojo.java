@@ -48,6 +48,13 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
     private boolean debug;
 
     /**
+     * Defines what bindings to emit
+     *
+     * @parameter emit
+     */
+    private String emit;
+
+    /**
      * the Java JVM directory containing *.idl files
      *
      * @parameter expression="${java.home}/lib"
@@ -178,6 +185,11 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
                     arguments.add(prefix.getType());
                     arguments.add(prefix.getPrefix());
                 }
+            }
+
+            if (emit != null)
+            {
+                arguments.add("-f" + emit);
             }
 
             arguments.add(idlFile.toString());
