@@ -57,15 +57,4 @@ public class TestIDLJMojo extends AbstractIDLJMojo
     {
         return outputDirectory;
     }
-
-    public void execute() throws MojoExecutionException
-    {
-        super.execute();
-        if ( /*project != null*/ true)
-        {
-            getLog().debug("adding .dat resource");
-            projectHelper.addTestResource(project, outputDirectory, Collections.singletonList("**/**.dat"), new ArrayList());
-            project.addTestCompileSourceRoot(outputDirectory);
-        }
-    }
 }

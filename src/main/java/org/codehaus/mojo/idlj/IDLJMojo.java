@@ -25,7 +25,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 /**
  * A plugin for processing CORBA IDL files in IDLJ.
  *
- * @author maguro <adc@apache.org>
+ * @author Alan D. Cabrera <adc@apache.org>
  * @version $Id$
  * @goal generate
  * @phase generate-sources
@@ -60,16 +60,5 @@ public class IDLJMojo extends AbstractIDLJMojo
     protected void setSourceDirectory(String sourceDirectory)
     {
         this.sourceDirectory = sourceDirectory;
-    }
-
-    public void execute() throws MojoExecutionException
-    {
-        super.execute();
-        if (project != null)
-        {
-            getLog().debug("adding .dat resource");
-            projectHelper.addResource(project, outputDirectory, Collections.singletonList("**/**.dat"), new ArrayList());
-            project.addCompileSourceRoot(outputDirectory);
-        }
     }
 }
