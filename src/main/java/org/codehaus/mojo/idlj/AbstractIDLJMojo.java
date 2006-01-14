@@ -17,63 +17,36 @@
 package org.codehaus.mojo.idlj;
 
 import java.io.File;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.compiler.util.scan.InclusionScanException;
 import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.StaleSourceScanner;
 import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
 import org.codehaus.plexus.util.FileUtils;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectHelper;
 
 
-public abstract class AbstractIDLJMojo extends AbstractMojo
-{
-
+public abstract class AbstractIDLJMojo extends AbstractMojo {
+    /**
+     * a list of idl sources to compile.
+     *
+     * @parameter
+     */
+    private List sources;
     /**
      * print out debug messages
      *
      * @parameter debug
      */
     private boolean debug;
-
-    /**
-     * Defines what bindings to emit
-     *
-     * @parameter emit
-     */
-    private String emit;
-
-    /**
-     * the Java JVM directory containing *.idl files
-     *
-     * @parameter expression="${java.home}/lib"
-     */
-    private String packagePrefix;
-
-    /**
-     * the Java JVM directory containing *.idl files
-     *
-     * @parameter expression="${java.home}/lib"
-     */
-    private String javaIdlDirectory;
-
-    /**
-     * the list of prefixes to use for certain types
-     *
-     * @parameter packagePrefixes
-     */
-    private List packagePrefixes;
 
     /**
      * @parameter expression="${project}"
@@ -103,153 +76,88 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
      */
     private String timestampDirectory;
 
+    /**
+     * The compiler to use. Current options are Suns idlj compiler and JacORB.
+     * Should be either "idlj" or "jacorb". Defaults to "idlj".
+     *
+     * @parameter expression="idlj"
+     */
+    private String compiler;
+
     protected abstract String getSourceDirectory();
 
     protected abstract String getOutputDirectory();
 
-    protected Class getIDLCompiler() throws MojoExecutionException
-    {
-        ClassLoader cl = this.getClass().getClassLoader();
-        try
-        {
-            return cl.loadClass("com.sun.tools.corba.se.idl.toJavaPortable.Compile");
-        }
-        catch (ClassNotFoundException e)
-        {
-            try
-            {
-                File javaHome = new File(System.getProperty("java.home"));
-                File toolsJar = new File(javaHome, "../lib/tools.jar");
-                URL toolsJarUrl = toolsJar.toURL();
-                URLClassLoader urlLoader = new URLClassLoader(new URL[]{toolsJarUrl}, cl);
-                return urlLoader.loadClass("com.sun.tools.corba.se.idl.toJavaPortable.Compile");
-            }
-            catch (Exception notUsed)
-            {
-                throw new MojoExecutionException(" Sun IDL compiler not available", e);
-            }
-        }
-    }
-
-    public void execute() throws MojoExecutionException
-    {
-        Class compilerClass = getIDLCompiler();
-        Method compilerMainMethod;
-        try
-        {
-            compilerMainMethod = compilerClass.getMethod("main", new Class[]{String[].class});
-        }
-        catch (NoSuchMethodException e)
-        {
-            throw new MojoExecutionException(" Sun IDL compiler not available ");
-        }
-
-
-        if (!FileUtils.fileExists(getOutputDirectory()))
-        {
+    public void execute() throws MojoExecutionException {
+        if (!FileUtils.fileExists(getOutputDirectory())) {
             FileUtils.mkdir(getOutputDirectory());
         }
 
-        Set staleGrammars = computeStaleGrammars();
-
-        if (staleGrammars.isEmpty())
-        {
-            getLog().info("Nothing to process - all CORBA IDL files are up to date");
-            return;
+        CompilerTranslator translator;
+        if (compiler == null) {
+            translator = new IdljTranslator(debug, getLog());
+        } else if (compiler.equals("idlj")) {
+            translator = new IdljTranslator(debug, getLog());
+        } else if (compiler.equals("jacorb")) {
+            translator = new JacorbTranslator(debug, getLog());
+        } else {
+            throw new MojoExecutionException("Compiler not supported: " + compiler);
         }
 
-        for (Iterator i = staleGrammars.iterator(); i.hasNext();)
-        {
-            File idlFile = (File) i.next();
-
-            ArrayList arguments = new ArrayList();
-
-            if (getSourceDirectory() != null)
-            {
-                arguments.add("-i");
-                arguments.add(getSourceDirectory().toString());
-            }
-
-            arguments.add("-i");
-            arguments.add(javaIdlDirectory.toString());
-
-            arguments.add("-td");
-            arguments.add(getOutputDirectory().toString());
-
-            if (packagePrefixes != null)
-            {
-                for (Iterator prefixes = packagePrefixes.iterator(); prefixes.hasNext();)
-                {
-                    PackagePrefix prefix = (PackagePrefix) prefixes.next();
-                    arguments.add("-pkgPrefix");
-                    arguments.add(prefix.getType());
-                    arguments.add(prefix.getPrefix());
-                }
-            }
-
-            if (emit != null)
-            {
-                arguments.add("-f" + emit);
-            }
-
-            arguments.add(idlFile.toString());
-
-            try
-            {
-                getLog().info("Processing: " + idlFile.toString());
-
-                if (debug)
-                {
-                    String command = "idlj";
-                    for (int j = 0; j < arguments.size(); j++)
-                    {
-                        command += " " + arguments.get(j);
-                    }
-                    getLog().info("Executing: " + command);
-                }
-
-                compilerMainMethod.invoke(compilerClass, new Object[]{(String[]) arguments.toArray(new String[arguments.size()])});
-
-                // make sure this is after the acutal processing,
-                //otherwise it if fails the computeStaleGrammars will think it completed.
-                FileUtils.copyFileToDirectory(idlFile, new File(timestampDirectory));
-            }
-            catch (Exception e)
-            {
-                throw new MojoExecutionException("IDLJ execution failed", e);
-            }
-            catch (Throwable t)
-            {
-                throw new MojoExecutionException("IDLJ execution failed", t);
+        if (sources != null) {
+            for (Iterator it = sources.iterator(); it.hasNext();) {
+                Source source = (Source) it.next();
+                processSource(source, translator);
             }
         }
-
+        addCompileSourceRoot();
     }
 
-    private Set computeStaleGrammars() throws MojoExecutionException
-    {
-        SourceInclusionScanner scanner = new StaleSourceScanner(staleMillis);
+    private void processSource(Source source, CompilerTranslator translator) throws MojoExecutionException {
+        Set staleGrammars = computeStaleGrammars(source);
+        for (Iterator it = staleGrammars.iterator(); it.hasNext();) {
+            File idlFile = (File) it.next();
+            getLog().info("Processing: " + idlFile.toString());
+            translator.invokeCompiler(getLog(), getSourceDirectory(), getOutputDirectory(), idlFile.toString(), source);
+            try {
+                FileUtils.copyFileToDirectory(idlFile, new File(timestampDirectory));
+            }
+            catch (IOException e) {
+                getLog().warn("Failed to copy IDL file to output directory");
+            }
+        }
+    }
 
+    private Set computeStaleGrammars(Source source) throws MojoExecutionException {
+        Set includes = source.getIncludes();
+        if (includes == null) {
+            includes = new HashSet();
+            includes.add("**/*.idl");
+        }
+        Set excludes = source.getExcludes();
+        if (excludes == null) {
+            excludes = new HashSet();
+        }
+        SourceInclusionScanner scanner = new StaleSourceScanner(staleMillis, includes, excludes);
         scanner.addSourceMapping(new SuffixMapping(".idl", ".idl"));
-
-        File outDir = new File(timestampDirectory);
 
         Set staleSources = new HashSet();
 
+        File outDir = new File(timestampDirectory);
+
         File sourceDir = new File(getSourceDirectory());
 
-        try
-        {
-            if (sourceDir.exists() && sourceDir.isDirectory())
-            {
+        try {
+            if (sourceDir.exists() && sourceDir.isDirectory()) {
                 staleSources.addAll(scanner.getIncludedSources(sourceDir, outDir));
             }
         }
-        catch (InclusionScanException e)
-        {
+        catch (InclusionScanException e) {
             throw new MojoExecutionException("Error scanning source root: \'" + sourceDir + "\' for stale CORBA IDL files to reprocess.", e);
         }
 
         return staleSources;
     }
+
+    protected abstract void addCompileSourceRoot();
 }

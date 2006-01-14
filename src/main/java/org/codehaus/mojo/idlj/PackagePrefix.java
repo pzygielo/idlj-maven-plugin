@@ -20,8 +20,7 @@ package org.codehaus.mojo.idlj;
 /**
  * @version $Revision: $ $Date: $
  */
-public class PackagePrefix
-{
+public class PackagePrefix {
     /**
      * The simple name of either a top-level module, or an IDL type defined outside of any module
      *
@@ -37,13 +36,11 @@ public class PackagePrefix
     private String prefix;
 
 
-    public String getType()
-    {
+    public String getType() {
         return type;
     }
 
-    public String getPrefix()
-    {
+    public String getPrefix() {
         return prefix;
     }
 }

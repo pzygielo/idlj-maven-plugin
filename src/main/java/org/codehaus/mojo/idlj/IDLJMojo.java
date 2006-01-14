@@ -16,12 +16,6 @@
  */
 package org.codehaus.mojo.idlj;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
-import org.apache.maven.plugin.MojoExecutionException;
-
-
 /**
  * A plugin for processing CORBA IDL files in IDLJ.
  *
@@ -31,8 +25,7 @@ import org.apache.maven.plugin.MojoExecutionException;
  * @phase generate-sources
  * @description CORBA IDL compiler plugin
  */
-public class IDLJMojo extends AbstractIDLJMojo
-{
+public class IDLJMojo extends AbstractIDLJMojo {
     /**
      * the source directory containing *.idl files
      *
@@ -47,18 +40,19 @@ public class IDLJMojo extends AbstractIDLJMojo
      */
     private String outputDirectory;
 
-    protected String getSourceDirectory()
-    {
+    protected String getSourceDirectory() {
         return sourceDirectory;
     }
 
-    protected String getOutputDirectory()
-    {
+    protected String getOutputDirectory() {
         return outputDirectory;
     }
 
-    protected void setSourceDirectory(String sourceDirectory)
-    {
+    protected void setSourceDirectory(String sourceDirectory) {
         this.sourceDirectory = sourceDirectory;
+    }
+
+    protected void addCompileSourceRoot() {
+        project.addCompileSourceRoot(getOutputDirectory());
     }
 }
