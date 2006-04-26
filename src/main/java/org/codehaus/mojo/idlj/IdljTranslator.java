@@ -54,14 +54,14 @@ public class IdljTranslator implements CompilerTranslator {
             }
         }
 
-        if (source.emitStubs().booleanValue()) {
+        if (source.emitStubs() != null && source.emitStubs().booleanValue()) {
             if (source.emitSkeletons().booleanValue()) {
                 args.add("-fall");
             } else {
                 args.add("-fclient");
             }
         } else {
-            if (source.emitSkeletons().booleanValue()) {
+            if (source.emitSkeletons() != null && source.emitSkeletons().booleanValue()) {
                 args.add("-fserver");
             } else {
                 args.add("-fserverTIE");
