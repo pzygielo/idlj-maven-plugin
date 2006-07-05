@@ -92,6 +92,13 @@ public class IdljTranslator implements CompilerTranslator {
                 File toolsJar = new File(javaHome, "../lib/tools.jar");
                 URL toolsJarUrl = toolsJar.toURL();
                 URLClassLoader urlLoader = new URLClassLoader(new URL[]{toolsJarUrl}, cl);
+
+                // Unfortunately the idlj compiler reads messages using the system class path.
+                // Therefore this really nasty hack is required.
+                System.setProperty("java.class.path", System.getProperty("java.class.path")
+                                                      + System.getProperty("path.separator")
+                                                      + toolsJar.getAbsolutePath());
+                urlLoader.loadClass("com.sun.tools.corba.se.idl.som.cff.FileLocator");
                 idljCompiler = urlLoader.loadClass("com.sun.tools.corba.se.idl.toJavaPortable.Compile");
             }
             catch (Exception notUsed) {
