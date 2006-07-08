@@ -1,15 +1,16 @@
 <project>
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>mojo-sandbox</artifactId>
+    <artifactId>mojo</artifactId>
     <groupId>org.codehaus.mojo</groupId>
-    <version>2-SNAPSHOT</version>
+    <version>10-SNAPSHOT</version>
   </parent>
   <artifactId>idlj-maven-plugin</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>Maven CORBA IDL Compiler Plugin</name>
   <inceptionYear>2005</inceptionYear>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -32,5 +33,42 @@
       <version>1.0.1</version>
     </dependency>
   </dependencies>
+
+  <developers>
+    <developer>
+      <id>kbravo</id>
+      <name>Kris Bravo</name>
+      <email>m2@corridor-software.us</email>
+      <organization>Corridor Software, Inc.</organization>
+      <organizationUrl>http://www.corridor-software.us</organizationUrl>
+      <roles>
+          <role>Maintainer</role>
+      </roles>
+      <timezone>EST</timezone>
+    </developer>
+    <developer>
+      <id>maguro</id>
+      <name>Alan D. Cabrera</name>
+      <email>protected</email>
+      <organization>mojo</organization>
+      <organizationUrl>http://mojo.codehaus.org</organizationUrl>
+      <roles>
+          <role>Submitter</role>
+      </roles>
+      <timezone>-8</timezone>
+    </developer>
+    <developer>
+      <id>na</id>
+      <name>Anders Hessellund Jensen</name>
+      <email>protected</email>
+      <organization>unknown</organization>
+      <organizationUrl>unknown</organizationUrl>
+      <roles>
+          <role>Contributor</role>
+      </roles>
+      <timezone>EST</timezone>
+    </developer>
+  </developers>
+
 </project>
 
