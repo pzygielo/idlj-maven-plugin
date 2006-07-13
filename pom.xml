@@ -1,12 +1,12 @@
-<project>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>mojo</artifactId>
     <groupId>org.codehaus.mojo</groupId>
-    <version>10-SNAPSHOT</version>
+    <version>10</version>
   </parent>
   <artifactId>idlj-maven-plugin</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <packaging>maven-plugin</packaging>
   <name>Maven CORBA IDL Compiler Plugin</name>
   <inceptionYear>2005</inceptionYear>
@@ -70,5 +70,10 @@
     </developer>
   </developers>
 
-</project>
 
+  <scm>
+    <connection>scm:svn:https://svn.codehaus.org/mojo/tags/idlj-maven-plugin-1.0</connection>
+    <developerConnection>scm:svn:https://svn.codehaus.org/mojo/tags/idlj-maven-plugin-1.0</developerConnection>
+    <url>https://svn.codehaus.org/mojo/tags/idlj-maven-plugin-1.0</url>
+  </scm>
+</project>
