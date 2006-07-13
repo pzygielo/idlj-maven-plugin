@@ -6,7 +6,7 @@
     <version>10</version>
   </parent>
   <artifactId>idlj-maven-plugin</artifactId>
-  <version>1.0</version>
+  <version>1.1-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>Maven CORBA IDL Compiler Plugin</name>
   <inceptionYear>2005</inceptionYear>
@@ -69,11 +69,4 @@
       <timezone>EST</timezone>
     </developer>
   </developers>
-
-
-  <scm>
-    <connection>scm:svn:https://svn.codehaus.org/mojo/tags/idlj-maven-plugin-1.0</connection>
-    <developerConnection>scm:svn:https://svn.codehaus.org/mojo/tags/idlj-maven-plugin-1.0</developerConnection>
-    <url>https://svn.codehaus.org/mojo/tags/idlj-maven-plugin-1.0</url>
-  </scm>
 </project>
