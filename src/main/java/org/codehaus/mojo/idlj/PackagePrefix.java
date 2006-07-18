@@ -18,7 +18,7 @@ package org.codehaus.mojo.idlj;
 
 
 /**
- * @version $Revision: $ $Date: $
+ * @version $Revision: $ $Date$
  */
 public class PackagePrefix {
     /**
