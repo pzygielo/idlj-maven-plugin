@@ -84,7 +84,7 @@ public class IdljTranslator implements CompilerTranslator {
         ClassLoader cl = this.getClass().getClassLoader();
         Class idljCompiler;
         try {
-            idljCompiler = Class.forName("com.sun.tools.corba.se.idl.toJavaPortable.Compile");
+            idljCompiler = Class.forName(getIDLCompilerClass());
         }
         catch (ClassNotFoundException e) {
             try {
@@ -98,16 +98,25 @@ public class IdljTranslator implements CompilerTranslator {
                 System.setProperty("java.class.path", System.getProperty("java.class.path")
                                                       + System.getProperty("path.separator")
                                                       + toolsJar.getAbsolutePath());
-                urlLoader.loadClass("com.sun.tools.corba.se.idl.som.cff.FileLocator");
-                idljCompiler = urlLoader.loadClass("com.sun.tools.corba.se.idl.toJavaPortable.Compile");
+                if(System.getProperty("java.vm.name").indexOf("HotSpot") != -1)
+                    urlLoader.loadClass("com.sun.tools.corba.se.idl.som.cff.FileLocator");
+                idljCompiler = urlLoader.loadClass(getIDLCompilerClass());
             }
             catch (Exception notUsed) {
-                throw new MojoExecutionException(" Sun IDL compiler not available", e);
+                throw new MojoExecutionException(" IDL compiler not available", e);
             }
         }
         return idljCompiler;
     }
-
+    
+    private String getIDLCompilerClass(){
+        String vendor = System.getProperty("java.vm.name");
+        
+        if(vendor.indexOf("IBM") != -1)
+            return "com.ibm.idl.toJavaPortable.Compile";
+        return "com.sun.tools.corba.se.idl.toJavaPortable.Compile";
+    }
+    
     private void invokeCompiler(Class compilerClass, List args) throws MojoExecutionException {
         Method compilerMainMethod;
         String arguments[] = (String[]) args.toArray(new String[args.size()]);
