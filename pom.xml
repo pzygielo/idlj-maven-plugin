@@ -72,4 +72,14 @@
       <timezone>EST</timezone>
     </developer>
   </developers>
+
+  <contributors>
+    <contributor>
+      <name>Jens Andersen</name>
+      <email>protected</email>
+      <roles>
+          <role>Patch Contributor</role>
+      </roles>
+    </contributor>
+  </contributors>
 </project>
