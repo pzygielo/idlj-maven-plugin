@@ -11,14 +11,14 @@ public class Source {
      *
      * @parameter emitStubs;
      */
-    private Boolean emitStubs;
+    private Boolean emitStubs = Boolean.TRUE;
 
     /**
      * Whether the compiler should emit server skeletons. Defaults to true.
      *
      * @parameter emitSkeletons;
      */
-    private Boolean emitSkeletons;
+    private Boolean emitSkeletons = Boolean.TRUE;
 
     /**
      * Specifies a single, global packageprefix to use for all modules.

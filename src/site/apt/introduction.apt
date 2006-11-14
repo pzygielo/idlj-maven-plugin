@@ -1,31 +1,33 @@
  ------
- Maven 2 SableCC plugin 
+ Maven 2 CORBA IDL Compiler plugin 
  ------
  Jesse McConnell <jesse.mcconnell@gmail.com>
  ------
- Mon Aug 1 2005
+ Mon Nov 13 2006
  ------
 
-Maven 2 SableCC plugin
+Maven 2 CORBA IDL Compiler plugin
 
- This plugin is for processing grammer files into java sources.
-
- SableCC is a great mechanism for specifying a grammer and then generating the 
- supporting implementaion of java classes.  See http://www.sablecc.org for 
- more information about SableCC itself.
+ This plugin is for processing IDL files into java sources.
    
- This plugin will process all *.grammer files in the sourceDirectory into a 
+ This plugin will process all *.idl files in the sourceDirectory into a 
  common generated sources output directory.  This will occur during the 
  generate-resources phase and the sources directory will be added to the project
  for the compile phase.
  
 Available Configuration Options:
  
- * sourceDirectory - src/main/sablecc
+ * sourceDirectory - src/main/idl
  
- * outputDirectory - target/generated-sources/sablecc
+ * outputDirectory - target/generated-sources/idl
  
  * timestampDirectory - target (used so grammers are not constantly regenerated)
+ 
+ * compiler - idlj or jacorb. Defaults to idlj if not provided
+ 
+ * emitStubs - defaults to true if not provided
+ 
+ * emitSkeletons - defaults to true if not provided
  
  []
 
@@ -34,15 +36,24 @@ Usage:
 -------------------
 <project>
    ...
-      <build>
-         <plugins>
-            <plugin>
-               <groupId>org.apache.maven.plugins</groupId>
-               <artifactId>maven-sablecc-plugin</artifactId>
-            </plugin>
-         </plugins>
-         ...
-      </build>
+   <build>
+	<plugin>
+		<groupId>org.codehaus.mojo</groupId>
+		<artifactId>idlj-maven-plugin</artifactId>
+		<configuration>
+			<compiler>idlj</compiler>
+			<sources>
+				<source>
+					<includes>
+						<include>YOUR_IDL_FILE.idl</include>
+					</includes>
+					<emitStubs>true</emitStubs>
+					<emitSkeletons>true</emitSkeletons>
+				</source>
+			</sources>
+		</configuration>
+	</plugin>
+   <build>
    ...
 </project>
 -------------------
