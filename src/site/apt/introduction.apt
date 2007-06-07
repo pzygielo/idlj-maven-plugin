@@ -15,7 +15,11 @@ Maven 2 CORBA IDL Compiler plugin
  generate-resources phase and the sources directory will be added to the project
  for the compile phase.
  
+ To execute the goal in stand alone mode, you can type: mvn idlj:generate
+ 
 Available Configuration Options:
+
+ * debug - defaults to false if not provided, if enable make the output more verbose
  
  * sourceDirectory - src/main/idl
  
@@ -25,11 +29,19 @@ Available Configuration Options:
  
  * compiler - idlj or jacorb. Defaults to idlj if not provided
  
+ []
+
+Available Configuration Options for each Source tag:
+
  * emitStubs - defaults to true if not provided
  
  * emitSkeletons - defaults to true if not provided
  
+ * compatibility - defaults to true if not provided, it force the creation of Java source compatibile with JDK older than version 1.4
+ 
  []
+ 
+ 
 
 Usage:
  
@@ -40,6 +52,13 @@ Usage:
 	<plugin>
 		<groupId>org.codehaus.mojo</groupId>
 		<artifactId>idlj-maven-plugin</artifactId>
+		<executions>
+			<execution>
+				<goals>
+					<goal>generate</goal>
+				</goals>
+			</execution>
+		</executions>
 		<configuration>
 			<compiler>idlj</compiler>
 			<sources>
@@ -57,3 +76,5 @@ Usage:
    ...
 </project>
 -------------------
+ 
+

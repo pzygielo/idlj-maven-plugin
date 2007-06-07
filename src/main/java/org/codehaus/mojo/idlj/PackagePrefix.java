@@ -1,4 +1,5 @@
-/**
+package org.codehaus.mojo.idlj;
+/* *
  *
  * Copyright 2005 (C) The original author or authors.
  *
@@ -14,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.codehaus.mojo.idlj;
+
 
 
 /**

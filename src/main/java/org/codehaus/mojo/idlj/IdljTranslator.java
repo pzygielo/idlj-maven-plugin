@@ -1,5 +1,21 @@
 package org.codehaus.mojo.idlj;
 
+/**
+ *
+ * Copyright 2005 (C) The original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -68,6 +84,17 @@ public class IdljTranslator implements CompilerTranslator {
             }
         }
 
+        if (source.compatible() != null && source.compatible().booleanValue()) {		
+	    String version = System.getProperty("java.specification.version"); 
+	    log.debug("JDK Version:"+version);
+	    //TODO A compiled REGEX should be used instead of the matches() method
+	    if(version.matches("^[0-1]\\.[0-3]")){
+	        log.debug("OPTION IGNORED: compatible");
+	    }else{
+	        args.add("-oldImplBase");
+	    }
+	}
+	
         if (source.getAdditionalArguments() != null) {
             for (Iterator it = source.getAdditionalArguments().iterator(); it.hasNext();) {
                 args.add(it.next());
@@ -119,15 +146,19 @@ public class IdljTranslator implements CompilerTranslator {
     
     private void invokeCompiler(Class compilerClass, List args) throws MojoExecutionException {
         Method compilerMainMethod;
-        String arguments[] = (String[]) args.toArray(new String[args.size()]);
+        String arguments[];
         
         if (debug) {
-            String command = "main";
+	    args.add(0, "-verbose");
+	    arguments = (String[]) args.toArray(new String[args.size()]);
+            String command = compilerClass.getName();
             for (int i = 0; i < arguments.length; i++) {
                 command += " " + arguments[i];
             }
-            log.info(command);
-        }
+            log.info(command);	    
+        }else{
+	    arguments = (String[]) args.toArray(new String[args.size()]);
+	}
 
         try {
             compilerMainMethod = compilerClass.getMethod("main", new Class[]{String[].class});

@@ -19,6 +19,7 @@ package org.codehaus.mojo.idlj;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -41,8 +42,9 @@ public abstract class AbstractIDLJMojo extends AbstractMojo {
      * @parameter
      */
     private List sources;
+
     /**
-     * print out debug messages
+     * Active more detailed debug messages
      *
      * @parameter debug
      */
@@ -103,7 +105,11 @@ public abstract class AbstractIDLJMojo extends AbstractMojo {
         } else {
             throw new MojoExecutionException("Compiler not supported: " + compiler);
         }
-
+	if (sources == null) {
+		//Intialize the sources in order to conform to documentation
+		sources = new ArrayList();
+		sources.add(new Source());
+	}	
         if (sources != null) {
             for (Iterator it = sources.iterator(); it.hasNext();) {
                 Source source = (Source) it.next();

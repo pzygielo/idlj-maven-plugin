@@ -81,5 +81,12 @@
           <role>Patch Contributor</role>
       </roles>
     </contributor>
+    <contributor>
+      <name>Stefano "Kismet" Lenzi</name>
+      <email>protected</email>
+      <roles>
+          <role>Patch Contributor</role>
+      </roles>
+    </contributor>
   </contributors>
 </project>

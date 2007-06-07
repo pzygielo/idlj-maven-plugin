@@ -1,4 +1,6 @@
-/**
+package org.codehaus.mojo.idlj;
+
+/* *
  *
  * Copyright 2005 (C) The original author or authors.
  *
@@ -14,7 +16,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.codehaus.mojo.idlj;
 
 /**
  * A plugin for processing CORBA IDL files in IDLJ.
@@ -53,6 +54,6 @@ public class IDLJMojo extends AbstractIDLJMojo {
     }
 
     protected void addCompileSourceRoot() {
-        project.addCompileSourceRoot(getOutputDirectory());
+        project.addCompileSourceRoot( getOutputDirectory( ) );
     }
 }
