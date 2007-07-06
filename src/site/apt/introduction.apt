@@ -29,6 +29,8 @@ Available Configuration Options:
  
  * compiler - idlj or jacorb. Defaults to idlj if not provided
  
+ * includeDir - additional directory / directories with required idl files (e. g. from other projects)
+ 
  []
 
 Available Configuration Options for each Source tag:
@@ -70,6 +72,10 @@ Usage:
 					<emitSkeletons>true</emitSkeletons>
 				</source>
 			</sources>
+			<includeDirs>
+				<includeDir>AN_IDL_DIRECTORY</includeDir>
+			    <includeDir>ANOTHER_IDL_DIRECTORY</includeDir>
+			</includeDirs>
 		</configuration>
 	</plugin>
    <build>

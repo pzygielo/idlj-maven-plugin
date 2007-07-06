@@ -5,7 +5,7 @@
   <parent>
     <artifactId>mojo</artifactId>
     <groupId>org.codehaus.mojo</groupId>
-    <version>14</version>
+    <version>15</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>idlj-maven-plugin</artifactId>
@@ -71,18 +71,20 @@
       </roles>
       <timezone>EST</timezone>
     </developer>
+    <developer>
+      <id>kismet</id>
+      <name>Stefano "Kismet" Lenzi</name>
+      <email>protected</email>
+      <roles>
+          <role>Maintainer</role>
+      </roles>
+      <timezone>EST</timezone>
+    </developer>
   </developers>
 
   <contributors>
     <contributor>
       <name>Jens Andersen</name>
-      <email>protected</email>
-      <roles>
-          <role>Patch Contributor</role>
-      </roles>
-    </contributor>
-    <contributor>
-      <name>Stefano "Kismet" Lenzi</name>
       <email>protected</email>
       <roles>
           <role>Patch Contributor</role>
