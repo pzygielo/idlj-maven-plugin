@@ -5,18 +5,95 @@
   <parent>
     <artifactId>mojo</artifactId>
     <groupId>org.codehaus.mojo</groupId>
-    <version>15</version>
+    <version>16</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>idlj-maven-plugin</artifactId>
-  <version>1.1-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
-  <name>Maven CORBA IDL Compiler Plugin</name>
+  <name>CORBA IDL Compiler Maven Plugin</name>
+  <version>1.1-SNAPSHOT</version>
+  <description>
+    This plugin is for processing IDL files into java sources.
+  </description>
+  <prerequisites>
+    <maven>2.0</maven>
+  </prerequisites>
+
   <issueManagement>
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MIDLJ</url>
   </issueManagement>
+
   <inceptionYear>2005</inceptionYear>
+
+  <developers>
+    <developer>
+      <id>kbravo</id>
+      <name>Kris Bravo</name>
+      <email>m2@corridor-software.us</email>
+      <organization>Corridor Software, Inc.</organization>
+      <organizationUrl>http://www.corridor-software.us</organizationUrl>
+      <roles>
+        <role>Maintainer</role>
+      </roles>
+      <timezone>EST</timezone>
+    </developer>
+    <developer>
+      <id>maguro</id>
+      <name>Alan D. Cabrera</name>
+      <email>protected</email>
+      <organization>mojo</organization>
+      <organizationUrl>http://mojo.codehaus.org</organizationUrl>
+      <roles>
+        <role>Submitter</role>
+      </roles>
+      <timezone>-8</timezone>
+    </developer>
+    <developer>
+      <id>na</id>
+      <name>Anders Hessellund Jensen</name>
+      <email>protected</email>
+      <organization>unknown</organization>
+      <organizationUrl>unknown</organizationUrl>
+      <roles>
+        <role>Contributor</role>
+      </roles>
+      <timezone>EST</timezone>
+    </developer>
+    <developer>
+      <id>kismet</id>
+      <name>Stefano "Kismet" Lenzi</name>
+      <email>protected</email>
+      <roles>
+        <role>Maintainer</role>
+      </roles>
+      <timezone>EST</timezone>
+    </developer>
+  </developers>
+
+  <contributors>
+    <contributor>
+      <name>Jens Andersen</name>
+      <email>protected</email>
+      <roles>
+        <role>Patch Contributor</role>
+      </roles>
+    </contributor>
+  </contributors>
+
+  <licenses>
+    <license>
+      <name>Apache License 2</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:svn:http://svn.codehaus.org/mojo/trunk/mojo/idlj-maven-plugin/</connection>
+    <developerConnection>scm:svn:https://svn.codehaus.org/mojo/trunk/mojo/idlj-maven-plugin/</developerConnection>
+    <url>http://svn.codehaus.org/mojo/trunk/mojo/idlj-maven-plugin/</url>
+  </scm>
 
   <dependencies>
     <dependency>
@@ -40,59 +117,4 @@
       <version>1.0.1</version>
     </dependency>
   </dependencies>
-
-  <developers>
-    <developer>
-      <id>kbravo</id>
-      <name>Kris Bravo</name>
-      <email>m2@corridor-software.us</email>
-      <organization>Corridor Software, Inc.</organization>
-      <organizationUrl>http://www.corridor-software.us</organizationUrl>
-      <roles>
-          <role>Maintainer</role>
-      </roles>
-      <timezone>EST</timezone>
-    </developer>
-    <developer>
-      <id>maguro</id>
-      <name>Alan D. Cabrera</name>
-      <email>protected</email>
-      <organization>mojo</organization>
-      <organizationUrl>http://mojo.codehaus.org</organizationUrl>
-      <roles>
-          <role>Submitter</role>
-      </roles>
-      <timezone>-8</timezone>
-    </developer>
-    <developer>
-      <id>na</id>
-      <name>Anders Hessellund Jensen</name>
-      <email>protected</email>
-      <organization>unknown</organization>
-      <organizationUrl>unknown</organizationUrl>
-      <roles>
-          <role>Contributor</role>
-      </roles>
-      <timezone>EST</timezone>
-    </developer>
-    <developer>
-      <id>kismet</id>
-      <name>Stefano "Kismet" Lenzi</name>
-      <email>protected</email>
-      <roles>
-          <role>Maintainer</role>
-      </roles>
-      <timezone>EST</timezone>
-    </developer>
-  </developers>
-
-  <contributors>
-    <contributor>
-      <name>Jens Andersen</name>
-      <email>protected</email>
-      <roles>
-          <role>Patch Contributor</role>
-      </roles>
-    </contributor>
-  </contributors>
 </project>
