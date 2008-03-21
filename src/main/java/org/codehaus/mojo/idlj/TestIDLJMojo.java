@@ -22,36 +22,34 @@ package org.codehaus.mojo.idlj;
 import java.util.List;
 
 /**
- * A plugin for processing CORBA IDL files in IDLJ.
+ * A plugin for processing CORBA IDL test files in IDLJ.
  * 
  * @author maguro <adc@apache.org>
  * @version $Id$
  * @goal generate-test
  * @phase generate-test-sources
- * @description CORBA IDL compiler plugin
  */
 public class TestIDLJMojo extends AbstractIDLJMojo
 {
-
     /**
-     * the source directory containing *.idl files
+     * The source directory containing *.idl files.
      * 
-     * @parameter expression="${basedir}/src/test/idl"
+     * @parameter default-value="${basedir}/src/test/idl"
      */
     private String sourceDirectory;
 
     /**
-     * the include directories containing additional *.idl files required for
-     * compilation
+     * The include directories containing additional *.idl files required for
+     * compilation.
      * 
-     * @parameter expression="${basedir}/src/test/idl"
+     * @parameter default-value="${basedir}/src/test/idl"
      */
     private List includeDirs;
 
     /**
-     * the directory to output the generated sources to
+     * The directory to output the generated sources to.
      * 
-     * @parameter expression="${project.build.directory}/generated-test-sources/idl"
+     * @parameter default-value="${project.build.directory}/generated-test-sources/idl"
      */
     private String outputDirectory;
 

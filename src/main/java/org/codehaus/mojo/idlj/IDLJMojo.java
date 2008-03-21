@@ -28,28 +28,27 @@ import java.util.List;
  * @version $Id$
  * @goal generate
  * @phase generate-sources
- * @description CORBA IDL compiler plugin
  */
 public class IDLJMojo extends AbstractIDLJMojo
 {
     /**
-     * the source directory containing *.idl files
+     * The source directory containing *.idl files.
      * 
-     * @parameter expression="${basedir}/src/main/idl"
+     * @parameter default-value="${basedir}/src/main/idl"
      */
     private String sourceDirectory;
 
     /**
-     * additional include directories
+     * Additional include directories.
      * 
      * @parameter
      */
     private List includeDirs;
 
     /**
-     * the directory to output the generated sources to
+     * The directory to output the generated sources to.
      * 
-     * @parameter expression="${project.build.directory}/generated-sources/idl"
+     * @parameter default-value="${project.build.directory}/generated-sources/idl"
      */
     private String outputDirectory;
 
@@ -79,7 +78,7 @@ public class IDLJMojo extends AbstractIDLJMojo
     }
 
     /**
-     * Set the source directory
+     * Set the source directory.
      * 
      * @param dir the path of directory that conatins the IDL files
      */

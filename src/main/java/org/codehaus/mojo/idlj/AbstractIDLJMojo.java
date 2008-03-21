@@ -39,7 +39,7 @@ import org.codehaus.plexus.util.FileUtils;
 
 /**
  * This is abstarct class used to decrease the code needed
- * to the creation of the compiler MOJO
+ * to the creation of the compiler MOJO.
  * 
  * @author Anders Hessellund Jensen <ahj@trifork.com>
  * @version $Id$
@@ -47,14 +47,14 @@ import org.codehaus.plexus.util.FileUtils;
 public abstract class AbstractIDLJMojo extends AbstractMojo
 {
     /**
-     * a <code>List</code> of <code>Source</code> to compile.
+     * A <code>List</code> of <code>Source</code> to compile.
      * 
      * @parameter
      */
     private List sources;
 
     /**
-     * Active more detailed debug messages
+     * Activate more detailed debug messages.
      * 
      * @parameter debug
      */
@@ -63,36 +63,37 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
     /**
      * @parameter expression="${project}"
      * @required
+     * @readonly
      */
     private MavenProject project;
 
     /**
      * The granularity in milliseconds of the last modification date for testing
-     * whether a source needs recompilation
+     * whether a source needs recompilation.
      * 
      * @parameter expression="${lastModGranularityMs}" default-value="0"
      */
     private int staleMillis;
 
     /**
-     * the maven project helper class for adding resources
+     * The maven project helper class for adding resources.
      * 
      * @parameter expression="${component.org.apache.maven.project.MavenProjectHelper}"
      */
     private MavenProjectHelper projectHelper;
 
     /**
-     * the directory to store the processed grammars
+     * The directory to store the processed grammars.
      * 
-     * @parameter expression="${basedir}/target"
+     * @parameter default-value="${basedir}/target"
      */
     private String timestampDirectory;
 
     /**
      * The compiler to use. Current options are Suns idlj compiler and JacORB.
-     * Should be either "idlj" or "jacorb". Defaults to "idlj".
+     * Should be either "idlj" or "jacorb".
      * 
-     * @parameter expression="idlj"
+     * @parameter default-value="idlj"
      */
     private String compiler;
 
