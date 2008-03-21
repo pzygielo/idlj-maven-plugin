@@ -1,0 +1,73 @@
+ ------
+ Usage
+ ------
+ Jesse McConnell <jesse.mcconnell@gmail.com>
+ ------
+ Mon Nov 13 2006
+ ------
+
+Usage
+
+ This plugin will process all <<<*.idl>>> files in the <<<sourceDirectory>>>
+ into a common generated sources output directory.  This will occur during the
+ <<<generate-sources>>> phase and the sources directory will be added to the project
+ for the <<<compile>>> phase.
+ 
+ To execute the goal in stand alone mode, you can type:
+
++-----
+<<<mvn idlj:generate>>>
++-----
+
+ 
+* Available Configuration Options for each Source tag
+
+ * emitStubs - defaults to <<<true>>>, if not provided
+ 
+ * emitSkeletons - defaults to <<<true>>>, if not provided
+ 
+ * compatibility - defaults to <<<true>>>, if not provided, it forces the
+   creation of Java sources compatibile with JDK:s older than version 1.4
+ 
+ []
+
+
+* Configuration example
+ 
+-------------------
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>idlj-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <compiler>idlj</compiler>
+          <sources>
+            <source>
+              <includes>
+                <include>YOUR_IDL_FILE.idl</include>
+              </includes>
+              <emitStubs>true</emitStubs>
+              <emitSkeletons>true</emitSkeletons>
+            </source>
+          </sources>
+          <includeDirs>
+            <includeDir>AN_IDL_DIRECTORY</includeDir>
+            <includeDir>ANOTHER_IDL_DIRECTORY</includeDir>
+          </includeDirs>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
+-------------------

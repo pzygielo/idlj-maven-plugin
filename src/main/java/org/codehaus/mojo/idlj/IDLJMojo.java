@@ -22,7 +22,7 @@ package org.codehaus.mojo.idlj;
 import java.util.List;
 
 /**
- * A plugin for processing CORBA IDL files in IDLJ.
+ * Process CORBA IDL files in IDLJ.
  * 
  * @author Alan D. Cabrera <adc@apache.org>
  * @version $Id$
@@ -39,7 +39,8 @@ public class IDLJMojo extends AbstractIDLJMojo
     private String sourceDirectory;
 
     /**
-     * Additional include directories.
+     * Additional include directories containing additional *.idl files required for
+     * compilation.
      * 
      * @parameter
      */

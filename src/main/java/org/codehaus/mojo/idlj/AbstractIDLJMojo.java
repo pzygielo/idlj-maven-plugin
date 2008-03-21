@@ -83,7 +83,8 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
     private MavenProjectHelper projectHelper;
 
     /**
-     * The directory to store the processed grammars.
+     * The directory to store the processed grammars. Used so that grammars
+     * are not constantly regenerated.
      * 
      * @parameter default-value="${basedir}/target"
      */

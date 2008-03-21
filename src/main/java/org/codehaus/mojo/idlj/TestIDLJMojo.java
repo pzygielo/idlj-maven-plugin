@@ -22,7 +22,7 @@ package org.codehaus.mojo.idlj;
 import java.util.List;
 
 /**
- * A plugin for processing CORBA IDL test files in IDLJ.
+ * Process CORBA IDL test files in IDLJ.
  * 
  * @author maguro <adc@apache.org>
  * @version $Id$
@@ -39,7 +39,7 @@ public class TestIDLJMojo extends AbstractIDLJMojo
     private String sourceDirectory;
 
     /**
-     * The include directories containing additional *.idl files required for
+     * Additional include directories containing additional *.idl files required for
      * compilation.
      * 
      * @parameter default-value="${basedir}/src/test/idl"
