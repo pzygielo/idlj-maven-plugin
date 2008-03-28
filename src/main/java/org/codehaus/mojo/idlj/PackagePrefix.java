@@ -21,7 +21,7 @@ package org.codehaus.mojo.idlj;
 
 /**
  * @author Alan D. Cabrera <adc@apache.org> 
- * @version $Revision: $ $Date$
+ * @version $Revision$ $Date$
  */
 public class PackagePrefix
 {
