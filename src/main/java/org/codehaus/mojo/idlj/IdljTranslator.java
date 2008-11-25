@@ -228,7 +228,7 @@ public class IdljTranslator implements CompilerTranslator
      */
     private String getIDLCompilerClass()
     {
-        String vendor = System.getProperty( "java.vm.name" );
+        String vendor = System.getProperty( "java.vm.vendor" );
 
         if ( vendor.indexOf( "IBM" ) != -1 )
         {
