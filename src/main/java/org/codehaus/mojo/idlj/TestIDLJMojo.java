@@ -19,6 +19,7 @@ package org.codehaus.mojo.idlj;
  * under the License.
  */
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -36,7 +37,7 @@ public class TestIDLJMojo extends AbstractIDLJMojo
      * 
      * @parameter default-value="${basedir}/src/test/idl"
      */
-    private String sourceDirectory;
+    private File sourceDirectory;
 
     /**
      * Additional include directories containing additional *.idl files required for
@@ -51,12 +52,12 @@ public class TestIDLJMojo extends AbstractIDLJMojo
      * 
      * @parameter default-value="${project.build.directory}/generated-test-sources/idl"
      */
-    private String outputDirectory;
+    private File outputDirectory;
 
     /**
      * @return the directory that contains the source
      */
-    protected String getSourceDirectory()
+    protected File getSourceDirectory()
     {
         return sourceDirectory;
     }
@@ -64,17 +65,9 @@ public class TestIDLJMojo extends AbstractIDLJMojo
     /**
      * @return the directory that will contain the generated code
      */
-    protected String getOutputDirectory()
+    protected File getOutputDirectory()
     {
         return outputDirectory;
-    }
-
-    /**
-     * //TODO
-     */
-    protected void addCompileSourceRoot()
-    {
-        getProject().addTestCompileSourceRoot( getOutputDirectory() );
     }
 
     /**

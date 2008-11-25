@@ -19,6 +19,7 @@ package org.codehaus.mojo.idlj;
  * under the License.
  */
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -36,7 +37,7 @@ public class IDLJMojo extends AbstractIDLJMojo
      * 
      * @parameter default-value="${basedir}/src/main/idl"
      */
-    private String sourceDirectory;
+    private File sourceDirectory;
 
     /**
      * Additional include directories containing additional *.idl files required for
@@ -51,12 +52,12 @@ public class IDLJMojo extends AbstractIDLJMojo
      * 
      * @parameter default-value="${project.build.directory}/generated-sources/idl"
      */
-    private String outputDirectory;
+    private File outputDirectory;
 
     /**
      * @return the source directory that conatins the IDL files
      */
-    protected String getSourceDirectory()
+    protected File getSourceDirectory()
     {
         return sourceDirectory;
     }
@@ -73,7 +74,7 @@ public class IDLJMojo extends AbstractIDLJMojo
     /**
      * @return the path of the directory that will contains the results of the compilation
      */
-    protected String getOutputDirectory()
+    protected File getOutputDirectory()
     {
         return outputDirectory;
     }
@@ -83,16 +84,9 @@ public class IDLJMojo extends AbstractIDLJMojo
      * 
      * @param dir the path of directory that conatins the IDL files
      */
-    protected void setSourceDirectory( String dir )
+    protected void setSourceDirectory( File dir )
     {
         this.sourceDirectory = dir;
     }
 
-    /**
-     * //TODO ????
-     */
-    protected void addCompileSourceRoot()
-    {
-        getProject().addCompileSourceRoot( getOutputDirectory() );
-    }
 }
