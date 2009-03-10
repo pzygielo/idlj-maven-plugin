@@ -20,40 +20,40 @@ package org.codehaus.mojo.idlj;
  */
 
 /**
- * @author Alan D. Cabrera <adc@apache.org> 
- * @version $Revision$ $Date$
+ * @author Alan D. Cabrera <adc@apache.org>
+ * @version $Revision$ $Date: 2008-03-28 13:22:57 +0100 (Fri, 28 Mar
+ *          2008) $
  */
-public class PackagePrefix
-{
-    /**
-     * The simple name of either a top-level module, or an IDL type defined
-     * outside of any module
-     * 
-     * @parameter type
-     */
-    private String type;
+public class PackagePrefix {
+	/**
+	 * The simple name of either a top-level module, or an IDL type defined
+	 * outside of any module
+	 * 
+	 * @parameter type
+	 */
+	private String type;
 
-    /**
-     * The generated Java package name with <i>prefix</i> for all files
-     * generated for that type
-     * 
-     * @parameter prefix
-     */
-    private String prefix;
+	/**
+	 * The generated Java package name with <i>prefix</i> for all files
+	 * generated for that type
+	 * 
+	 * @parameter prefix
+	 */
+	private String prefix;
 
-    /**
-     * @return the name of either a top-level module or IDL type to match to use this prefix
-     */
-    public String getType()
-    {
-        return type;
-    }
+	/**
+	 * @return the name of either a top-level module or IDL type to match to use
+	 *         this prefix
+	 */
+	public String getType() {
+		return type;
+	}
 
-    /**
-     * @return the package name that will applied to all the idl types that match the criteria
-     */
-    public String getPrefix()
-    {
-        return prefix;
-    }
+	/**
+	 * @return the package name that will applied to all the idl types that
+	 *         match the criteria
+	 */
+	public String getPrefix() {
+		return prefix;
+	}
 }

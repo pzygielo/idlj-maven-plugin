@@ -24,65 +24,63 @@ import java.util.List;
 
 /**
  * Process CORBA IDL test files in IDLJ.
- *
+ * 
  * @author maguro <adc@apache.org>
  * @version $Id$
  * @goal generate-test
  * @phase generate-test-sources
  */
-public class TestIDLJMojo extends AbstractIDLJMojo
-{
-    /**
-     * The source directory containing *.idl files.
-     *
-     * @parameter default-value="${basedir}/src/test/idl"
-     */
-    private File sourceDirectory;
+public class TestIDLJMojo extends AbstractIDLJMojo {
+	/**
+	 * The source directory containing *.idl files.
+	 * 
+	 * @parameter default-value="${basedir}/src/test/idl"
+	 */
+	private File sourceDirectory;
 
-    /**
-     * Additional include directories containing additional *.idl files required for
-     * compilation.
-     *
-     * @parameter default-value="${basedir}/src/test/idl"
-     */
-    private List includeDirs;
+	/**
+	 * Additional include directories containing additional *.idl files required
+	 * for compilation.
+	 * 
+	 * @parameter default-value="${basedir}/src/test/idl"
+	 */
+	private List includeDirs;
 
-    /**
-     * The directory to output the generated sources to.
-     *
-     * @parameter default-value="${project.build.directory}/generated-test-sources/idl"
-     */
-    private File outputDirectory;
+	/**
+	 * The directory to output the generated sources to.
+	 * 
+	 * @parameter 
+	 *            default-value="${project.build.directory}/generated-test-sources/idl"
+	 */
+	private File outputDirectory;
 
-    /**
-     * @return the directory that contains the source
-     */
-    protected File getSourceDirectory()
-    {
-        return sourceDirectory;
-    }
+	/**
+	 * @return the directory that contains the source
+	 */
+	protected File getSourceDirectory() {
+		return sourceDirectory;
+	}
 
-    /**
-     * @return the directory that will contain the generated code
-     */
-    protected File getOutputDirectory()
-    {
-        return outputDirectory;
-    }
+	/**
+	 * @return the directory that will contain the generated code
+	 */
+	protected File getOutputDirectory() {
+		return outputDirectory;
+	}
 
-    /**
-     * @return a <code>List</code> of directory to use as <i>include</i>
-     */
-    protected List getIncludeDirs()
-    {
-        return includeDirs;
-    }
+	/**
+	 * @return a <code>List</code> of directory to use as <i>include</i>
+	 */
+	protected List getIncludeDirs() {
+		return includeDirs;
+	}
 
-    /**
-     * Adds the generated source path to the test source directories list so that maven can find the new sources to compile tests.
-     */
-    protected void addCompileSourceRoot()
-    {
-        getProject().addTestCompileSourceRoot( getOutputDirectory().getAbsolutePath() );
-    }
+	/**
+	 * Adds the generated source path to the test source directories list so
+	 * that maven can find the new sources to compile tests.
+	 */
+	protected void addCompileSourceRoot() {
+		getProject().addTestCompileSourceRoot(
+				getOutputDirectory().getAbsolutePath());
+	}
 }

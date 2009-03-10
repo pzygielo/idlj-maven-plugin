@@ -25,35 +25,32 @@ package org.codehaus.mojo.idlj;
  * @author Anders Hessellund Jensen <ahj@trifork.com>
  * @version $Id$
  */
-public class Define
-{
-    /**
-     * The symbol to define
-     * 
-     * @parameter symbol
-     */
-    private String symbol;
+public class Define {
+	/**
+	 * The symbol to define
+	 * 
+	 * @parameter symbol
+	 */
+	private String symbol;
 
-    /**
-     * The value of the symbol. This is optional.
-     * 
-     * @parameter value
-     */
-    private String value;
+	/**
+	 * The value of the symbol. This is optional.
+	 * 
+	 * @parameter value
+	 */
+	private String value;
 
-    /**
-     * @return The name of the symbol defined
-     */
-    public String getSymbol()
-    {
-        return symbol;
-    }
+	/**
+	 * @return The name of the symbol defined
+	 */
+	public String getSymbol() {
+		return symbol;
+	}
 
-    /**
-     * @return The value of the symbol defined
-     */
-    public String getValue()
-    {
-        return value;
-    }
+	/**
+	 * @return The value of the symbol defined
+	 */
+	public String getValue() {
+		return value;
+	}
 }
