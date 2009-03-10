@@ -122,6 +122,8 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
         {
             getOutputDirectory().mkdirs();
         }
+        
+        addCompileSourceRoot();
 
         if ( !timestampDirectory.exists() )
         {
@@ -241,6 +243,11 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
         return staleSources;
     }
 
+    /**
+     * //TODO ??? 
+     */
+    protected abstract void addCompileSourceRoot();    
+    
     /**
      * @return the current <code>MavenProject</code> instance
      */

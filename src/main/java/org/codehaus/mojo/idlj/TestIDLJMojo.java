@@ -77,4 +77,13 @@ public class TestIDLJMojo extends AbstractIDLJMojo
     {
         return includeDirs;
     }
+    
+
+    /**
+     * //TODO ????
+     */
+    protected void addCompileSourceRoot()
+    {      
+        getProject().addCompileSourceRoot( getOutputDirectory().getAbsolutePath() );
+    }        
 }

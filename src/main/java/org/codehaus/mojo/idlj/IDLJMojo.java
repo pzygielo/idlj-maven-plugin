@@ -89,4 +89,12 @@ public class IDLJMojo extends AbstractIDLJMojo
         this.sourceDirectory = dir;
     }
 
+    /**
+     * Adds the generated source path to the source directory so that maven can find the new sources to compile.
+     */
+    protected void addCompileSourceRoot()
+    {      
+        getProject().addCompileSourceRoot( getOutputDirectory().getAbsolutePath() );
+    }    
+    
 }
