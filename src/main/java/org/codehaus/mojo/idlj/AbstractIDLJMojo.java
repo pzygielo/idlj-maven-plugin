@@ -2,20 +2,20 @@ package org.codehaus.mojo.idlj;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file 
+ * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, 
+ *
+ * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY 
- * KIND, either express or implied.  See the License for the 
- * specific language governing permissions and limitations 
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
  * under the License.
  */
 
@@ -40,7 +40,7 @@ import org.codehaus.plexus.util.FileUtils;
 
 /**
  * This is abstarct class used to decrease the code needed to the creation of the compiler MOJO.
- * 
+ *
  * @author Anders Hessellund Jensen <ahj@trifork.com>
  * @version $Id$
  */
@@ -48,14 +48,14 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
 {
     /**
      * A <code>List</code> of <code>Source</code> configurations to compile.
-     * 
+     *
      * @parameter
      */
     private List sources;
 
     /**
      * Activate more detailed debug messages.
-     * 
+     *
      * @parameter debug
      */
     private boolean debug;
@@ -69,34 +69,34 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
 
     /**
      * The granularity in milliseconds of the last modification date for testing whether a source needs recompilation.
-     * 
+     *
      * @parameter expression="${lastModGranularityMs}" default-value="0"
      */
     private int staleMillis;
 
     /**
      * The maven project helper class for adding resources.
-     * 
+     *
      * @parameter expression="${component.org.apache.maven.project.MavenProjectHelper}"
      */
     private MavenProjectHelper projectHelper;
 
     /**
      * The directory to store the processed grammars. Used so that grammars are not constantly regenerated.
-     * 
+     *
      * @parameter default-value="${project.build.directory}/idlj-timestamp"
      */
     private File timestampDirectory;
 
     /**
      * The compiler to use. Current options are Suns idlj compiler and JacORB. Should be either "idlj" or "jacorb".
-     * 
+     *
      * @parameter default-value="idlj"
      */
     private String compiler;
 
     /**
-     * @return the source directory that conatins the IDL files
+     * @return the source directory that contains the IDL files
      */
     protected abstract File getSourceDirectory();
 
@@ -112,7 +112,7 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
 
     /**
      * Execute the goal of the MOJO that is: compiling the IDL files
-     * 
+     *
      * @throws MojoExecutionException if the compilation fails or the compiler crashes
      */
     public void execute()
@@ -122,7 +122,7 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
         {
             getOutputDirectory().mkdirs();
         }
-        
+
         addCompileSourceRoot();
 
         if ( !timestampDirectory.exists() )
@@ -164,7 +164,7 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
 
     /**
      * Compile the IDL files located in the given source path.
-     * 
+     *
      * @param source the <code>Source</code> that specify which file compile with arguments to use for the source
      * @param translator the <code>CompilerTranslator</code> that raprresents idl compiler backend that will be used
      * @throws MojoExecutionException if the compilation fails or the compiler crashes
@@ -180,7 +180,7 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
         {
             getLog().info( "Nothing to compile - all idl files are up to date" );
         }
-        
+
         for ( Iterator it = staleGrammars.iterator(); it.hasNext(); )
         {
             File idlFile = (File) it.next();
@@ -244,10 +244,10 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
     }
 
     /**
-     * //TODO ??? 
+     * Add generated sources in compile source root
      */
-    protected abstract void addCompileSourceRoot();    
-    
+    protected abstract void addCompileSourceRoot();
+
     /**
      * @return the current <code>MavenProject</code> instance
      */
