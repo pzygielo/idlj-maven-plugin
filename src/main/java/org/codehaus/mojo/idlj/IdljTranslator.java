@@ -34,7 +34,7 @@ import org.apache.maven.plugin.logging.Log;
 /**
  * This class implement the <code>CompilerTranslator</code> for the Sun idlj IDL
  * compiler
- * 
+ *
  * @author Anders Hessellund Jensen <ahj@trifork.com>
  * @version $Id$
  */
@@ -50,7 +50,7 @@ public class IdljTranslator extends AbstractTranslator implements
 
 	/**
 	 * This method it's used to invoke the compiler
-	 * 
+	 *
 	 * @param sourceDirectory
 	 *            the path to the sources
 	 * @param includeDirs
@@ -66,7 +66,7 @@ public class IdljTranslator extends AbstractTranslator implements
 	 * @throws MojoExecutionException
 	 *             the exception is thrown whenever the compilation fails or
 	 *             crashes
-	 * 
+	 *
 	 * @see CompilerTranslator#invokeCompiler(Log, String, List, String, String,
 	 *      Source)
 	 */
@@ -208,11 +208,11 @@ public class IdljTranslator extends AbstractTranslator implements
 	}
 
 	/**
-	 * 
+	 *
 	 * Invoke the specified compiler with a set of arguments
-	 * 
+	 *
 	 * @param compilerClass
-	 *            the <code>Class</code> that implemtns the compiler
+	 *            the <code>Class</code> that implements the compiler
 	 * @param args
 	 *            a <code>List</code> that contains the arguments to use for the
 	 *            compiler
@@ -246,10 +246,10 @@ public class IdljTranslator extends AbstractTranslator implements
 
 		int exitCode = 0;
 		try {
-			Integer retVal = (Integer) compilerMainMethod.invoke(compilerClass,
+			Object retVal = (Object) compilerMainMethod.invoke(compilerClass,
 					new Object[] { arguments });
-
-			exitCode = retVal.intValue();
+			if (retVal != null && retVal instanceof Integer)
+				exitCode = ((Integer) retVal).intValue();
 
 		} catch (InvocationTargetException e) {
 			throw new MojoExecutionException("IDL compilation failed", e
