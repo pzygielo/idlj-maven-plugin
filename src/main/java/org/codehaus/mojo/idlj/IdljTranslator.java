@@ -31,6 +31,7 @@ import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
+import org.codehaus.plexus.util.StringInputStream;
 import org.codehaus.plexus.util.StringOutputStream;
 
 /**

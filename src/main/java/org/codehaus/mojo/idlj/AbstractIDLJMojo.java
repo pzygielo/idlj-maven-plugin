@@ -37,8 +37,6 @@ import org.codehaus.plexus.compiler.util.scan.StaleSourceScanner;
 import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
 import org.codehaus.plexus.util.FileUtils;
 
-import sun.security.action.GetBooleanAction;
-
 /**
  * This is abstarct class used to decrease the code needed to the creation of
  * the compiler MOJO.
@@ -47,16 +45,6 @@ import sun.security.action.GetBooleanAction;
  * @version $Id$
  */
 public abstract class AbstractIDLJMojo extends AbstractMojo {
-
-    /**
-     * The directory to run the compiler
-     * 
-     * @parameter expression="${basedir}"
-     * @required
-     * @readonly
-     */
-    private File basedir;
-
     /**
      * A <code>List</code> of <code>Source</code> configurations to compile.
      * 
@@ -142,43 +130,44 @@ public abstract class AbstractIDLJMojo extends AbstractMojo {
      *             crashes
      */
     public void execute() throws MojoExecutionException {
-        if (!getOutputDirectory().exists()) {
-            getOutputDirectory().mkdirs();
-        }
-        if (!getOutputDirectory().canWrite())
-            throw new MojoExecutionException("Cannot write in : " + getOutputDirectory());
+		if (!getOutputDirectory().exists()) {
+			getOutputDirectory().mkdirs();
+		}
+		if(!getOutputDirectory().canWrite())
+		    throw new MojoExecutionException("Cannot write in : "+getOutputDirectory());
 
-        addCompileSourceRoot();
+		addCompileSourceRoot();
 
-        if (!timestampDirectory.exists()) {
-            timestampDirectory.mkdirs();
-        }
+		if (!timestampDirectory.exists()) {
+			timestampDirectory.mkdirs();
+		}
 
-        CompilerTranslator translator;
-        if (compiler == null) {
-            translator = new IdljTranslator();
-        } else if (compiler.equals("idlj")) {
-            translator = new IdljTranslator();
-        } else if (compiler.equals("jacorb")) {
-            translator = new JacorbTranslator();
-        } else {
-            throw new MojoExecutionException("Compiler not supported: " + compiler);
-        }
+		CompilerTranslator translator;
+		if (compiler == null) {
+			translator = new IdljTranslator();
+		} else if (compiler.equals("idlj")) {
+			translator = new IdljTranslator();
+		} else if (compiler.equals("jacorb")) {
+			translator = new JacorbTranslator();
+		} else {
+			throw new MojoExecutionException("Compiler not supported: "
+					+ compiler);
+		}
 
-        translator.setDebug(debug);
-        translator.setFailOnError(failOnError);
-        translator.setLog(getLog());
+		translator.setDebug(debug);
+		translator.setFailOnError(failOnError);
+		translator.setLog(getLog());
 
-        if (sources != null) {
-            for (Iterator it = sources.iterator(); it.hasNext();) {
-                Source source = (Source ) it.next();
-                processSource(source, translator);
-            }
-        } else {
-            Source defaultSourceConfiguration = new Source();
-            processSource(defaultSourceConfiguration, translator);
-        }
-    }
+		if (sources != null) {
+			for (Iterator it = sources.iterator(); it.hasNext();) {
+				Source source = (Source) it.next();
+				processSource(source, translator);
+			}
+		} else {
+			Source defaultSourceConfiguration = new Source();
+			processSource(defaultSourceConfiguration, translator);
+		}
+	}
 
     /**
      * Compile the IDL files located in the given source path.
@@ -201,8 +190,8 @@ public abstract class AbstractIDLJMojo extends AbstractMojo {
         for (Iterator it = staleGrammars.iterator(); it.hasNext();) {
             File idlFile = (File ) it.next();
             getLog().debug("Processing: " + idlFile.toString());
-            translator.invokeCompiler(getSourceDirectory().getPath(), getIncludeDirs(), getOutputDirectory().getPath(),
-                            idlFile.getPath(), source);
+            translator.invokeCompiler(getSourceDirectory().getAbsolutePath(), getIncludeDirs(), getOutputDirectory()
+                            .getAbsolutePath(), idlFile.toString(), source);
             try {
                 URI relativeURI = getSourceDirectory().toURI().relativize(idlFile.toURI());
                 File timestampFile = new File(timestampDirectory.toURI().resolve(relativeURI));
