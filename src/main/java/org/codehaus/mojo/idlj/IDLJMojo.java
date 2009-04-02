@@ -22,9 +22,11 @@ package org.codehaus.mojo.idlj;
 import java.io.File;
 import java.util.List;
 
+import org.apache.maven.plugin.MojoExecutionException;
+
 /**
  * Process CORBA IDL files in IDLJ.
- * 
+ *
  * @author Alan D. Cabrera <adc@apache.org>
  * @version $Id$
  * @goal generate
@@ -33,7 +35,7 @@ import java.util.List;
 public class IDLJMojo extends AbstractIDLJMojo {
 	/**
 	 * The source directory containing *.idl files.
-	 * 
+	 *
 	 * @parameter default-value="${basedir}/src/main/idl"
 	 */
 	private File sourceDirectory;
@@ -41,24 +43,26 @@ public class IDLJMojo extends AbstractIDLJMojo {
 	/**
 	 * Additional include directories containing additional *.idl files required
 	 * for compilation.
-	 * 
+	 *
 	 * @parameter
 	 */
 	private List includeDirs;
 
 	/**
 	 * The directory to output the generated sources to.
-	 * 
-	 * @parameter 
+	 *
+	 * @parameter
 	 *            default-value="${project.build.directory}/generated-sources/idl"
 	 */
 	private File outputDirectory;
 
 	/**
 	 * @return the source directory that contains the IDL files
+	 * @throws MojoExecutionException
 	 */
-	protected File getSourceDirectory() {
-		return sourceDirectory;
+	protected File getSourceDirectory() throws MojoExecutionException {
+		return new File(toRelativeAndFixSeparator(getProject()
+				.getFile().getParentFile(), sourceDirectory, false));
 	}
 
 	/**
@@ -72,14 +76,16 @@ public class IDLJMojo extends AbstractIDLJMojo {
 	/**
 	 * @return the path of the directory that will contains the results of the
 	 *         compilation
+	 * @throws MojoExecutionException
 	 */
-	protected File getOutputDirectory() {
-		return outputDirectory;
+	protected File getOutputDirectory() throws MojoExecutionException {
+		return new File(toRelativeAndFixSeparator(getProject()
+				.getFile().getParentFile(), outputDirectory, false));
 	}
 
 	/**
 	 * Set the source directory.
-	 * 
+	 *
 	 * @param dir
 	 *            the path of directory that conatins the IDL files
 	 */
@@ -90,10 +96,10 @@ public class IDLJMojo extends AbstractIDLJMojo {
 	/**
 	 * Adds the generated source path to the source directories list so that
 	 * maven can find the new sources to compile.
+	 * @throws MojoExecutionException
 	 */
-	protected void addCompileSourceRoot() {
-		getProject().addCompileSourceRoot(
-				getOutputDirectory().getAbsolutePath());
+	protected void addCompileSourceRoot() throws MojoExecutionException {
+		getProject().addCompileSourceRoot(getOutputDirectory().getPath());
 	}
 
 }

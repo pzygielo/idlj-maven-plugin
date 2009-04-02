@@ -36,25 +36,26 @@ import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.StaleSourceScanner;
 import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * This is abstarct class used to decrease the code needed to the creation of
  * the compiler MOJO.
- * 
+ *
  * @author Anders Hessellund Jensen <ahj@trifork.com>
  * @version $Id$
  */
 public abstract class AbstractIDLJMojo extends AbstractMojo {
     /**
      * A <code>List</code> of <code>Source</code> configurations to compile.
-     * 
+     *
      * @parameter
      */
     private List sources;
 
     /**
      * Activate more detailed debug messages.
-     * 
+     *
      * @parameter debug
      */
     private boolean debug;
@@ -62,7 +63,7 @@ public abstract class AbstractIDLJMojo extends AbstractMojo {
     /**
      * Should the plugin fail the build if there's an error while generating
      * sources from IDLs.
-     * 
+     *
      * @parameter expression="${failOnError}" default-value="true"
      */
     private boolean failOnError;
@@ -77,15 +78,15 @@ public abstract class AbstractIDLJMojo extends AbstractMojo {
     /**
      * The granularity in milliseconds of the last modification date for testing
      * whether a source needs recompilation.
-     * 
+     *
      * @parameter expression="${lastModGranularityMs}" default-value="0"
      */
     private int staleMillis;
 
     /**
      * The maven project helper class for adding resources.
-     * 
-     * @parameter 
+     *
+     * @parameter
      *            expression="${component.org.apache.maven.project.MavenProjectHelper}"
      */
     private MavenProjectHelper projectHelper;
@@ -93,7 +94,7 @@ public abstract class AbstractIDLJMojo extends AbstractMojo {
     /**
      * The directory to store the processed grammars. Used so that grammars are
      * not constantly regenerated.
-     * 
+     *
      * @parameter default-value="${project.build.directory}/idlj-timestamp"
      */
     private File timestampDirectory;
@@ -101,15 +102,24 @@ public abstract class AbstractIDLJMojo extends AbstractMojo {
     /**
      * The compiler to use. Current options are Suns idlj compiler and JacORB.
      * Should be either "idlj" or "jacorb".
-     * 
+     *
      * @parameter default-value="idlj"
      */
     private String compiler;
 
     /**
-     * @return the source directory that contains the IDL files
+     * The currently executed project (can be a reactor project).
+     *
+     * @parameter expression="${executedProject}"
+     * @readonly
      */
-    protected abstract File getSourceDirectory();
+    private MavenProject executedProject;
+
+    /**
+     * @return the source directory that contains the IDL files
+     * @throws MojoExecutionException
+     */
+    protected abstract File getSourceDirectory() throws MojoExecutionException;
 
     /**
      * @return the <code>List</code> of the directories to use as include
@@ -120,12 +130,13 @@ public abstract class AbstractIDLJMojo extends AbstractMojo {
     /**
      * @return the path of the directory that will contains the results of the
      *         compilation
+     * @throws MojoExecutionException
      */
-    protected abstract File getOutputDirectory();
+    protected abstract File getOutputDirectory() throws MojoExecutionException;
 
     /**
      * Execute the goal of the MOJO that is: compiling the IDL files
-     * 
+     *
      * @throws MojoExecutionException if the compilation fails or the compiler
      *             crashes
      */
@@ -171,7 +182,7 @@ public abstract class AbstractIDLJMojo extends AbstractMojo {
 
     /**
      * Compile the IDL files located in the given source path.
-     * 
+     *
      * @param source the <code>Source</code> that specify which file compile
      *            with arguments to use for the source
      * @param translator the <code>CompilerTranslator</code> that raprresents
@@ -190,8 +201,8 @@ public abstract class AbstractIDLJMojo extends AbstractMojo {
         for (Iterator it = staleGrammars.iterator(); it.hasNext();) {
             File idlFile = (File ) it.next();
             getLog().debug("Processing: " + idlFile.toString());
-            translator.invokeCompiler(getSourceDirectory().getAbsolutePath(), getIncludeDirs(), getOutputDirectory()
-                            .getAbsolutePath(), idlFile.toString(), source);
+            translator.invokeCompiler(getSourceDirectory().getPath(), getIncludeDirs(), getOutputDirectory()
+                            .getPath(), idlFile.toString(), source);
             try {
                 URI relativeURI = getSourceDirectory().toURI().relativize(idlFile.toURI());
                 File timestampFile = new File(timestampDirectory.toURI().resolve(relativeURI));
@@ -204,7 +215,7 @@ public abstract class AbstractIDLJMojo extends AbstractMojo {
 
     /**
      * Determine which idl files need to be compiled.
-     * 
+     *
      * @param source the <code>Source</code> that rapresent which file to
      *            compile
      * @return a set of file that need to be compiled
@@ -241,9 +252,86 @@ public abstract class AbstractIDLJMojo extends AbstractMojo {
     }
 
     /**
-     * Add generated sources in compile source root
+     * Taken from maven-eclipse-plugin
+     * @param basedir
+     * @param fileToAdd
+     * @param replaceSlashesWithDashes
+     * @return
+     * @throws MojoExecutionException
      */
-    protected abstract void addCompileSourceRoot();
+    public static String toRelativeAndFixSeparator(File basedir,
+			File fileToAdd, boolean replaceSlashesWithDashes)
+			throws MojoExecutionException {
+		if (!fileToAdd.isAbsolute()) {
+			fileToAdd = new File(basedir, fileToAdd.getPath());
+		}
+
+		String basedirPath = getCanonicalPath(basedir);
+		String absolutePath = getCanonicalPath(fileToAdd);
+
+		String relative = null;
+
+		if (absolutePath.equals(basedirPath)) {
+			relative = "."; //$NON-NLS-1$
+		} else if (absolutePath.startsWith(basedirPath)) {
+			// MECLIPSE-261
+			// The canonical form of a windows root dir ends in a slash, whereas
+			// the canonical form of any other file
+			// does not.
+			// The absolutePath is assumed to be: basedirPath + Separator +
+			// fileToAdd
+			// In the case of a windows root directory the Separator is missing
+			// since it is contained within
+			// basedirPath.
+			int length = basedirPath.length() + 1;
+			if (basedirPath.endsWith("\\")) {
+				length--;
+			}
+			relative = absolutePath.substring(length);
+		} else {
+			relative = absolutePath;
+		}
+
+		relative = fixSeparator(relative);
+
+		if (replaceSlashesWithDashes) {
+			relative = StringUtils.replace(relative, '/', '-');
+			relative = StringUtils.replace(relative, ':', '-'); // remove ":"
+																// for absolute
+																// paths in
+																// windows
+		}
+
+		return relative;
+	}
+
+    public static String getCanonicalPath(File file)
+			throws MojoExecutionException {
+		try {
+			return file.getCanonicalPath();
+		} catch (IOException e) {
+			throw new MojoExecutionException("Can't canonicalize system path: "
+					+ file.getAbsolutePath(), e);
+		}
+	}
+
+    /**
+	 * Convert the provided filename from a Windows separator \\ to a unix/java
+	 * separator /
+	 *
+	 * @param filename
+	 *            file name to fix separator
+	 * @return filename with all \\ replaced with /
+	 */
+	public static String fixSeparator(String filename) {
+		return StringUtils.replace(filename, '\\', '/');
+	}
+
+    /**
+     * Add generated sources in compile source root
+     * @throws MojoExecutionException
+     */
+    protected abstract void addCompileSourceRoot() throws MojoExecutionException;
 
     /**
      * @return the current <code>MavenProject</code> instance
@@ -258,4 +346,6 @@ public abstract class AbstractIDLJMojo extends AbstractMojo {
     protected MavenProjectHelper getProjectHelper() {
         return projectHelper;
     }
+
+
 }

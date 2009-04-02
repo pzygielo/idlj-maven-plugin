@@ -38,6 +38,9 @@
             <phase>generate-sources</phase>
           </execution>
         </executions>
+        <configuration>
+          <debug>true</debug>
+        </configuration>
       </plugin>
     </plugins>
   </build>
