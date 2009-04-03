@@ -12,28 +12,28 @@ Usage
  into a common generated sources output directory.  This will occur during the
  <<<generate-sources>>> phase and the sources directory will be added to the project
  for the <<<compile>>> phase.
- 
+
  To execute the goal in stand alone mode, you can type:
 
 +-----
 <<<mvn idlj:generate>>>
 +-----
 
- 
+
 * Available Configuration Options for each Source tag
 
  * emitStubs - defaults to <<<true>>>, if not provided
- 
+
  * emitSkeletons - defaults to <<<true>>>, if not provided
- 
+
  * compatibility - defaults to <<<true>>>, if not provided, it forces the
    creation of Java sources compatibile with JDK:s older than version 1.4
- 
+
  []
 
 
 * Configuration example
- 
+
 -------------------
 <project>
   ...
@@ -42,6 +42,7 @@ Usage
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>idlj-maven-plugin</artifactId>
+        <version>1.1</version>
         <executions>
           <execution>
             <goals>

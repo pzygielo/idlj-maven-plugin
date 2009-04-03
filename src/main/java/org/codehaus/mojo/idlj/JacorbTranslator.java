@@ -36,11 +36,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 
 /**
  * This class implement the <code>CompilerTranslator</code> for the JacORB IDL compiler
- * 
+ *
  * @author Anders Hessellund Jensen <ahj@trifork.com>
  * @version $Id$
  */
@@ -59,7 +58,7 @@ public class JacorbTranslator
 
     /**
      * Invoke the specified compiler with a set of arguments
-     * 
+     *
      * @param compilerClass the <code>Class</code> that implemtns the compiler
      * @param args a <code>List</code> that contains the arguments to use for the compiler
      * @throws MojoExecutionException if the compilation fail or the compiler crashes
@@ -178,14 +177,14 @@ public class JacorbTranslator
 
     /**
      * This method it's used to invoke the compiler
-     * 
+     *
      * @param sourceDirectory the path to the sources
      * @param includeDirs the <code>List</code> of directories where to find the includes
      * @param targetDirectory the path to the destination of the compilation
      * @param idlFile the path to the file to compile
      * @param source //TODO ???
      * @throws MojoExecutionException the exeception is thrown whenever the compilation fails or crashes
-     * @see CompilerTranslator#invokeCompiler(Log, String, List, String, String, Source)
+     * @see CompilerTranslator#invokeCompiler(String, List, String, String, Source)
      */
     public void invokeCompiler( String sourceDirectory, List includeDirs, String targetDirectory, String idlFile,
                                 Source source )
@@ -276,7 +275,7 @@ public class JacorbTranslator
 
     /**
      * This methos it's used to redirect an <code>InputeStream</code> to a <code>OutputStream</code>
-     * 
+     *
      * @param in the <code>InputStream</code> to read from
      * @param out the <code>OutputStream</code> to write into
      * @param streamName the name of Stream

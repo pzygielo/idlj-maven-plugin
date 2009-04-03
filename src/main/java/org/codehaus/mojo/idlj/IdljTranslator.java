@@ -31,13 +31,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.StringOutputStream;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
  * This class implement the <code>CompilerTranslator</code> for the Sun idlj IDL compiler
- * 
+ *
  * @author Anders Hessellund Jensen <ahj@trifork.com>
  * @version $Id$
  */
@@ -56,14 +55,14 @@ public class IdljTranslator
 
     /**
      * This method it's used to invoke the compiler
-     * 
+     *
      * @param sourceDirectory the path to the sources
      * @param includeDirs the <code>List</code> of directories where to find the includes
      * @param targetDirectory the path to the destination of the compilation
      * @param idlFile the path to the file to compile
      * @param source the source tag available in the configuration tree of the maven plugin
      * @throws MojoExecutionException the exception is thrown whenever the compilation fails or crashes
-     * @see CompilerTranslator#invokeCompiler(Log, String, List, String, String, Source)
+     * @see CompilerTranslator#invokeCompiler(String, List, String, String, Source)
      */
     public void invokeCompiler( String sourceDirectory, List includeDirs, String targetDirectory, String idlFile,
                                 Source source )
@@ -229,7 +228,7 @@ public class IdljTranslator
 
     /**
      * Invoke the specified compiler with a set of arguments
-     * 
+     *
      * @param compilerClass the <code>Class</code> that implements the compiler
      * @param args a <code>List</code> that contains the arguments to use for the compiler
      * @throws MojoExecutionException if the compilation fail or the compiler crashes
@@ -316,7 +315,7 @@ public class IdljTranslator
 
     /**
      * Convert the provided filename from a Windows separator \\ to a unix/java separator /
-     * 
+     *
      * @param filename file name to fix separator
      * @return filename with all \\ replaced with /
      */
@@ -340,23 +339,23 @@ public class IdljTranslator
 
     /**
      * Taken from maven-eclipse-plugin
-     * 
-     * @param basedir
-     * @param fileToAdd
+     *
+     * @param fromdir
+     * @param todir
      * @param replaceSlashesWithDashes
-     * @return
+     * @return the relative path between fromdir to todir
      * @throws MojoExecutionException
      */
-    public static String toRelativeAndFixSeparator( File basedir, File fileToAdd, boolean replaceSlashesWithDashes )
+    public static String toRelativeAndFixSeparator( File fromdir, File todir, boolean replaceSlashesWithDashes )
         throws MojoExecutionException
     {
-        if ( !fileToAdd.isAbsolute() )
+        if ( !todir.isAbsolute() )
         {
-            fileToAdd = new File( basedir, fileToAdd.getPath() );
+            todir = new File( fromdir, todir.getPath() );
         }
 
-        String basedirPath = getCanonicalPath( basedir );
-        String absolutePath = getCanonicalPath( fileToAdd );
+        String basedirPath = getCanonicalPath( fromdir );
+        String absolutePath = getCanonicalPath( todir );
 
         String relative = null;
 
