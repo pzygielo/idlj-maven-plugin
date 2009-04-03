@@ -39,7 +39,7 @@ import org.codehaus.plexus.util.FileUtils;
 
 /**
  * This is abstarct class used to decrease the code needed to the creation of the compiler MOJO.
- * 
+ *
  * @author Anders Hessellund Jensen <ahj@trifork.com>
  * @version $Id$
  */
@@ -48,21 +48,21 @@ public abstract class AbstractIDLJMojo
 {
     /**
      * A <code>List</code> of <code>Source</code> configurations to compile.
-     * 
+     *
      * @parameter
      */
     private List sources;
 
     /**
      * Activate more detailed debug messages.
-     * 
+     *
      * @parameter debug
      */
     private boolean debug;
 
     /**
      * Should the plugin fail the build if there's an error while generating sources from IDLs.
-     * 
+     *
      * @parameter expression="${failOnError}" default-value="true"
      */
     private boolean failOnError;
@@ -76,28 +76,28 @@ public abstract class AbstractIDLJMojo
 
     /**
      * The granularity in milliseconds of the last modification date for testing whether a source needs recompilation.
-     * 
+     *
      * @parameter expression="${lastModGranularityMs}" default-value="0"
      */
     private int staleMillis;
 
     /**
      * The maven project helper class for adding resources.
-     * 
+     *
      * @parameter expression="${component.org.apache.maven.project.MavenProjectHelper}"
      */
     private MavenProjectHelper projectHelper;
 
     /**
      * The directory to store the processed grammars. Used so that grammars are not constantly regenerated.
-     * 
+     *
      * @parameter default-value="${project.build.directory}/idlj-timestamp"
      */
     private File timestampDirectory;
 
     /**
      * The compiler to use. Current options are Suns idlj compiler and JacORB. Should be either "idlj" or "jacorb".
-     * 
+     *
      * @parameter default-value="idlj"
      */
     private String compiler;
@@ -110,9 +110,9 @@ public abstract class AbstractIDLJMojo
         throws MojoExecutionException;
 
     /**
-     * @return the <code>List</code> of the directories to use as include directories for the compilation
+     * @return the <code>File[]</code> of the directories to use as include directories for the compilation
      */
-    protected abstract List getIncludeDirs();
+    protected abstract File[] getIncludeDirs();
 
     /**
      * @return the path of the directory that will contains the results of the compilation
@@ -123,7 +123,7 @@ public abstract class AbstractIDLJMojo
 
     /**
      * Execute the goal of the MOJO that is: compiling the IDL files
-     * 
+     *
      * @throws MojoExecutionException if the compilation fails or the compiler crashes
      */
     public void execute()
@@ -182,7 +182,7 @@ public abstract class AbstractIDLJMojo
 
     /**
      * Compile the IDL files located in the given source path.
-     * 
+     *
      * @param source the <code>Source</code> that specify which file compile with arguments to use for the source
      * @param translator the <code>CompilerTranslator</code> that raprresents idl compiler backend that will be used
      * @throws MojoExecutionException if the compilation fails or the compiler crashes
@@ -221,7 +221,7 @@ public abstract class AbstractIDLJMojo
 
     /**
      * Determine which idl files need to be compiled.
-     * 
+     *
      * @param source the <code>Source</code> that rapresent which file to compile
      * @return a set of file that need to be compiled
      * @throws MojoExecutionException if the selection of the file to compile fails
@@ -271,7 +271,7 @@ public abstract class AbstractIDLJMojo
 
     /**
      * Add generated sources in compile source root
-     * 
+     *
      * @throws MojoExecutionException
      */
     protected abstract void addCompileSourceRoot()

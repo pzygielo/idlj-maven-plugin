@@ -20,11 +20,10 @@ package org.codehaus.mojo.idlj;
  */
 
 import java.io.File;
-import java.util.List;
 
 /**
  * Process CORBA IDL test files in IDLJ.
- * 
+ *
  * @author maguro <adc@apache.org>
  * @version $Id$
  * @goal generate-test
@@ -35,21 +34,21 @@ public class TestIDLJMojo
 {
     /**
      * The source directory containing *.idl files.
-     * 
+     *
      * @parameter default-value="${basedir}/src/test/idl"
      */
     private File sourceDirectory;
 
     /**
      * Additional include directories containing additional *.idl files required for compilation.
-     * 
-     * @parameter default-value="${basedir}/src/test/idl"
+     *
+     * @parameter
      */
-    private List includeDirs;
+    private File[] includeDirs;
 
     /**
      * The directory to output the generated sources to.
-     * 
+     *
      * @parameter default-value="${project.build.directory}/generated-test-sources/idl"
      */
     private File outputDirectory;
@@ -73,7 +72,7 @@ public class TestIDLJMojo
     /**
      * @return a <code>List</code> of directory to use as <i>include</i>
      */
-    protected List getIncludeDirs()
+    protected File[] getIncludeDirs()
     {
         return includeDirs;
     }

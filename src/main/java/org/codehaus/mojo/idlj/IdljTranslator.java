@@ -57,14 +57,14 @@ public class IdljTranslator
      * This method it's used to invoke the compiler
      *
      * @param sourceDirectory the path to the sources
-     * @param includeDirs the <code>List</code> of directories where to find the includes
+     * @param includeDirs the <code>File[]</code> of directories where to find the includes
      * @param targetDirectory the path to the destination of the compilation
      * @param idlFile the path to the file to compile
      * @param source the source tag available in the configuration tree of the maven plugin
      * @throws MojoExecutionException the exception is thrown whenever the compilation fails or crashes
      * @see CompilerTranslator#invokeCompiler(String, List, String, String, Source)
      */
-    public void invokeCompiler( String sourceDirectory, List includeDirs, String targetDirectory, String idlFile,
+    public void invokeCompiler( String sourceDirectory, File[] includeDirs, String targetDirectory, String idlFile,
                                 Source source )
         throws MojoExecutionException
     {
@@ -73,14 +73,12 @@ public class IdljTranslator
         args.add( sourceDirectory );
 
         // add idl files from other directories as well
-        if ( includeDirs != null )
+        if ( includeDirs != null && includeDirs.length > 0 )
         {
-            Iterator iter = includeDirs.iterator();
-            while ( iter.hasNext() )
+            for ( int i = 0; i < includeDirs.length; i++ )
             {
-                String includeDir = (String) iter.next();
                 args.add( "-i" );
-                args.add( includeDir );
+                args.add( includeDirs[i] );
             }
         }
 
