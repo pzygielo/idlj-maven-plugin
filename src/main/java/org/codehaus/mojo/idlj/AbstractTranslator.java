@@ -26,68 +26,72 @@ import org.apache.maven.plugin.logging.Log;
  * 
  * @author Arnaud Heritier <aheritier AT apache DOT org>
  * @version $Id: AbstractIDLJMojo.java 9189 2009-03-10 21:47:46Z aheritier $
- * 
  */
-public abstract class AbstractTranslator implements CompilerTranslator {
+public abstract class AbstractTranslator
+    implements CompilerTranslator
+{
 
-	/**
-	 * enable/disable debug messages
-	 */
-	private boolean debug;
+    /**
+     * enable/disable debug messages
+     */
+    private boolean debug;
 
-	/**
-	 * Set to true to fail the build if an error occur while compiling the IDL.
-	 */
-	private boolean failOnError;
+    /**
+     * Set to true to fail the build if an error occur while compiling the IDL.
+     */
+    private boolean failOnError;
 
-	/**
-	 * the <code>Log</code> that will used for the messages
-	 */
-	private Log log;
+    /**
+     * the <code>Log</code> that will used for the messages
+     */
+    private Log log;
 
-	/**
-	 * @return the debug
-	 */
-	public boolean isDebug() {
-		return debug;
-	}
+    /**
+     * @return the debug
+     */
+    public boolean isDebug()
+    {
+        return debug;
+    }
 
-	/**
-	 * @param debug
-	 *            the debug to set
-	 */
-	public void setDebug(boolean debug) {
-		this.debug = debug;
-	}
+    /**
+     * @param debug the debug to set
+     */
+    public void setDebug( boolean debug )
+    {
+        this.debug = debug;
+    }
 
-	/**
-	 * @return the log
-	 */
-	public Log getLog() {
-		return log;
-	}
+    /**
+     * @return the log
+     */
+    public Log getLog()
+    {
+        return log;
+    }
 
-	/**
-	 * @param log
-	 *            the log to set
-	 */
-	public void setLog(Log log) {
-		this.log = log;
-	}
+    /**
+     * @param log the log to set
+     */
+    public void setLog( Log log )
+    {
+        this.log = log;
+    }
 
-	/**
-	 * @return the failOnError
-	 */
-	public boolean isFailOnError() {
-		return failOnError;
-	}
+    /**
+     * @return the failOnError
+     */
+    public boolean isFailOnError()
+    {
+        return failOnError;
+    }
 
-	/**
-	 * @param failOnError
-	 *            the failOnError to set
-	 */
-	public void setFailOnError(boolean failOnError) {
-		this.failOnError = failOnError;
-	}
+    /**
+     * @param failOnError the failOnError to set
+     */
+    public void setFailOnError( boolean failOnError )
+    {
+        this.failOnError = failOnError;
+    }
 
 }
