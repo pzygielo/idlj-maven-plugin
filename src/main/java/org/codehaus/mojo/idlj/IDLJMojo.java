@@ -61,8 +61,7 @@ public class IDLJMojo extends AbstractIDLJMojo {
 	 * @throws MojoExecutionException
 	 */
 	protected File getSourceDirectory() throws MojoExecutionException {
-		return new File(toRelativeAndFixSeparator(getProject()
-				.getFile().getParentFile(), sourceDirectory, false));
+		return  sourceDirectory;
 	}
 
 	/**
@@ -79,8 +78,7 @@ public class IDLJMojo extends AbstractIDLJMojo {
 	 * @throws MojoExecutionException
 	 */
 	protected File getOutputDirectory() throws MojoExecutionException {
-		return new File(toRelativeAndFixSeparator(getProject()
-				.getFile().getParentFile(), outputDirectory, false));
+		return outputDirectory;
 	}
 
 	/**

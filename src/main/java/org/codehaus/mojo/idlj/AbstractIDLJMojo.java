@@ -36,7 +36,6 @@ import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.StaleSourceScanner;
 import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * This is abstarct class used to decrease the code needed to the creation of
@@ -201,8 +200,7 @@ public abstract class AbstractIDLJMojo extends AbstractMojo {
         for (Iterator it = staleGrammars.iterator(); it.hasNext();) {
             File idlFile = (File ) it.next();
             getLog().debug("Processing: " + idlFile.toString());
-            translator.invokeCompiler(getSourceDirectory().getPath(), getIncludeDirs(), getOutputDirectory()
-                            .getPath(), idlFile.toString(), source);
+            translator.invokeCompiler( getSourceDirectory().getAbsolutePath(), getIncludeDirs(), getOutputDirectory().getAbsolutePath(), idlFile.toString(), source);
             try {
                 URI relativeURI = getSourceDirectory().toURI().relativize(idlFile.toURI());
                 File timestampFile = new File(timestampDirectory.toURI().resolve(relativeURI));
@@ -224,11 +222,13 @@ public abstract class AbstractIDLJMojo extends AbstractMojo {
      */
     private Set computeStaleGrammars(Source source) throws MojoExecutionException {
         Set includes = source.getIncludes();
+    	getLog().debug("includes : " + includes);
         if (includes == null) {
             includes = new HashSet();
             includes.add("**/*.idl");
         }
         Set excludes = source.getExcludes();
+        getLog().debug("excludes : " + excludes);
         if (excludes == null) {
             excludes = new HashSet();
         }
@@ -238,10 +238,12 @@ public abstract class AbstractIDLJMojo extends AbstractMojo {
         Set staleSources = new HashSet();
 
         File sourceDir = getSourceDirectory();
-
+        getLog().debug("sourceDir : " + sourceDir);
         try {
             if (sourceDir.exists() && sourceDir.isDirectory()) {
                 staleSources.addAll(scanner.getIncludedSources(sourceDir, timestampDirectory));
+            }else {
+            	getLog().debug("sourceDir isn't a directory");
             }
         } catch (InclusionScanException e) {
             throw new MojoExecutionException("Error scanning source root: \'" + sourceDir
@@ -250,82 +252,6 @@ public abstract class AbstractIDLJMojo extends AbstractMojo {
 
         return staleSources;
     }
-
-    /**
-     * Taken from maven-eclipse-plugin
-     * @param basedir
-     * @param fileToAdd
-     * @param replaceSlashesWithDashes
-     * @return
-     * @throws MojoExecutionException
-     */
-    public static String toRelativeAndFixSeparator(File basedir,
-			File fileToAdd, boolean replaceSlashesWithDashes)
-			throws MojoExecutionException {
-		if (!fileToAdd.isAbsolute()) {
-			fileToAdd = new File(basedir, fileToAdd.getPath());
-		}
-
-		String basedirPath = getCanonicalPath(basedir);
-		String absolutePath = getCanonicalPath(fileToAdd);
-
-		String relative = null;
-
-		if (absolutePath.equals(basedirPath)) {
-			relative = "."; //$NON-NLS-1$
-		} else if (absolutePath.startsWith(basedirPath)) {
-			// MECLIPSE-261
-			// The canonical form of a windows root dir ends in a slash, whereas
-			// the canonical form of any other file
-			// does not.
-			// The absolutePath is assumed to be: basedirPath + Separator +
-			// fileToAdd
-			// In the case of a windows root directory the Separator is missing
-			// since it is contained within
-			// basedirPath.
-			int length = basedirPath.length() + 1;
-			if (basedirPath.endsWith("\\")) {
-				length--;
-			}
-			relative = absolutePath.substring(length);
-		} else {
-			relative = absolutePath;
-		}
-
-		relative = fixSeparator(relative);
-
-		if (replaceSlashesWithDashes) {
-			relative = StringUtils.replace(relative, '/', '-');
-			relative = StringUtils.replace(relative, ':', '-'); // remove ":"
-																// for absolute
-																// paths in
-																// windows
-		}
-
-		return relative;
-	}
-
-    public static String getCanonicalPath(File file)
-			throws MojoExecutionException {
-		try {
-			return file.getCanonicalPath();
-		} catch (IOException e) {
-			throw new MojoExecutionException("Can't canonicalize system path: "
-					+ file.getAbsolutePath(), e);
-		}
-	}
-
-    /**
-	 * Convert the provided filename from a Windows separator \\ to a unix/java
-	 * separator /
-	 *
-	 * @param filename
-	 *            file name to fix separator
-	 * @return filename with all \\ replaced with /
-	 */
-	public static String fixSeparator(String filename) {
-		return StringUtils.replace(filename, '\\', '/');
-	}
 
     /**
      * Add generated sources in compile source root
