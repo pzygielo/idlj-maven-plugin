@@ -26,7 +26,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 
 /**
  * Process CORBA IDL files in IDLJ.
- *
+ * 
  * @author Alan D. Cabrera <adc@apache.org>
  * @version $Id$
  * @goal generate
@@ -35,7 +35,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 public class IDLJMojo extends AbstractIDLJMojo {
 	/**
 	 * The source directory containing *.idl files.
-	 *
+	 * 
 	 * @parameter default-value="${basedir}/src/main/idl"
 	 */
 	private File sourceDirectory;
@@ -43,15 +43,15 @@ public class IDLJMojo extends AbstractIDLJMojo {
 	/**
 	 * Additional include directories containing additional *.idl files required
 	 * for compilation.
-	 *
+	 * 
 	 * @parameter
 	 */
 	private List includeDirs;
 
 	/**
 	 * The directory to output the generated sources to.
-	 *
-	 * @parameter
+	 * 
+	 * @parameter 
 	 *            default-value="${project.build.directory}/generated-sources/idl"
 	 */
 	private File outputDirectory;
@@ -61,7 +61,7 @@ public class IDLJMojo extends AbstractIDLJMojo {
 	 * @throws MojoExecutionException
 	 */
 	protected File getSourceDirectory() throws MojoExecutionException {
-		return  sourceDirectory;
+		return sourceDirectory;
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class IDLJMojo extends AbstractIDLJMojo {
 
 	/**
 	 * Set the source directory.
-	 *
+	 * 
 	 * @param dir
 	 *            the path of directory that conatins the IDL files
 	 */
@@ -94,6 +94,7 @@ public class IDLJMojo extends AbstractIDLJMojo {
 	/**
 	 * Adds the generated source path to the source directories list so that
 	 * maven can find the new sources to compile.
+	 * 
 	 * @throws MojoExecutionException
 	 */
 	protected void addCompileSourceRoot() throws MojoExecutionException {

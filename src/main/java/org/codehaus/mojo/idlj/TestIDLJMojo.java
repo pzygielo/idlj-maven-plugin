@@ -24,7 +24,7 @@ import java.util.List;
 
 /**
  * Process CORBA IDL test files in IDLJ.
- *
+ * 
  * @author maguro <adc@apache.org>
  * @version $Id$
  * @goal generate-test
@@ -33,7 +33,7 @@ import java.util.List;
 public class TestIDLJMojo extends AbstractIDLJMojo {
 	/**
 	 * The source directory containing *.idl files.
-	 *
+	 * 
 	 * @parameter default-value="${basedir}/src/test/idl"
 	 */
 	private File sourceDirectory;
@@ -41,15 +41,15 @@ public class TestIDLJMojo extends AbstractIDLJMojo {
 	/**
 	 * Additional include directories containing additional *.idl files required
 	 * for compilation.
-	 *
+	 * 
 	 * @parameter default-value="${basedir}/src/test/idl"
 	 */
 	private List includeDirs;
 
 	/**
 	 * The directory to output the generated sources to.
-	 *
-	 * @parameter
+	 * 
+	 * @parameter 
 	 *            default-value="${project.build.directory}/generated-test-sources/idl"
 	 */
 	private File outputDirectory;
