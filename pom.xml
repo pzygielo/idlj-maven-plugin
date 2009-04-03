@@ -110,11 +110,16 @@
       <groupId>plexus</groupId>
       <artifactId>plexus-compiler-api</artifactId>
       <version>1.5</version>
-    </dependency>
-    <dependency>
-      <groupId>plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
-      <version>1.0.1</version>
+      <exclusions>
+      	<exclusion>
+      		<artifactId>plexus-container-default</artifactId>
+      		<groupId>plexus</groupId>
+      	</exclusion>
+      	<exclusion>
+      		<artifactId>plexus-utils</artifactId>
+      		<groupId>plexus</groupId>
+      	</exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 
