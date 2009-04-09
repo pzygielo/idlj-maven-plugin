@@ -89,8 +89,10 @@ Usage
 -------------------
 
  * packagePrefixes - The list of package prefixes for certain types. 
- ** <<<type>>> The simple name of either a top-level module, or an IDL type defined outside of any module
- ** <<<prefix>>> The generated Java package name with <<<prefix>>> for all files generated for that type
+ 
+   * <<<type>>> The simple name of either a top-level module, or an IDL type defined outside of any module
+ 
+   * <<<prefix>>> The generated Java package name with <<<prefix>>> for all files generated for that type
  
 -------------------
 ...
@@ -110,8 +112,10 @@ Usage
 ------------------- 
  
  * defines - The list of preprocessor symbols to define.
- ** <<<symbol>>> The symbol to define
- ** <<<value>>> The value of the symbol. This is optional.
+ 
+   * <<<symbol>>> The symbol to define
+ 
+   * <<<value>>> The value of the symbol. This is optional.
 
 -------------------
 ...
