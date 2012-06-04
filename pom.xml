@@ -26,17 +26,28 @@
   <inceptionYear>2005</inceptionYear>
 
   <developers>
-    <developer>
-      <id>kbravo</id>
-      <name>Kris Bravo</name>
-      <email>m2@corridor-software.us</email>
-      <organization>Corridor Software, Inc.</organization>
-      <organizationUrl>http://www.corridor-software.us</organizationUrl>
-      <roles>
-        <role>Maintainer</role>
-      </roles>
-      <timezone>EST</timezone>
-    </developer>
+      <developer>
+        <id>russgold</id>
+        <name>Russell Gold</name>
+        <email>russell.gold@oracle.com</email>
+        <organization>Oracle Corp.</organization>
+        <organizationUrl>http://www.oracle.com</organizationUrl>
+        <roles>
+          <role>Maintainer</role>
+        </roles>
+        <timezone>EST</timezone>
+      </developer>
+      <developer>
+        <id>kbravo</id>
+        <name>Kris Bravo</name>
+        <email>m2@corridor-software.us</email>
+        <organization>Corridor Software, Inc.</organization>
+        <organizationUrl>http://www.corridor-software.us</organizationUrl>
+        <roles>
+          <role>Maintainer</role>
+        </roles>
+        <timezone>EST</timezone>
+      </developer>
     <developer>
       <id>maguro</id>
       <name>Alan D. Cabrera</name>
@@ -87,6 +98,10 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
+
+    <properties>
+        <mojo.java.target>1.5</mojo.java.target>
+    </properties>
 
 <!--
   <scm>
