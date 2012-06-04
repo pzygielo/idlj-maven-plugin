@@ -101,6 +101,7 @@
 
     <properties>
         <mojo.java.target>1.5</mojo.java.target>
+        <project.build.java.target>1.5</project.build.java.target>
     </properties>
 
 <!--
