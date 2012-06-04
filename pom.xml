@@ -5,7 +5,7 @@
     <artifactId>mojo-parent</artifactId>
     <groupId>org.codehaus.mojo</groupId>
     <version>30</version>
-    <relativePath></relativePath>
+    <relativePath/>
   </parent>
   <artifactId>idlj-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
