@@ -106,10 +106,9 @@ public class IDLJMojo
      *
      * @throws MojoExecutionException
      */
-    protected void addCompileSourceRoot()
-        throws MojoExecutionException
+    protected void addCompileSourceRoot( File directory )
     {
-        getProject().addCompileSourceRoot( getOutputDirectory().getPath() );
+        getProject().addCompileSourceRoot( directory.getPath() );
     }
 
 }

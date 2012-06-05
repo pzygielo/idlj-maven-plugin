@@ -81,8 +81,8 @@ public class TestIDLJMojo
      * Adds the generated source path to the test source directories list so that maven can find the new sources to
      * compile tests.
      */
-    protected void addCompileSourceRoot()
+    protected void addCompileSourceRoot( File directory )
     {
-        getProject().addTestCompileSourceRoot( getOutputDirectory().getAbsolutePath() );
+        getProject().addTestCompileSourceRoot( directory.getAbsolutePath() );
     }
 }
