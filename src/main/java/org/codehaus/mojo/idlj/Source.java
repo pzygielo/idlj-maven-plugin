@@ -64,14 +64,14 @@ public class Source
      * 
      * @parameter includes;
      */
-    private Set includes;
+    private Set<String> includes;
 
     /**
      * Specifies which files to exclude from compilation.
      * 
      * @parameter excludes;
      */
-    private Set excludes;
+    private Set<String> excludes;
 
     /**
      * The list of package prefixes for certain types.
@@ -125,7 +125,7 @@ public class Source
     /**
      * @return a <code>Set</code> with all the exclusions pattern
      */
-    public Set getExcludes()
+    public Set<String> getExcludes()
     {
         return excludes;
     }
@@ -133,7 +133,7 @@ public class Source
     /**
      * @return a <code>Set</code> with all the inclusions pattern
      */
-    public Set getIncludes()
+    public Set<String> getIncludes()
     {
         return includes;
     }

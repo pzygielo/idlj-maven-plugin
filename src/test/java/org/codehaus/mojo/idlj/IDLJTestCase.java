@@ -163,7 +163,6 @@ public class IDLJTestCase {
         private List<URL> prependedURLs = new ArrayList<URL>();
         private List<String> loadedClasses = new ArrayList<String>();
         private String idlCompilerClass;
-        private Map<String,URL> definedResources = new HashMap<String, URL>();
 
         public void prependUrls(URL... urls) {
             prependedURLs.addAll(Arrays.asList(urls));
@@ -173,10 +172,6 @@ public class IDLJTestCase {
             loadedClasses.add(className);
             idlCompilerClass = className;
             return TestIdlCompiler.class;
-        }
-
-        public URL getResource(String resourceName) {
-            return definedResources.get(resourceName);
         }
     }
 

@@ -44,8 +44,8 @@ import org.apache.maven.plugin.MojoExecutionException;
  * @version $Id$
  */
 public class JacorbTranslator
-    extends AbstractTranslator
-    implements CompilerTranslator
+        extends AbstractTranslator
+        implements CompilerTranslator
 {
 
     /**
@@ -60,11 +60,11 @@ public class JacorbTranslator
      * Invoke the specified compiler with a set of arguments
      *
      * @param compilerClass the <code>Class</code> that implemtns the compiler
-     * @param args a <code>List</code> that contains the arguments to use for the compiler
+     * @param args          a <code>List</code> that contains the arguments to use for the compiler
      * @throws MojoExecutionException if the compilation fail or the compiler crashes
      */
     private void invokeCompiler( Class compilerClass, List args )
-        throws MojoExecutionException
+            throws MojoExecutionException
     {
         // It would be great to use some 3rd party library for this stuff
         boolean fork = true;
@@ -84,7 +84,7 @@ public class JacorbTranslator
                     getLog().info( command );
                 }
 
-                Method compileMethod = compilerClass.getMethod( "compile", new Class[] { String[].class } );
+                Method compileMethod = compilerClass.getMethod( "compile", new Class[]{String[].class} );
                 compileMethod.invoke( compilerClass, arguments );
             }
             catch ( InvocationTargetException e )
@@ -179,15 +179,15 @@ public class JacorbTranslator
      * This method it's used to invoke the compiler
      *
      * @param sourceDirectory the path to the sources
-     * @param includeDirs the <code>File[]</code> of directories where to find the includes
+     * @param includeDirs     the <code>File[]</code> of directories where to find the includes
      * @param targetDirectory the path to the destination of the compilation
-     * @param idlFile the path to the file to compile
-     * @param source //TODO ???
+     * @param idlFile         the path to the file to compile
+     * @param source          //TODO ???
      * @throws MojoExecutionException the exeception is thrown whenever the compilation fails or crashes
      */
     public void invokeCompiler( String sourceDirectory, File[] includeDirs, String targetDirectory, String idlFile,
                                 Source source )
-        throws MojoExecutionException
+            throws MojoExecutionException
     {
         List args = new ArrayList();
 
@@ -260,7 +260,7 @@ public class JacorbTranslator
         Class compilerClass;
         try
         {
-            compilerClass = getClassLoaderFacade().loadClass("org.jacorb.idl.parser");
+            compilerClass = getClassLoaderFacade().loadClass( "org.jacorb.idl.parser" );
         }
         catch ( ClassNotFoundException e )
         {
@@ -273,8 +273,8 @@ public class JacorbTranslator
     /**
      * This methos it's used to redirect an <code>InputeStream</code> to a <code>OutputStream</code>
      *
-     * @param in the <code>InputStream</code> to read from
-     * @param out the <code>OutputStream</code> to write into
+     * @param in         the <code>InputStream</code> to read from
+     * @param out        the <code>OutputStream</code> to write into
      * @param streamName the name of Stream
      */
     public static void redirectStream( final InputStream in, final OutputStream out, final String streamName )

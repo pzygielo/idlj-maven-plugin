@@ -37,33 +37,34 @@ public interface CompilerTranslator
      * This method it's used to invoke the compiler
      *
      * @param sourceDirectory the path to the sources
-     * @param includeDirs the <code>File[]</code> of directories where to find the includes
+     * @param includeDirs     the <code>File[]</code> of directories where to find the includes
      * @param targetDirectory the path to the destination of the compilation
-     * @param idlFile the path to the file to compile
-     * @param source //TODO ???
+     * @param idlFile         the path to the file to compile
+     * @param source          //TODO ???
      * @throws MojoExecutionException the exeception is thrown whenever the compilation fails or crashes
      */
-    void invokeCompiler( String sourceDirectory, File[] includeDirs, String targetDirectory, String idlFile, Source source )
-        throws MojoExecutionException;
+    void invokeCompiler( String sourceDirectory, File[] includeDirs,
+                         String targetDirectory, String idlFile, Source source )
+            throws MojoExecutionException;
 
     /**
      * Enable/disable debug messages.
      *
      * @param debug the debug to set
      */
-    public void setDebug( boolean debug );
+    void setDebug( boolean debug );
 
     /**
      * The <code>Log</code> that will used for the messages
      *
      * @param log the log to set
      */
-    public void setLog( Log log );
+    void setLog( Log log );
 
     /**
      * Set to true to fail the build if an error occur while compiling the IDL.
      *
      * @param failOnError the failOnError to set
      */
-    public void setFailOnError( boolean failOnError );
+    void setFailOnError( boolean failOnError );
 }

@@ -26,12 +26,12 @@ import java.net.URLClassLoader;
 
 /**
  * Shared capabilities for translators.
- * 
+ *
  * @author Arnaud Heritier <aheritier AT apache DOT org>
  * @version $Id: AbstractIDLJMojo.java 9189 2009-03-10 21:47:46Z aheritier $
  */
 public abstract class AbstractTranslator
-    implements CompilerTranslator
+        implements CompilerTranslator
 {
 
     /**
@@ -100,41 +100,49 @@ public abstract class AbstractTranslator
         this.failOnError = failOnError;
     }
 
-    static void setClassLoaderFacade(ClassLoaderFacade classLoaderFacade) {
+    static void setClassLoaderFacade( ClassLoaderFacade classLoaderFacade )
+    {
         AbstractTranslator.classLoaderFacade = classLoaderFacade;
     }
 
-    protected ClassLoaderFacade getClassLoaderFacade() {
+    protected ClassLoaderFacade getClassLoaderFacade()
+    {
         return classLoaderFacade;
     }
 
     /**
-     An interface for loading the proper IDL compiler class.
+     * An interface for loading the proper IDL compiler class.
      */
-    public static interface ClassLoaderFacade {
-        void prependUrls(URL... urls);
+    public interface ClassLoaderFacade
+    {
+        /**
+         * Updates the active classloader to include the specified URLs before the original definitions.
+         * @param urls a list of URLs to include when searching for classes.
+         */
+        void prependUrls( URL... urls );
 
-        Class loadClass(String idlCompilerClass) throws ClassNotFoundException;
-
-        URL getResource(String resourceName);
+        /**
+         * Loads the specified class using the appropriate classloader.
+         * @param idlCompilerClass the name of the class to use for compiling IDL files.
+         */
+        Class loadClass( String idlCompilerClass ) throws ClassNotFoundException;
     }
 
     /**
      * The implementation of ClassLoaderFacade used at runtime.
      */
-    static class ClassLoaderFacadeImpl implements ClassLoaderFacade {
+    static class ClassLoaderFacadeImpl implements ClassLoaderFacade
+    {
         ClassLoader classLoader = getClass().getClassLoader();
 
-        public void prependUrls(URL... urls) {
-            classLoader = new URLClassLoader(urls, classLoader);
+        public void prependUrls( URL... urls )
+        {
+            classLoader = new URLClassLoader( urls, classLoader );
         }
 
-        public Class loadClass(String idlCompilerClass) throws ClassNotFoundException {
-            return classLoader.loadClass(idlCompilerClass);
-        }
-
-        public URL getResource(String resourceName) {
-            return classLoader.getResource( resourceName );
+        public Class loadClass( String idlCompilerClass ) throws ClassNotFoundException
+        {
+            return classLoader.loadClass( idlCompilerClass );
         }
 
     }

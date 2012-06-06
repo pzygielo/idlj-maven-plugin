@@ -30,7 +30,7 @@ import java.io.File;
  * @phase generate-test-sources
  */
 public class TestIDLJMojo
-    extends AbstractIDLJMojo
+        extends AbstractIDLJMojo
 {
     /**
      * The source directory containing *.idl files.

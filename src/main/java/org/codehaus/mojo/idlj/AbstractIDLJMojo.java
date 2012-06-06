@@ -22,8 +22,8 @@ package org.codehaus.mojo.idlj;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -104,7 +104,7 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
     /**
      * The interface between this class and the rest of the world - unit tests replace the default implementation.
      */
-    private DependenciesFacade dependenciesFacade;
+    private DependenciesFacade dependencies;
 
     /**
      * The default implementation of the dependencies.
@@ -112,22 +112,23 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
     private static final DependenciesFacade DEPENDENCIES_FACADE = new DependenciesFacadeImpl();
 
 
+    /**
+     * Creates the abstract class using a production implementation of the dependencies.
+     */
     protected AbstractIDLJMojo()
     {
         this( DEPENDENCIES_FACADE );
     }
 
-    AbstractIDLJMojo( DependenciesFacade dependenciesFacade )
+    AbstractIDLJMojo( DependenciesFacade dependencies )
     {
-        this.dependenciesFacade = dependenciesFacade;
+        this.dependencies = dependencies;
     }
 
     /**
      * @return the source directory that contains the IDL files
-     * @throws MojoExecutionException
      */
-    protected abstract File getSourceDirectory()
-            throws MojoExecutionException;
+    protected abstract File getSourceDirectory();
 
     /**
      * @return the <code>File[]</code> of the directories to use as include directories for the compilation
@@ -136,10 +137,8 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
 
     /**
      * @return the path of the directory that will contains the results of the compilation
-     * @throws MojoExecutionException
      */
-    protected abstract File getOutputDirectory()
-            throws MojoExecutionException;
+    protected abstract File getOutputDirectory();
 
     /**
      * Execute the goal of the MOJO that is: compiling the IDL files
@@ -151,10 +150,14 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
         prepareGeneratedSourceDirectory( getOutputDirectory() );
         createIfAbsent( timestampDirectory );
 
-        if (isSourceSpecified())
+        if ( isSourceSpecified() )
+        {
             translateSources( createTranslator(), sources );
+        }
         else
+        {
             translateInferredSource( createTranslator() );
+        }
     }
 
     private void prepareGeneratedSourceDirectory( File directory ) throws MojoExecutionException
@@ -174,10 +177,13 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
         processSource( new Source(), translator );
     }
 
-    private void translateSources( CompilerTranslator translator, List<Source> sourceList ) throws MojoExecutionException
+    private void translateSources( CompilerTranslator translator, List<Source> sourceList )
+            throws MojoExecutionException
     {
-        for (Source source : sourceList)
+        for ( Source source : sourceList )
+        {
             processSource( source, translator );
+        }
     }
 
     private CompilerTranslator createTranslator() throws MojoExecutionException
@@ -192,26 +198,38 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
 
     private CompilerTranslator createAppropriateTranslatorType() throws MojoExecutionException
     {
-        if (compiler == null)
+        if ( compiler == null )
+        {
             return new IdljTranslator();
-        else if (compiler.equals( "idlj" ))
+        }
+        else if ( compiler.equals( "idlj" ) )
+        {
             return new IdljTranslator();
-        else if (compiler.equals( "jacorb" ))
+        }
+        else if ( compiler.equals( "jacorb" ) )
+        {
             return new JacorbTranslator();
+        }
         else
+        {
             throw new MojoExecutionException( "Compiler not supported: " + compiler );
+        }
     }
 
     private void failIfNotWriteable( File directory ) throws MojoExecutionException
     {
-        if (!dependenciesFacade.isWriteable( directory ))
+        if ( !dependencies.isWriteable( directory ) )
+        {
             throw new MojoExecutionException( "Cannot write in : " + directory );
+        }
     }
 
     private void createIfAbsent( File directory )
     {
-        if (!dependenciesFacade.exists( directory ))
-            dependenciesFacade.createDirectory( directory );
+        if ( !dependencies.exists( directory ) )
+        {
+            dependencies.createDirectory( directory );
+        }
     }
 
     /**
@@ -224,34 +242,54 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
     private void processSource( Source source, CompilerTranslator translator )
             throws MojoExecutionException
     {
-        Set staleGrammars = computeStaleGrammars( source );
+        Set<File> staleGrammars = computeStaleGrammars( source );
         reportProcessingNeeded( staleGrammars );
 
-        for (Object staleGrammar : staleGrammars)
+        for ( File idlFile : staleGrammars )
         {
-            File idlFile = (File) staleGrammar;
-            getLog().debug( "Processing: " + idlFile.toString() );
-            translator.invokeCompiler( getSourceDirectory().getAbsolutePath(), getIncludeDirs(),
-                    getOutputDirectory().getAbsolutePath(), idlFile.toString(), source );
-            try
-            {
-                URI relativeURI = getSourceDirectory().toURI().relativize( idlFile.toURI() );
-                File timestampFile = new File( timestampDirectory.toURI().resolve( relativeURI ) );
-                dependenciesFacade.copyFile( idlFile, timestampFile );
-            }
-            catch (IOException e)
-            {
-                getLog().warn( "Failed to copy IDL file to output directory: " + e );
-            }
+            processIdlFile( source, translator, idlFile );
         }
+    }
+
+    private void processIdlFile( Source source, CompilerTranslator translator, File idlFile )
+            throws MojoExecutionException
+    {
+        try
+        {
+            translateIdlFile( idlFile, source, translator );
+            copyToTimestampDirectory( idlFile );
+        }
+        catch ( IOException e )
+        {
+            getLog().warn( "Failed to copy IDL file to timestamp directory: " + e );
+        }
+    }
+
+    private void translateIdlFile( File idlFile, Source source, CompilerTranslator translator )
+            throws MojoExecutionException
+    {
+        getLog().debug( "Processing: " + idlFile.toString() );
+        translator.invokeCompiler( getSourceDirectory().getAbsolutePath(), getIncludeDirs(),
+                getOutputDirectory().getAbsolutePath(), idlFile.toString(), source );
+    }
+
+    private void copyToTimestampDirectory( File idlFile ) throws MojoExecutionException, IOException
+    {
+        URI relativeURI = getSourceDirectory().toURI().relativize( idlFile.toURI() );
+        File timestampFile = new File( timestampDirectory.toURI().resolve( relativeURI ) );
+        dependencies.copyFile( idlFile, timestampFile );
     }
 
     private void reportProcessingNeeded( Set staleGrammars ) throws MojoExecutionException
     {
-        if (staleGrammars.size() > 0)
+        if ( staleGrammars.size() > 0 )
+        {
             getLog().info( "Processing " + staleGrammars.size() + " grammar files to " + getOutputDirectory() );
+        }
         else
+        {
             getLog().info( "Nothing to compile - all idl files are up to date" );
+        }
     }
 
     /**
@@ -261,52 +299,71 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
      * @return a set of files that need to be compiled
      * @throws MojoExecutionException if the selection of the files to compile fails
      */
-    private Set computeStaleGrammars( Source source )
-            throws MojoExecutionException
+    private Set<File> computeStaleGrammars( Source source ) throws MojoExecutionException
     {
-        Set includes = source.getIncludes();
-        getLog().debug( "includes : " + includes );
-        if (includes == null)
-        {
-            includes = new HashSet();
-            includes.add( "**/*.idl" );
-        }
-        Set excludes = source.getExcludes();
-        getLog().debug( "excludes : " + excludes );
-        if (excludes == null)
-        {
-            excludes = new HashSet();
-        }
-        SourceInclusionScanner scanner = dependenciesFacade.createSourceInclusionScanner( staleMillis, includes, excludes );
-        scanner.addSourceMapping( new SuffixMapping( ".idl", ".idl" ) );
-
-        Set staleSources = new HashSet();
-
         File sourceDir = getSourceDirectory();
         getLog().debug( "sourceDir : " + sourceDir );
+
+        return getStaleSources( createIdlScanner( source ), sourceDir );
+    }
+
+    private Set<File> getStaleSources( SourceInclusionScanner scanner, File sourceDir ) throws MojoExecutionException
+    {
         try
         {
-            if (dependenciesFacade.exists( sourceDir ) && dependenciesFacade.isDirectory( sourceDir ))
-            {
-                staleSources.addAll( scanner.getIncludedSources( sourceDir, timestampDirectory ) );
-            }
-            else
-            {
-                getLog().debug( "sourceDir isn't a directory" );
-            }
-        } catch (InclusionScanException e)
+            return tryToGetStaleSources( scanner, sourceDir );
+        }
+        catch ( InclusionScanException e )
         {
             throw new MojoExecutionException( "Error scanning source root: \'" + sourceDir
                     + "\' for stale CORBA IDL files to reprocess.", e );
         }
+    }
 
-        return staleSources;
+    private Set<File> tryToGetStaleSources( SourceInclusionScanner scanner,
+                                            File sourceDir ) throws InclusionScanException
+    {
+        if ( isExistingDirectory( sourceDir ) )
+        {
+            return (Set<File>) scanner.getIncludedSources( sourceDir, timestampDirectory );
+        }
+        else
+        {
+            getLog().debug( "sourceDir isn't a directory" );
+            return new HashSet<File>();
+        }
+    }
+
+    private boolean isExistingDirectory( File sourceDir )
+    {
+        return dependencies.exists( sourceDir ) && dependencies.isDirectory( sourceDir );
+    }
+
+    private SourceInclusionScanner createIdlScanner( Source source )
+    {
+        Set<String> includes = getNonNullSet( "includes", source.getIncludes(), "**/*.idl" );
+        Set<String> excludes = getNonNullSet( "excludes", source.getExcludes() );
+
+        SourceInclusionScanner scanner = dependencies.createSourceInclusionScanner( staleMillis, includes, excludes );
+        scanner.addSourceMapping( new SuffixMapping( ".idl", ".idl" ) );
+        return scanner;
+    }
+
+    private Set<String> getNonNullSet( String comment, Set<String> set, String... defaultValues )
+    {
+        getLog().debug( comment + ": " + set );
+        if ( set == null )
+        {
+            set = new HashSet<String>();
+            Collections.addAll( set, defaultValues );
+        }
+        return set;
     }
 
     /**
      * Add generated sources in compile source root
      *
-     * @throws MojoExecutionException
+     * @param directory a directory containing generated java files to be compiled.
      */
     protected abstract void addCompileSourceRoot( File directory );
 

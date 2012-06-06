@@ -21,8 +21,6 @@ package org.codehaus.mojo.idlj;
 
 import java.io.File;
 
-import org.apache.maven.plugin.MojoExecutionException;
-
 /**
  * Process CORBA IDL files in IDLJ.
  *
@@ -32,7 +30,7 @@ import org.apache.maven.plugin.MojoExecutionException;
  * @phase generate-sources
  */
 public class IDLJMojo
-    extends AbstractIDLJMojo
+        extends AbstractIDLJMojo
 {
     /**
      * The source directory containing *.idl files.
@@ -56,19 +54,22 @@ public class IDLJMojo
     private File outputDirectory;
 
 
-    public IDLJMojo() {
+    /**
+     * Constructs a standard IDL translation Mojo.
+     */
+    public IDLJMojo()
+    {
     }
 
-    public IDLJMojo(DependenciesFacade dependenciesFacade) {
-        super(dependenciesFacade);
+    IDLJMojo( DependenciesFacade dependenciesFacade )
+    {
+        super( dependenciesFacade );
     }
 
     /**
      * @return the source directory that contains the IDL files
-     * @throws MojoExecutionException
      */
     protected File getSourceDirectory()
-        throws MojoExecutionException
     {
         return sourceDirectory;
     }
@@ -83,10 +84,8 @@ public class IDLJMojo
 
     /**
      * @return the path of the directory that will contains the results of the compilation
-     * @throws MojoExecutionException
      */
     protected File getOutputDirectory()
-        throws MojoExecutionException
     {
         return outputDirectory;
     }
@@ -94,7 +93,7 @@ public class IDLJMojo
     /**
      * Set the source directory.
      *
-     * @param dir the path of directory that conatins the IDL files
+     * @param dir the path of directory that contains the IDL files
      */
     protected void setSourceDirectory( File dir )
     {
@@ -102,9 +101,9 @@ public class IDLJMojo
     }
 
     /**
-     * Adds the generated source path to the source directories list so that maven can find the new sources to compile.
+     * Add generated sources in compile source root
      *
-     * @throws MojoExecutionException
+     * @param directory a directory containing generated java files to be compiled.
      */
     protected void addCompileSourceRoot( File directory )
     {

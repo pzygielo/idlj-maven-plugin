@@ -40,8 +40,8 @@ import org.codehaus.plexus.util.StringUtils;
  * @version $Id$
  */
 public class IdljTranslator
-    extends AbstractTranslator
-    implements CompilerTranslator
+        extends AbstractTranslator
+        implements CompilerTranslator
 {
 
     /**
@@ -56,15 +56,15 @@ public class IdljTranslator
      * This method it's used to invoke the compiler
      *
      * @param sourceDirectory the path to the sources
-     * @param includeDirs the <code>File[]</code> of directories where to find the includes
+     * @param includeDirs     the <code>File[]</code> of directories where to find the includes
      * @param targetDirectory the path to the destination of the compilation
-     * @param idlFile the path to the file to compile
-     * @param source the source tag available in the configuration tree of the maven plugin
+     * @param idlFile         the path to the file to compile
+     * @param source          the source tag available in the configuration tree of the maven plugin
      * @throws MojoExecutionException the exception is thrown whenever the compilation fails or crashes
      */
     public void invokeCompiler( String sourceDirectory, File[] includeDirs, String targetDirectory, String idlFile,
                                 Source source )
-        throws MojoExecutionException
+            throws MojoExecutionException
     {
         List args = new ArrayList();
         args.add( "-i" );
@@ -82,7 +82,7 @@ public class IdljTranslator
 
         args.add( "-td" );
         args.add( toRelativeAndFixSeparator( new File( System.getProperty( "user.dir" ) ), new File( targetDirectory ),
-                                             false ) );
+                false ) );
 
         if ( source.getPackagePrefix() != null )
         {
@@ -172,12 +172,12 @@ public class IdljTranslator
      * @throws MojoExecutionException if the search for the class fails
      */
     private Class getCompilerClass()
-        throws MojoExecutionException
+            throws MojoExecutionException
     {
         Class idljCompiler;
         try
         {
-            idljCompiler = getClassLoaderFacade().loadClass(getIDLCompilerClass());
+            idljCompiler = getClassLoaderFacade().loadClass( getIDLCompilerClass() );
         }
         catch ( ClassNotFoundException e )
         {
@@ -186,18 +186,18 @@ public class IdljTranslator
                 File javaHome = new File( System.getProperty( "java.home" ) );
                 File toolsJar = new File( javaHome, "../lib/tools.jar" );
                 URL toolsJarUrl = toolsJar.toURL();
-                getClassLoaderFacade().prependUrls(toolsJarUrl);
+                getClassLoaderFacade().prependUrls( toolsJarUrl );
 
                 // Unfortunately the idlj compiler reads messages using the
                 // system class path.
                 // Therefore this really nasty hack is required.
                 System.setProperty( "java.class.path", System.getProperty( "java.class.path" )
-                    + System.getProperty( "path.separator" ) + toolsJar.getAbsolutePath() );
+                        + System.getProperty( "path.separator" ) + toolsJar.getAbsolutePath() );
                 if ( System.getProperty( "java.vm.name" ).indexOf( "HotSpot" ) != -1 )
                 {
-                    getClassLoaderFacade().loadClass("com.sun.tools.corba.se.idl.som.cff.FileLocator");
+                    getClassLoaderFacade().loadClass( "com.sun.tools.corba.se.idl.som.cff.FileLocator" );
                 }
-                idljCompiler = getClassLoaderFacade().loadClass(getIDLCompilerClass());
+                idljCompiler = getClassLoaderFacade().loadClass( getIDLCompilerClass() );
             }
             catch ( Exception notUsed )
             {
@@ -225,11 +225,11 @@ public class IdljTranslator
      * Invoke the specified compiler with a set of arguments
      *
      * @param compilerClass the <code>Class</code> that implements the compiler
-     * @param args a <code>List</code> that contains the arguments to use for the compiler
+     * @param args          a <code>List</code> that contains the arguments to use for the compiler
      * @throws MojoExecutionException if the compilation fail or the compiler crashes
      */
     private void invokeCompiler( Class compilerClass, List args )
-        throws MojoExecutionException
+            throws MojoExecutionException
     {
         getLog().debug( "Current dir : " + System.getProperty( "user.dir" ) );
         Method compilerMainMethod;
@@ -253,7 +253,7 @@ public class IdljTranslator
 
         try
         {
-            compilerMainMethod = compilerClass.getMethod( "main", new Class[] { String[].class } );
+            compilerMainMethod = compilerClass.getMethod( "main", new Class[]{String[].class} );
         }
         catch ( NoSuchMethodException e1 )
         {
@@ -271,9 +271,11 @@ public class IdljTranslator
         System.setOut( new PrintStream( out ) );
         try
         {
-            Object retVal = (Object) compilerMainMethod.invoke( compilerClass, new Object[] { arguments } );
-            if ( retVal != null && retVal instanceof Integer )
-                exitCode = ( (Integer) retVal ).intValue();
+            Object retVal = compilerMainMethod.invoke( compilerClass, new Object[]{arguments} );
+            if ( ( retVal != null ) && ( retVal instanceof Integer ) )
+            {
+                exitCode = (Integer) retVal;
+            }
 
         }
         catch ( InvocationTargetException e )
@@ -287,22 +289,30 @@ public class IdljTranslator
         finally
         {
             if ( !"".equals( out.toString() ) )
+            {
                 getLog().info( out.toString() );
+            }
             if ( !"".equals( err.toString() ) )
+            {
                 getLog().error( err.toString() );
+            }
             // Restore std channels
             System.setErr( stdErr );
             System.setOut( stdOut );
         }
         if ( !"".equals( out.toString() ) )
+        {
             getLog().info( out.toString() );
+        }
         if ( !"".equals( err.toString() ) )
+        {
             getLog().error( err.toString() );
+        }
         // Restore std channels
         System.setErr( stdErr );
         System.setOut( stdOut );
 
-        if ( isFailOnError() && ( exitCode != 0 || err.toString().indexOf( "Invalid argument" ) != -1 ) )
+        if ( isFailOnError() && ( exitCode != 0 || err.toString().contains( "Invalid argument" ) ) )
         {
             throw new MojoExecutionException( "IDL compilation failed" );
         }
@@ -319,8 +329,15 @@ public class IdljTranslator
         return StringUtils.replace( filename, '\\', '/' );
     }
 
+    /**
+     * Return the unique path to the resource.
+     *
+     * @param file a resource to locate
+     * @return the computed path
+     * @throws MojoExecutionException if the infrastructure detects a problem
+     */
     public static String getCanonicalPath( File file )
-        throws MojoExecutionException
+            throws MojoExecutionException
     {
         try
         {
@@ -335,14 +352,14 @@ public class IdljTranslator
     /**
      * Taken from maven-eclipse-plugin
      *
-     * @param fromdir
-     * @param todir
-     * @param replaceSlashesWithDashes
+     * @param fromdir                  not sure
+     * @param todir                    what these are
+     * @param replaceSlashesWithDashes true if we need to replace slashes with dashes to accomodate the OS
      * @return the relative path between fromdir to todir
-     * @throws MojoExecutionException
+     * @throws MojoExecutionException thrown if an error is detected by the mojo infrastructure
      */
     public static String toRelativeAndFixSeparator( File fromdir, File todir, boolean replaceSlashesWithDashes )
-        throws MojoExecutionException
+            throws MojoExecutionException
     {
         if ( !todir.isAbsolute() )
         {
