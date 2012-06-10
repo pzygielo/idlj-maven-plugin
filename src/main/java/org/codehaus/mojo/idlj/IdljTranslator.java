@@ -66,7 +66,7 @@ public class IdljTranslator
                                 Source source )
             throws MojoExecutionException
     {
-        List args = new ArrayList();
+        List<String> args = new ArrayList<String>();
         args.add( "-i" );
         args.add( sourceDirectory );
 
@@ -155,15 +155,15 @@ public class IdljTranslator
 
         if ( source.getAdditionalArguments() != null )
         {
-            for ( Iterator it = source.getAdditionalArguments().iterator(); it.hasNext(); )
+            for ( String arg : source.getAdditionalArguments() )
             {
-                args.add( it.next() );
+                args.add( arg );
             }
         }
 
         args.add( idlFile );
 
-        Class compilerClass = getCompilerClass();
+        Class<?> compilerClass = getCompilerClass();
         invokeCompiler( compilerClass, args );
     }
 
@@ -171,10 +171,10 @@ public class IdljTranslator
      * @return the <code>Class</code> that implements the idlj compiler
      * @throws MojoExecutionException if the search for the class fails
      */
-    private Class getCompilerClass()
+    private Class<?> getCompilerClass()
             throws MojoExecutionException
     {
-        Class idljCompiler;
+        Class<?> idljCompiler;
         try
         {
             idljCompiler = getClassLoaderFacade().loadClass( getIDLCompilerClass() );
@@ -228,7 +228,7 @@ public class IdljTranslator
      * @param args          a <code>List</code> that contains the arguments to use for the compiler
      * @throws MojoExecutionException if the compilation fail or the compiler crashes
      */
-    private void invokeCompiler( Class compilerClass, List args )
+    private void invokeCompiler( Class<?> compilerClass, List<String> args )
             throws MojoExecutionException
     {
         getLog().debug( "Current dir : " + System.getProperty( "user.dir" ) );

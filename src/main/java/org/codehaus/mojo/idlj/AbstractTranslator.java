@@ -125,7 +125,7 @@ public abstract class AbstractTranslator
          * Loads the specified class using the appropriate classloader.
          * @param idlCompilerClass the name of the class to use for compiling IDL files.
          */
-        Class loadClass( String idlCompilerClass ) throws ClassNotFoundException;
+        Class<?> loadClass( String idlCompilerClass ) throws ClassNotFoundException;
     }
 
     /**
@@ -140,7 +140,7 @@ public abstract class AbstractTranslator
             classLoader = new URLClassLoader( urls, classLoader );
         }
 
-        public Class loadClass( String idlCompilerClass ) throws ClassNotFoundException
+        public Class<?> loadClass( String idlCompilerClass ) throws ClassNotFoundException
         {
             return classLoader.loadClass( idlCompilerClass );
         }

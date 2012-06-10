@@ -88,7 +88,7 @@ public class Source
     /**
      * The list of additional, compiler-specific arguments to use.
      */
-    private List additionalArguments;
+    private List<String> additionalArguments;
 
     /**
      * @return a <code>List</code> with all the defines with this source
@@ -157,7 +157,7 @@ public class Source
     /**
      * @return a <code>List</code> of <code>String</code> that will be added as compiler parameters
      */
-    public List getAdditionalArguments()
+    public List<String> getAdditionalArguments()
     {
         return additionalArguments;
     }

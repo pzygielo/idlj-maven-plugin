@@ -280,7 +280,7 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
         dependencies.copyFile( idlFile, timestampFile );
     }
 
-    private void reportProcessingNeeded( Set staleGrammars ) throws MojoExecutionException
+    private void reportProcessingNeeded( Set<File> staleGrammars ) throws MojoExecutionException
     {
         if ( staleGrammars.size() > 0 )
         {
@@ -389,7 +389,8 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
 
     interface DependenciesFacade
     {
-        SourceInclusionScanner createSourceInclusionScanner( int updatedWithinMsecs, Set includes, Set excludes );
+        SourceInclusionScanner createSourceInclusionScanner( int updatedWithinMsecs, Set<String> includes,
+                                                             Set<String> excludes );
 
         void copyFile( File sourceFile, File targetFile ) throws IOException;
 
@@ -413,7 +414,8 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
             FileUtils.copyFile( sourceFile, targetFile );
         }
 
-        public SourceInclusionScanner createSourceInclusionScanner( int updatedWithinMsecs, Set includes, Set excludes )
+        public SourceInclusionScanner createSourceInclusionScanner( int updatedWithinMsecs, Set<String> includes,
+                                                                    Set<String> excludes )
         {
             return new StaleSourceScanner( updatedWithinMsecs, includes, excludes );
         }
