@@ -99,10 +99,9 @@
     </license>
   </licenses>
 
-    <properties>
-        <mojo.java.target>1.5</mojo.java.target>
-        <project.build.java.target>1.5</project.build.java.target>
-    </properties>
+  <properties>
+    <mojo.java.target>1.5</mojo.java.target>
+  </properties>
 
   <scm>
     <connection>scm:svn:http://svn.codehaus.org/mojo/trunk/mojo/idlj-maven-plugin</connection>
@@ -143,19 +142,6 @@
         <version>4.4</version>
     </dependency>
   </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
   <profiles>
     <profile>
