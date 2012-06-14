@@ -273,20 +273,50 @@ public class IdljTranslator
             getLog().info( getCommandLine( compilerClass, arguments ) );
         }
 
-        // Backup std channels
-        PrintStream stdErr = System.err;
-        PrintStream stdOut = System.out;
         // Local channels
         ByteArrayOutputStream err = new ByteArrayOutputStream();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        int exitCode = runCompilerAndRecordOutput( compilerClass, arguments, err, out );
+        logOutputMessages( err, out );
+
+        if ( isFailOnError() && isCompilationFailed( err, exitCode ) )
+        {
+            throw new MojoExecutionException( "IDL compilation failed" );
+        }
+    }
+
+    private boolean isCompilationFailed( ByteArrayOutputStream err, int exitCode )
+    {
+        return exitCode != 0 || isNotEmpty( err );
+    }
+
+    private void logOutputMessages( ByteArrayOutputStream err, ByteArrayOutputStream out )
+    {
+        if ( isNotEmpty( out ) )
+        {
+            getLog().info( out.toString() );
+        }
+        if ( isNotEmpty( err ) )
+        {
+            getLog().error( err.toString() );
+        }
+    }
+
+    private int runCompilerAndRecordOutput( Class<?> compilerClass, String[] arguments, ByteArrayOutputStream err,
+                                            ByteArrayOutputStream out ) throws MojoExecutionException
+    {
+        // Backup std channels
+        PrintStream stdErr = System.err;
+        PrintStream stdOut = System.out;
+
         System.setErr( new PrintStream( err ) );
         System.setOut( new PrintStream( out ) );
-        int exitCode;
         try
         {
-            exitCode = runCompiler( compilerClass, arguments );
+            return runCompiler( compilerClass, arguments );
         }
-        catch ( NoSuchMethodException e1 )
+        catch ( NoSuchMethodException e )
         {
             throw new MojoExecutionException( "Error: Compiler had no main method" );
         }
@@ -304,19 +334,11 @@ public class IdljTranslator
             System.setErr( stdErr );
             System.setOut( stdOut );
         }
-        if ( !"".equals( out.toString() ) )
-        {
-            getLog().info( out.toString() );
-        }
-        if ( !"".equals( err.toString() ) )
-        {
-            getLog().error( err.toString() );
-        }
+    }
 
-        if ( isFailOnError() && ( exitCode != 0 || !err.toString().isEmpty() ) )
-        {
-            throw new MojoExecutionException( "IDL compilation failed" );
-        }
+    private boolean isNotEmpty( ByteArrayOutputStream outputStream )
+    {
+        return !"".equals( outputStream.toString() );
     }
 
 
