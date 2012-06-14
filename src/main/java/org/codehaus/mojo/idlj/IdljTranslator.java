@@ -19,18 +19,18 @@ package org.codehaus.mojo.idlj;
  * under the License.
  */
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.codehaus.plexus.util.StringOutputStream;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -73,10 +73,9 @@ public class IdljTranslator
         // add idl files from other directories as well
         if ( includeDirs != null && includeDirs.length > 0 )
         {
-            for ( int i = 0; i < includeDirs.length; i++ )
-            {
+            for (File includeDir : includeDirs) {
                 args.add( "-i" );
-                args.add( includeDirs[i].toString() );
+                args.add( includeDir.toString() );
             }
         }
 
@@ -91,9 +90,7 @@ public class IdljTranslator
 
         if ( source.getPackagePrefixes() != null )
         {
-            for ( Iterator prefixes = source.getPackagePrefixes().iterator(); prefixes.hasNext(); )
-            {
-                PackagePrefix prefix = (PackagePrefix) prefixes.next();
+            for (PackagePrefix prefix : source.getPackagePrefixes()) {
                 args.add( "-pkgPrefix" );
                 args.add( prefix.getType() );
                 args.add( prefix.getPrefix() );
@@ -102,11 +99,8 @@ public class IdljTranslator
 
         if ( source.getDefines() != null )
         {
-            for ( Iterator defs = source.getDefines().iterator(); defs.hasNext(); )
-            {
-                Define define = (Define) defs.next();
-                if ( define.getValue() != null )
-                {
+            for (Define define : source.getDefines()) {
+                if (define.getValue() != null) {
                     throw new MojoExecutionException( "idlj compiler unable to define symbol values" );
                 }
                 args.add( "-d" );
@@ -114,9 +108,9 @@ public class IdljTranslator
             }
         }
 
-        if ( source.emitStubs() != null && source.emitStubs().booleanValue() )
+        if ( source.emitStubs() != null && source.emitStubs())
         {
-            if ( source.emitSkeletons().booleanValue() )
+            if (source.emitSkeletons())
             {
                 args.add( "-fall" );
             }
@@ -127,7 +121,7 @@ public class IdljTranslator
         }
         else
         {
-            if ( source.emitSkeletons() != null && source.emitSkeletons().booleanValue() )
+            if ( source.emitSkeletons() != null && source.emitSkeletons())
             {
                 args.add( "-fserver" );
             }
@@ -137,7 +131,7 @@ public class IdljTranslator
             }
         }
 
-        if ( source.compatible() != null && source.compatible().booleanValue() )
+        if ( source.compatible() != null && source.compatible())
         {
             String version = System.getProperty( "java.specification.version" );
             getLog().debug( "JDK Version:" + version );
@@ -177,26 +171,14 @@ public class IdljTranslator
         Class<?> idljCompiler;
         try
         {
+            if (isMacOSX()) addToolsJarToPath();
             idljCompiler = getClassLoaderFacade().loadClass( getIDLCompilerClass() );
         }
         catch ( ClassNotFoundException e )
         {
             try
             {
-                File javaHome = new File( System.getProperty( "java.home" ) );
-                File toolsJar = new File( javaHome, "../lib/tools.jar" );
-                URL toolsJarUrl = toolsJar.toURL();
-                getClassLoaderFacade().prependUrls( toolsJarUrl );
-
-                // Unfortunately the idlj compiler reads messages using the
-                // system class path.
-                // Therefore this really nasty hack is required.
-                System.setProperty( "java.class.path", System.getProperty( "java.class.path" )
-                        + System.getProperty( "path.separator" ) + toolsJar.getAbsolutePath() );
-                if ( System.getProperty( "java.vm.name" ).indexOf( "HotSpot" ) != -1 )
-                {
-                    getClassLoaderFacade().loadClass( "com.sun.tools.corba.se.idl.som.cff.FileLocator" );
-                }
+                addToolsJarToPath();
                 idljCompiler = getClassLoaderFacade().loadClass( getIDLCompilerClass() );
             }
             catch ( Exception notUsed )
@@ -204,17 +186,51 @@ public class IdljTranslator
                 throw new MojoExecutionException( " IDL compiler not available", e );
             }
         }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( " IDL compiler not available", e );
+        }
         return idljCompiler;
     }
 
+
+    private void addToolsJarToPath() throws MalformedURLException, ClassNotFoundException {
+        File javaHome = new File( System.getProperty( "java.home" ) );
+        File toolsJar = new File( javaHome, getToolsJarPath() );
+        URL toolsJarUrl = toolsJar.toURI().toURL();
+        getClassLoaderFacade().prependUrls( toolsJarUrl );
+
+        // Unfortunately the idlj compiler reads messages using the system class path.
+        // Therefore this really nasty hack is required.
+        System.setProperty( "java.class.path", System.getProperty( "java.class.path" )
+                + System.getProperty( "path.separator" ) + toolsJar.getAbsolutePath() );
+        if (System.getProperty( "java.vm.name" ).contains( "HotSpot" ))
+        {
+            getClassLoaderFacade().loadClass( "com.sun.tools.corba.se.idl.som.cff.FileLocator" );
+        }
+    }
+
+
+    private String getToolsJarPath() {
+        return isMacOSX()
+            ? "../Classes/classes.jar"
+            : "../lib/tools.jar";
+    }
+
+
+    private boolean isMacOSX() {
+        return System.getProperty("java.vm.vendor").contains( "Apple" );
+    }
+
+
     /**
-     * @return the class name of the clas that implements the compiler
+     * @return the name of the class that implements the compiler
      */
-    private String getIDLCompilerClass()
+    private static String getIDLCompilerClass()
     {
         String vendor = System.getProperty( "java.vm.vendor" );
 
-        if ( vendor.indexOf( "IBM" ) != -1 )
+        if (vendor.contains( "IBM" ))
         {
             return "com.ibm.idl.toJavaPortable.Compile";
         }
@@ -232,51 +248,35 @@ public class IdljTranslator
             throws MojoExecutionException
     {
         getLog().debug( "Current dir : " + System.getProperty( "user.dir" ) );
-        Method compilerMainMethod;
-        String arguments[];
 
         if ( isDebug() )
         {
             args.add( 0, "-verbose" );
-            arguments = (String[]) args.toArray( new String[args.size()] );
-            String command = compilerClass.getName();
-            for ( int i = 0; i < arguments.length; i++ )
-            {
-                command += " " + arguments[i];
-            }
-            getLog().info( command );
-        }
-        else
-        {
-            arguments = (String[]) args.toArray( new String[args.size()] );
         }
 
-        try
+        String[] arguments = args.toArray( new String[args.size()] );
+
+        if ( isDebug() )
         {
-            compilerMainMethod = compilerClass.getMethod( "main", new Class[]{String[].class} );
-        }
-        catch ( NoSuchMethodException e1 )
-        {
-            throw new MojoExecutionException( "Error: Compiler had no main method" );
+            getLog().info( getCommandLine( compilerClass, arguments ) );
         }
 
-        int exitCode = 0;
         // Backup std channels
         PrintStream stdErr = System.err;
         PrintStream stdOut = System.out;
         // Local channels
-        StringOutputStream err = new StringOutputStream();
-        StringOutputStream out = new StringOutputStream();
+        ByteArrayOutputStream err = new ByteArrayOutputStream();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
         System.setErr( new PrintStream( err ) );
         System.setOut( new PrintStream( out ) );
+        int exitCode;
         try
         {
-            Object retVal = compilerMainMethod.invoke( compilerClass, new Object[]{arguments} );
-            if ( ( retVal != null ) && ( retVal instanceof Integer ) )
-            {
-                exitCode = (Integer) retVal;
-            }
-
+            exitCode = runCompiler( compilerClass, arguments );
+        }
+        catch ( NoSuchMethodException e1 )
+        {
+            throw new MojoExecutionException( "Error: Compiler had no main method" );
         }
         catch ( InvocationTargetException e )
         {
@@ -288,14 +288,6 @@ public class IdljTranslator
         }
         finally
         {
-            if ( !"".equals( out.toString() ) )
-            {
-                getLog().info( out.toString() );
-            }
-            if ( !"".equals( err.toString() ) )
-            {
-                getLog().error( err.toString() );
-            }
             // Restore std channels
             System.setErr( stdErr );
             System.setOut( stdOut );
@@ -308,15 +300,31 @@ public class IdljTranslator
         {
             getLog().error( err.toString() );
         }
-        // Restore std channels
-        System.setErr( stdErr );
-        System.setOut( stdOut );
 
         if ( isFailOnError() && ( exitCode != 0 || err.toString().contains( "Invalid argument" ) ) )
         {
             throw new MojoExecutionException( "IDL compilation failed" );
         }
     }
+
+
+    private int runCompiler( Class<?> compilerClass, String... arguments ) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        int exitCode;Method compilerMainMethod = compilerClass.getMethod( "main", new Class[]{String[].class} );
+        Object retVal = compilerMainMethod.invoke( compilerClass, new Object[]{arguments} );
+        getLog().info( "Completed with code " + retVal );
+        exitCode = ( retVal != null ) && ( retVal instanceof Integer ) ? (Integer) retVal : 0;
+        return exitCode;
+    }
+
+
+    private String getCommandLine( Class<?> compilerClass, String[] arguments ) {
+        String command = compilerClass.getName();
+        for (String argument : arguments) {
+            command += " " + argument;
+        }
+        return command;
+    }
+
 
     /**
      * Convert the provided filename from a Windows separator \\ to a unix/java separator /
@@ -369,7 +377,7 @@ public class IdljTranslator
         String basedirPath = getCanonicalPath( fromdir );
         String absolutePath = getCanonicalPath( todir );
 
-        String relative = null;
+        String relative;
 
         if ( absolutePath.equals( basedirPath ) )
         {

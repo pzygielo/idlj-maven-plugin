@@ -16,6 +16,7 @@ import java.net.URL;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
@@ -48,13 +49,13 @@ public class IDLJTestCase {
 
     @After
     public void tearDown() {
-        System.setProperties(savedProperties);
+        System.setProperties( savedProperties );
     }
 
     @Test
     public void whenCompilerNotSpecified_chooseSunCompiler() throws Exception {
         mojo.execute();
-        assertEquals("com.sun.tools.corba.se.idl.toJavaPortable.Compile", loaderFacade.idlCompilerClass);
+        assertEquals( "com.sun.tools.corba.se.idl.toJavaPortable.Compile", loaderFacade.idlCompilerClass );
     }
 
     @Test
@@ -63,6 +64,22 @@ public class IDLJTestCase {
         mojo.execute();
         assertEquals("com.ibm.idl.toJavaPortable.Compile", loaderFacade.idlCompilerClass);
     }
+
+    @Test
+    public void whenVMNameContainsApple_loadClassesJar() throws Exception {
+        System.setProperty( "java.vm.vendor", "pretend it is Apple" );
+        mojo.execute();
+        assertTrue( getPrependedUrls().contains( "Classes/classes.jar" ) );
+    }
+
+
+    private String getPrependedUrls() {
+        StringBuilder sb = new StringBuilder( );
+        for (URL url : loaderFacade.prependedURLs)
+            sb.append( ':' ).append( url );
+        return sb.toString();
+    }
+
 
     @Test
     public void whenSpecified_chooseJacorbCompiler() throws Exception {

@@ -78,12 +78,12 @@ public class Source
      * 
      * @parameter packagePrefixes;
      */
-    private List packagePrefixes;
+    private List<PackagePrefix> packagePrefixes;
 
     /**
      * The list of preprocessor symbols to define.
      */
-    private List defines;
+    private List<Define> defines;
 
     /**
      * The list of additional, compiler-specific arguments to use.
@@ -93,7 +93,7 @@ public class Source
     /**
      * @return a <code>List</code> with all the defines with this source
      */
-    public List getDefines()
+    public List<Define> getDefines()
     {
         return defines;
     }
@@ -149,7 +149,7 @@ public class Source
     /**
      * @return a <code>List</code> of <code>PackagePrefix</code> to use for the generated files
      */
-    public List getPackagePrefixes()
+    public List<PackagePrefix> getPackagePrefixes()
     {
         return packagePrefixes;
     }
