@@ -32,10 +32,10 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * This class implement the <code>CompilerTranslator</code> for the JacORB IDL compiler
@@ -59,11 +59,11 @@ public class JacorbTranslator
     /**
      * Invoke the specified compiler with a set of arguments
      *
-     * @param compilerClass the <code>Class</code> that implemtns the compiler
+     * @param compilerClass the <code>Class</code> that implements the compiler
      * @param args          a <code>List</code> that contains the arguments to use for the compiler
      * @throws MojoExecutionException if the compilation fail or the compiler crashes
      */
-    private void invokeCompiler( Class compilerClass, List args )
+    private void invokeCompiler( Class<?> compilerClass, List<String> args )
             throws MojoExecutionException
     {
         // It would be great to use some 3rd party library for this stuff
@@ -72,16 +72,11 @@ public class JacorbTranslator
         {
             try
             {
-                String arguments[] = (String[]) args.toArray( new String[args.size()] );
+                Object[] arguments = args.toArray( new String[args.size()] );
 
                 if ( isDebug() )
                 {
-                    String command = "compile";
-                    for ( int i = 0; i < arguments.length; i++ )
-                    {
-                        command += " " + arguments[i];
-                    }
-                    getLog().info( command );
+                    getLog().debug( "compile " + StringUtils.join( arguments, " " ) );
                 }
 
                 Method compileMethod = compilerClass.getMethod( "compile", new Class[]{String[].class} );
@@ -109,7 +104,7 @@ public class JacorbTranslator
             URL[] classPathUrls = cl.getURLs();
 
             // Construct list of arguments
-            List binArgs = new ArrayList();
+            List<String> binArgs = new ArrayList<String>();
 
             // First argument is the java binary to run
             binArgs.add( javaBin.getPath() );
@@ -117,38 +112,27 @@ public class JacorbTranslator
             // Add the classpath to argument list
             binArgs.add( "-classpath" );
             String classPath = "" + new File( classPathUrls[0].getPath().replaceAll( "%20", " " ) );
-            for ( int i = 1; i < classPathUrls.length; i++ )
+            for ( URL url : classPathUrls )
             {
-                classPath += File.pathSeparator + new File( classPathUrls[i].getPath().replaceAll( "%20", " " ) );
+                classPath += File.pathSeparator + new File( url.getPath().replaceAll( "%20", " " ) );
             }
-            classPath += "";
             binArgs.add( classPath );
 
             // Add class containing main method to arg list
             binArgs.add( compilerClass.getName() );
 
             // Add java arguments
-            for ( Iterator it = args.iterator(); it.hasNext(); )
+            for ( String arg: args )
             {
-                Object o = it.next();
-                binArgs.add( o.toString() );
+                binArgs.add( arg );
             }
 
             // Convert arg list to array
-            String[] argArray = new String[binArgs.size()];
-            for ( int i = 0; i < argArray.length; i++ )
-            {
-                argArray[i] = binArgs.get( i ).toString();
-            }
+            String[] argArray = binArgs.toArray( new String[binArgs.size()] );
 
             if ( isDebug() )
             {
-                String command = "";
-                for ( int i = 0; i < argArray.length; i++ )
-                {
-                    command += " " + argArray[i];
-                }
-                getLog().info( command );
+                getLog().debug( StringUtils.join( argArray, " " ) );
             }
 
             try
@@ -189,7 +173,7 @@ public class JacorbTranslator
                                 Source source )
             throws MojoExecutionException
     {
-        List args = new ArrayList();
+        List<String> args = new ArrayList<String>();
 
         // TODO: This should be configurable
         args.add( "-sloppy_names" );
@@ -197,11 +181,11 @@ public class JacorbTranslator
         args.add( "-I" + sourceDirectory );
 
         // add idl files from other directories as well
-        if ( includeDirs != null && includeDirs.length > 0 )
+        if ( includeDirs != null )
         {
-            for ( int i = 0; i < includeDirs.length; i++ )
+            for ( File includeDir : includeDirs )
             {
-                args.add( "-I" + includeDirs[i] );
+                args.add( "-I" + includeDir.getPath() );
             }
         }
 
@@ -225,9 +209,8 @@ public class JacorbTranslator
 
         if ( source.getPackagePrefixes() != null )
         {
-            for ( Iterator prefixes = source.getPackagePrefixes().iterator(); prefixes.hasNext(); )
+            for ( PackagePrefix prefix  : source.getPackagePrefixes() )
             {
-                PackagePrefix prefix = (PackagePrefix) prefixes.next();
                 args.add( "-i2jpackage" );
                 args.add( prefix.getType() + ":" + prefix.getPrefix() + "." + prefix.getType() );
             }
@@ -235,9 +218,8 @@ public class JacorbTranslator
 
         if ( source.getDefines() != null )
         {
-            for ( Iterator defs = source.getDefines().iterator(); defs.hasNext(); )
+            for ( Define define : source.getDefines() )
             {
-                Define define = (Define) defs.next();
                 String arg = "-D" + define.getSymbol();
                 if ( define.getValue() != null )
                 {
@@ -249,15 +231,15 @@ public class JacorbTranslator
 
         if ( source.getAdditionalArguments() != null )
         {
-            for ( Iterator it = source.getAdditionalArguments().iterator(); it.hasNext(); )
+            for ( String addArg : source.getAdditionalArguments() )
             {
-                args.add( it.next() );
+                args.add( addArg );
             }
         }
 
         args.add( idlFile );
 
-        Class compilerClass;
+        Class<?> compilerClass;
         try
         {
             compilerClass = getClassLoaderFacade().loadClass( "org.jacorb.idl.parser" );
