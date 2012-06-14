@@ -1,0 +1,3 @@
+interface ITestIdlj {
+	UnknownReturnType testFailed();
+};
