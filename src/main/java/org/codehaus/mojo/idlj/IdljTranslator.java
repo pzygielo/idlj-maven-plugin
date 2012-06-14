@@ -44,6 +44,9 @@ public class IdljTranslator
         implements CompilerTranslator
 {
 
+    private static final String AIX_IDLJ_COMPILER_NAME = "com.ibm.idl.toJavaPortable.Compile";
+    private static final String ORACLE_IDLJ_COMPILER_NAME = "com.sun.tools.corba.se.idl.toJavaPortable.Compile";
+
     /**
      * Default constructor
      */
@@ -73,7 +76,8 @@ public class IdljTranslator
         // add idl files from other directories as well
         if ( includeDirs != null && includeDirs.length > 0 )
         {
-            for (File includeDir : includeDirs) {
+            for ( File includeDir : includeDirs )
+            {
                 args.add( "-i" );
                 args.add( includeDir.toString() );
             }
@@ -90,7 +94,8 @@ public class IdljTranslator
 
         if ( source.getPackagePrefixes() != null )
         {
-            for (PackagePrefix prefix : source.getPackagePrefixes()) {
+            for ( PackagePrefix prefix : source.getPackagePrefixes() )
+            {
                 args.add( "-pkgPrefix" );
                 args.add( prefix.getType() );
                 args.add( prefix.getPrefix() );
@@ -99,8 +104,10 @@ public class IdljTranslator
 
         if ( source.getDefines() != null )
         {
-            for (Define define : source.getDefines()) {
-                if (define.getValue() != null) {
+            for ( Define define : source.getDefines() )
+            {
+                if ( define.getValue() != null )
+                {
                     throw new MojoExecutionException( "idlj compiler unable to define symbol values" );
                 }
                 args.add( "-d" );
@@ -108,9 +115,9 @@ public class IdljTranslator
             }
         }
 
-        if ( source.emitStubs() != null && source.emitStubs())
+        if ( source.emitStubs() != null && source.emitStubs() )
         {
-            if (source.emitSkeletons())
+            if ( source.emitSkeletons() )
             {
                 args.add( "-fall" );
             }
@@ -121,7 +128,7 @@ public class IdljTranslator
         }
         else
         {
-            if ( source.emitSkeletons() != null && source.emitSkeletons())
+            if ( source.emitSkeletons() != null && source.emitSkeletons() )
             {
                 args.add( "-fserver" );
             }
@@ -131,7 +138,7 @@ public class IdljTranslator
             }
         }
 
-        if ( source.compatible() != null && source.compatible())
+        if ( source.compatible() != null && source.compatible() )
         {
             String version = System.getProperty( "java.specification.version" );
             getLog().debug( "JDK Version:" + version );
@@ -171,15 +178,18 @@ public class IdljTranslator
         Class<?> idljCompiler;
         try
         {
-            if (isMacOSX()) addToolsJarToPath();
-            idljCompiler = getClassLoaderFacade().loadClass( getIDLCompilerClass() );
+            if ( isMacOSX() )
+            {
+                addToolsJarToPath();
+            }
+            idljCompiler = getClassLoaderFacade().loadClass( getIDLCompilerClassName() );
         }
         catch ( ClassNotFoundException e )
         {
             try
             {
                 addToolsJarToPath();
-                idljCompiler = getClassLoaderFacade().loadClass( getIDLCompilerClass() );
+                idljCompiler = getClassLoaderFacade().loadClass( getIDLCompilerClassName() );
             }
             catch ( Exception notUsed )
             {
@@ -194,7 +204,8 @@ public class IdljTranslator
     }
 
 
-    private void addToolsJarToPath() throws MalformedURLException, ClassNotFoundException {
+    private void addToolsJarToPath() throws MalformedURLException, ClassNotFoundException
+    {
         File javaHome = new File( System.getProperty( "java.home" ) );
         File toolsJar = new File( javaHome, getToolsJarPath() );
         URL toolsJarUrl = toolsJar.toURI().toURL();
@@ -204,37 +215,38 @@ public class IdljTranslator
         // Therefore this really nasty hack is required.
         System.setProperty( "java.class.path", System.getProperty( "java.class.path" )
                 + System.getProperty( "path.separator" ) + toolsJar.getAbsolutePath() );
-        if (System.getProperty( "java.vm.name" ).contains( "HotSpot" ))
+        if ( System.getProperty( "java.vm.name" ).contains( "HotSpot" ) )
         {
             getClassLoaderFacade().loadClass( "com.sun.tools.corba.se.idl.som.cff.FileLocator" );
         }
     }
 
 
-    private String getToolsJarPath() {
+    private String getToolsJarPath()
+    {
         return isMacOSX()
-            ? "../Classes/classes.jar"
-            : "../lib/tools.jar";
+                ? "../Classes/classes.jar"
+                : "../lib/tools.jar";
     }
 
 
-    private boolean isMacOSX() {
-        return System.getProperty("java.vm.vendor").contains( "Apple" );
+    private boolean isMacOSX()
+    {
+        return System.getProperty( "java.vm.vendor" ).contains( "Apple" );
     }
 
+
+    private static boolean isAix()
+    {
+        return System.getProperty( "java.vm.vendor" ).contains( "IBM" );
+    }
 
     /**
      * @return the name of the class that implements the compiler
      */
-    private static String getIDLCompilerClass()
+    private static String getIDLCompilerClassName()
     {
-        String vendor = System.getProperty( "java.vm.vendor" );
-
-        if (vendor.contains( "IBM" ))
-        {
-            return "com.ibm.idl.toJavaPortable.Compile";
-        }
-        return "com.sun.tools.corba.se.idl.toJavaPortable.Compile";
+        return isAix() ? AIX_IDLJ_COMPILER_NAME : ORACLE_IDLJ_COMPILER_NAME;
     }
 
     /**
@@ -301,25 +313,28 @@ public class IdljTranslator
             getLog().error( err.toString() );
         }
 
-        if ( isFailOnError() && ( exitCode != 0 || err.toString().contains( "Invalid argument" ) ) )
+        if ( isFailOnError() && ( exitCode != 0 || !err.toString().isEmpty() ) )
         {
             throw new MojoExecutionException( "IDL compilation failed" );
         }
     }
 
 
-    private int runCompiler( Class<?> compilerClass, String... arguments ) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        int exitCode;Method compilerMainMethod = compilerClass.getMethod( "main", new Class[]{String[].class} );
+    private int runCompiler( Class<?> compilerClass, String... arguments ) throws NoSuchMethodException,
+            IllegalAccessException, InvocationTargetException
+    {
+        Method compilerMainMethod = compilerClass.getMethod( "main", new Class[]{String[].class} );
         Object retVal = compilerMainMethod.invoke( compilerClass, new Object[]{arguments} );
         getLog().info( "Completed with code " + retVal );
-        exitCode = ( retVal != null ) && ( retVal instanceof Integer ) ? (Integer) retVal : 0;
-        return exitCode;
+        return ( retVal != null ) && ( retVal instanceof Integer ) ? (Integer) retVal : 0;
     }
 
 
-    private String getCommandLine( Class<?> compilerClass, String[] arguments ) {
+    private String getCommandLine( Class<?> compilerClass, String[] arguments )
+    {
         String command = compilerClass.getName();
-        for (String argument : arguments) {
+        for ( String argument : arguments )
+        {
             command += " " + argument;
         }
         return command;

@@ -1,6 +1,7 @@
 package org.codehaus.mojo.idlj;
 
 import org.apache.maven.model.Model;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.compiler.util.scan.InclusionScanException;
 import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
@@ -39,7 +40,7 @@ public class IDLJTestCase {
         AbstractTranslator.setClassLoaderFacade(loaderFacade);
 
         mojo = new IDLJMojo(testDependenciesFacade);
-        defineMavenProject(null);
+        ignoreMavenProject();
         defineSourceDirectory("src/main/idl");
         defineOutputDirectory("target/main/generatedSources/idl");
         defineTimestampDirectory("target/main/timeStamps");
@@ -91,7 +92,7 @@ public class IDLJTestCase {
     @Test
     public void whenNoOptionsAreSpecified_useCurrentDirectoryAsIncludePath() throws Exception {
         mojo.execute();
-        assertArgumentsContains("-i", getCurrentDir() + "/src/main/idl");
+        assertArgumentsContains( "-i", getCurrentDir() + "/src/main/idl" );
     }
 
     @Test
@@ -99,6 +100,13 @@ public class IDLJTestCase {
         defineIncludePaths( "/src/main/idl-include" );
         mojo.execute();
         assertArgumentsContains("-i", "/src/main/idl-include");
+    }
+
+    @Test(expected = MojoExecutionException.class)
+    public void whenErrorMessageGenerated_failMojoStep() throws Exception {
+        setFailOnError();
+        TestIdlCompiler.defineErrorMessage( "oops" );
+        mojo.execute();
     }
 
     private String getCurrentDir() {
@@ -133,8 +141,8 @@ public class IDLJTestCase {
         setPrivateFieldValue(mojo, "compiler", compiler);
     }
 
-    private void defineMavenProject(Model model) throws NoSuchFieldException, IllegalAccessException {
-        setPrivateFieldValue(mojo, "project", new MavenProject(model));
+    private void ignoreMavenProject() throws NoSuchFieldException, IllegalAccessException {
+        setPrivateFieldValue(mojo, "project", new MavenProject((Model) null));
     }
 
     private void defineTimestampDirectory(String path) throws NoSuchFieldException, IllegalAccessException {
@@ -143,6 +151,10 @@ public class IDLJTestCase {
 
     private void defineOutputDirectory(String path) throws NoSuchFieldException, IllegalAccessException {
         setPrivateFieldValue(mojo, "outputDirectory", new File(path));
+    }
+
+    private void setFailOnError() throws NoSuchFieldException, IllegalAccessException {
+        setPrivateFieldValue(mojo, "failOnError", true);
     }
 
     private void defineIncludePaths(String... paths) throws NoSuchFieldException, IllegalAccessException {
@@ -193,10 +205,19 @@ public class IDLJTestCase {
     }
 
     static class TestIdlCompiler {
+        private static String errorMessage;
+
         public static void main(String... args) {
             IDLJTestCase.args = new String[ args.length];
             for (int i = 0; i < args.length; i++)
                 IDLJTestCase.args[i] = args[i].replace('\\','/');
+
+            if ( errorMessage != null )
+                System.err.println( errorMessage );
+        }
+
+        static void defineErrorMessage(String message) {
+            errorMessage = message;
         }
     }
 
