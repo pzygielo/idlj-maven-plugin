@@ -15,9 +15,9 @@ CORBA IDL Compiler Maven Plugin
 
    The CORBA IDL Compiler Maven Plugin has two goals:
 
-   * {{{generate-mojo.html} idlj:generate}} Process CORBA IDL files in IDLJ.
+   * {{{./generate-mojo.html} idlj:generate}} Process CORBA IDL files in IDLJ.
 
-   * {{{generate-test-mojo.html} idlj:generate-test}} Process CORBA IDL test files in IDLJ.
+   * {{{./generate-test-mojo.html} idlj:generate-test}} Process CORBA IDL test files in IDLJ.
 
 * Usage
 
