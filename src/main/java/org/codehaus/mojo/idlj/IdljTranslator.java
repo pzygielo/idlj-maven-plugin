@@ -266,100 +266,18 @@ public class IdljTranslator
             args.add( 0, "-verbose" );
         }
 
-        String[] arguments = args.toArray( new String[args.size()] );
-
-        if ( isDebug() )
-        {
-            getLog().info( getCommandLine( compilerClass, arguments ) );
-        }
-
-        // Local channels
-        ByteArrayOutputStream err = new ByteArrayOutputStream();
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        int exitCode = runCompilerAndRecordOutput( compilerClass, arguments, err, out );
-        logOutputMessages( err, out );
-
-        if ( isFailOnError() && isCompilationFailed( err, exitCode ) )
-        {
-            throw new MojoExecutionException( "IDL compilation failed" );
-        }
-    }
-
-    private boolean isCompilationFailed( ByteArrayOutputStream err, int exitCode )
-    {
-        return exitCode != 0 || isNotEmpty( err );
-    }
-
-    private void logOutputMessages( ByteArrayOutputStream err, ByteArrayOutputStream out )
-    {
-        if ( isNotEmpty( out ) )
-        {
-            getLog().info( out.toString() );
-        }
-        if ( isNotEmpty( err ) )
-        {
-            getLog().error( err.toString() );
-        }
-    }
-
-    private int runCompilerAndRecordOutput( Class<?> compilerClass, String[] arguments, ByteArrayOutputStream err,
-                                            ByteArrayOutputStream out ) throws MojoExecutionException
-    {
-        // Backup std channels
-        PrintStream stdErr = System.err;
-        PrintStream stdOut = System.out;
-
-        System.setErr( new PrintStream( err ) );
-        System.setOut( new PrintStream( out ) );
-        try
-        {
-            return runCompiler( compilerClass, arguments );
-        }
-        catch ( NoSuchMethodException e )
-        {
-            throw new MojoExecutionException( "Error: Compiler had no main method" );
-        }
-        catch ( InvocationTargetException e )
-        {
-            throw new MojoExecutionException( "IDL compilation failed", e.getTargetException() );
-        }
-        catch ( Throwable e )
-        {
-            throw new MojoExecutionException( "IDL compilation failed", e );
-        }
-        finally
-        {
-            // Restore std channels
-            System.setErr( stdErr );
-            System.setOut( stdOut );
-        }
-    }
-
-    private boolean isNotEmpty( ByteArrayOutputStream outputStream )
-    {
-        return !"".equals( outputStream.toString() );
+        invokeCompilerInProcess(compilerClass, args);
     }
 
 
-    private int runCompiler( Class<?> compilerClass, String... arguments ) throws NoSuchMethodException,
+    @Override
+    protected int runCompiler( Class<?> compilerClass, String... arguments ) throws NoSuchMethodException,
             IllegalAccessException, InvocationTargetException
     {
         Method compilerMainMethod = compilerClass.getMethod( "main", new Class[]{String[].class} );
         Object retVal = compilerMainMethod.invoke( compilerClass, new Object[]{arguments} );
         getLog().info( "Completed with code " + retVal );
         return ( retVal != null ) && ( retVal instanceof Integer ) ? (Integer) retVal : 0;
-    }
-
-
-    private String getCommandLine( Class<?> compilerClass, String[] arguments )
-    {
-        String command = compilerClass.getName();
-        for ( String argument : arguments )
-        {
-            command += " " + argument;
-        }
-        return command;
     }
 
 

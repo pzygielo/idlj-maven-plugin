@@ -269,8 +269,10 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
             throws MojoExecutionException
     {
         getLog().debug( "Processing: " + idlFile.toString() );
-        translator.invokeCompiler( getSourceDirectory().getAbsolutePath(), getIncludeDirs(),
-                getOutputDirectory().getAbsolutePath(), idlFile.toString(), source );
+        translator.invokeCompiler( getSourceDirectory().getAbsolutePath(),
+                                   getIncludeDirs(),
+                                   getOutputDirectory().getAbsolutePath(),
+                                   idlFile.toString(), source );
     }
 
     private void copyToTimestampDirectory( File idlFile ) throws MojoExecutionException, IOException

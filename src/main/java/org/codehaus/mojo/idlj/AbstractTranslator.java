@@ -19,10 +19,15 @@ package org.codehaus.mojo.idlj;
  * under the License.
  */
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.List;
 
 /**
  * Shared capabilities for translators.
@@ -51,6 +56,9 @@ public abstract class AbstractTranslator
 
     /* A facade to enable unit testing to control compiler access. */
     private static ClassLoaderFacade classLoaderFacade = new ClassLoaderFacadeImpl();
+
+    /** Determines if the compiler can fork a process to run. Not all compilers support this. */
+    private static boolean fork = true;
 
     /**
      * @return the debug
@@ -100,14 +108,108 @@ public abstract class AbstractTranslator
         this.failOnError = failOnError;
     }
 
+    protected static boolean isFork() {
+        return fork;
+    }
+
     static void setClassLoaderFacade( ClassLoaderFacade classLoaderFacade )
     {
         AbstractTranslator.classLoaderFacade = classLoaderFacade;
+        AbstractTranslator.fork = false;
     }
 
     protected ClassLoaderFacade getClassLoaderFacade()
     {
         return classLoaderFacade;
+    }
+
+    protected void invokeCompilerInProcess(Class<?> compilerClass, List<String> args) throws MojoExecutionException {
+        String[] arguments = args.toArray( new String[args.size()] );
+
+        if ( isDebug() )
+        {
+            getLog().info( getCommandLine( compilerClass, arguments ) );
+        }
+
+        // Local channels
+        ByteArrayOutputStream err = new ByteArrayOutputStream();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        int exitCode = runCompilerAndRecordOutput( compilerClass, arguments, err, out );
+        logOutputMessages( err, out );
+
+        if ( isFailOnError() && isCompilationFailed( err, exitCode ) )
+        {
+            throw new MojoExecutionException( "IDL compilation failed" );
+        }
+    }
+
+    private int runCompilerAndRecordOutput( Class<?> compilerClass, String[] arguments, ByteArrayOutputStream err,
+                                            ByteArrayOutputStream out ) throws MojoExecutionException
+    {
+        // Backup std channels
+        PrintStream stdErr = System.err;
+        PrintStream stdOut = System.out;
+
+        System.setErr( new PrintStream( err ) );
+        System.setOut( new PrintStream( out ) );
+        try
+        {
+            return runCompiler( compilerClass, arguments );
+        }
+        catch ( NoSuchMethodException e )
+        {
+            throw new MojoExecutionException( "Error: Compiler had no main method" );
+        }
+        catch ( InvocationTargetException e )
+        {
+            throw new MojoExecutionException( "IDL compilation failed", e.getTargetException() );
+        }
+        catch ( Throwable e )
+        {
+            throw new MojoExecutionException( "IDL compilation failed", e );
+        }
+        finally
+        {
+            // Restore std channels
+            System.setErr( stdErr );
+            System.setOut( stdOut );
+        }
+    }
+
+    protected abstract int runCompiler(Class<?> compilerClass, String... arguments) throws NoSuchMethodException,
+            IllegalAccessException, InvocationTargetException;
+
+    private boolean isCompilationFailed( ByteArrayOutputStream err, int exitCode )
+    {
+        return exitCode != 0 || isNotEmpty( err );
+    }
+
+    private void logOutputMessages( ByteArrayOutputStream err, ByteArrayOutputStream out )
+    {
+        if ( isNotEmpty( out ) )
+        {
+            getLog().info( out.toString() );
+        }
+        if ( isNotEmpty( err ) )
+        {
+            getLog().error( err.toString() );
+        }
+    }
+
+    private boolean isNotEmpty( ByteArrayOutputStream outputStream )
+    {
+        return !"".equals( outputStream.toString() );
+    }
+
+    private String getCommandLine( Class<?> compilerClass, String[] arguments )
+    {
+        String command = compilerClass.getName();
+        for ( String argument : arguments )
+        {
+            command += " " + argument;
+        }
+        return command;
     }
 
     /**

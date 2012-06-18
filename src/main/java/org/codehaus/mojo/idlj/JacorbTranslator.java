@@ -67,29 +67,9 @@ public class JacorbTranslator
             throws MojoExecutionException
     {
         // It would be great to use some 3rd party library for this stuff
-        boolean fork = true;
-        if ( !fork )
+        if ( !isFork() )
         {
-            try
-            {
-                Object[] arguments = args.toArray( new String[args.size()] );
-
-                if ( isDebug() )
-                {
-                    getLog().debug( "compile " + StringUtils.join( arguments, " " ) );
-                }
-
-                Method compileMethod = compilerClass.getMethod( "compile", new Class[]{String[].class} );
-                compileMethod.invoke( compilerClass, arguments );
-            }
-            catch ( InvocationTargetException e )
-            {
-                throw new MojoExecutionException( "Compilation failed", e.getTargetException() );
-            }
-            catch ( Throwable t )
-            {
-                throw new MojoExecutionException( "Compilation failed", t );
-            }
+            invokeCompilerInProcess(compilerClass, args);
         }
         else
         {
@@ -138,8 +118,8 @@ public class JacorbTranslator
             try
             {
                 Process p = Runtime.getRuntime().exec( argArray );
-                redirectStream( p.getErrorStream(), System.err, "" );
-                redirectStream( p.getInputStream(), System.out, "" );
+                redirectStream( p.getErrorStream(), System.err);
+                redirectStream( p.getInputStream(), System.out);
 
                 p.waitFor();
 
@@ -157,6 +137,14 @@ public class JacorbTranslator
                 throw new MojoExecutionException( "Thread interrupted unexpectedly", e );
             }
         }
+    }
+
+    @Override
+    protected int runCompiler(Class<?> compilerClass, String... arguments) throws NoSuchMethodException,
+            IllegalAccessException, InvocationTargetException {
+        Method compileMethod = compilerClass.getMethod( "compile", new Class[]{String[].class} );
+        compileMethod.invoke( compilerClass, new Object[] {arguments} );
+        return 0;
     }
 
     /**
@@ -192,11 +180,11 @@ public class JacorbTranslator
         args.add( "-d" );
         args.add( targetDirectory );
 
-        if ( source.emitSkeletons() != null && !source.emitSkeletons().booleanValue() )
+        if ( source.emitSkeletons() != null && !source.emitSkeletons())
         {
             args.add( "-noskel" );
         }
-        if ( source.emitStubs() != null && !source.emitStubs().booleanValue() )
+        if ( source.emitStubs() != null && !source.emitStubs())
         {
             args.add( "-nostub" );
         }
@@ -257,9 +245,8 @@ public class JacorbTranslator
      *
      * @param in         the <code>InputStream</code> to read from
      * @param out        the <code>OutputStream</code> to write into
-     * @param streamName the name of Stream
      */
-    public static void redirectStream( final InputStream in, final OutputStream out, final String streamName )
+    public static void redirectStream(final InputStream in, final OutputStream out)
     {
         Thread stdoutTransferThread = new Thread()
         {
