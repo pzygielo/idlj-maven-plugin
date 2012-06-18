@@ -92,21 +92,159 @@ public class IDLJTestCase {
     @Test
     public void whenNoOptionsAreSpecified_useCurrentDirectoryAsIncludePath() throws Exception {
         mojo.execute();
-        assertArgumentsContains( "-i", getCurrentDir() + "/src/main/idl" );
+        assertArgumentsContains("-i", getCurrentDir() + "/src/main/idl");
+    }
+
+    @Test
+    public void whenNoOptionsAreSpecified_generateFallArguments() throws Exception {
+        mojo.execute();
+        assertArgumentsContains("-fall");
     }
 
     @Test
     public void whenIncludePathIsSpecified_createIncludeArguments() throws Exception {
-        defineIncludePaths( "/src/main/idl-include" );
+        defineIncludePaths("/src/main/idl-include");
         mojo.execute();
         assertArgumentsContains("-i", "/src/main/idl-include");
     }
 
     @Test(expected = MojoExecutionException.class)
+    public void whenSinglePackagePrefixDefined_throwException() throws Exception {
+        Source source = createSource();
+        defineSinglePrefix(source, "aPrefix1");
+        mojo.execute();
+        assertArgumentsContains("-pkgPrefix", "aType1", "aPrefix1");
+    }
+
+    private void defineSinglePrefix(Source source, String aPrefix) throws NoSuchFieldException, IllegalAccessException {
+        setPrivateFieldValue(source, "packagePrefix", aPrefix);
+    }
+
+    @Test
+    public void whenPackagePrefixDefined_createPrefixArguments() throws Exception {
+        Source source = createSource();
+        createPrefix(source, "aType1", "aPrefix1");
+        createPrefix(source, "aType2", "aPrefix2");
+        mojo.execute();
+        assertArgumentsContains("-pkgPrefix", "aType1", "aPrefix1");
+        assertArgumentsContains("-pkgPrefix", "aType2", "aPrefix2");
+    }
+
+    private void createPrefix(Source source, String aType, String aPrefix) throws NoSuchFieldException, IllegalAccessException {
+        PackagePrefix prefix = createPrefix(source);
+        setPrivateFieldValue(prefix, "type", aType);
+        setPrivateFieldValue(prefix, "prefix", aPrefix);
+    }
+
+    private PackagePrefix createPrefix(Source source) throws NoSuchFieldException, IllegalAccessException {
+        List<PackagePrefix> prefixes = getPrefixes(source);
+        PackagePrefix prefix = new PackagePrefix();
+        prefixes.add(prefix);
+        return prefix;
+    }
+
+    private Source createSource() throws NoSuchFieldException, IllegalAccessException {
+        Source source = new Source();
+        getSources().add(source);
+        return source;
+    }
+
+    private List<PackagePrefix> getPrefixes(Source source) throws NoSuchFieldException, IllegalAccessException {
+        List<PackagePrefix> prefixes = getPrivateFieldValue(source, "packagePrefixes");
+        if (prefixes == null)
+            setPrivateFieldValue(source, "packagePrefixes", prefixes = new ArrayList<PackagePrefix>());
+        return prefixes;
+    }
+
+    private List<Source> getSources() throws NoSuchFieldException, IllegalAccessException {
+        List<Source> sources = getPrivateFieldValue(mojo, "sources");
+        if (sources == null)
+            setPrivateFieldValue(mojo, "sources", sources = new ArrayList<Source>());
+        return sources;
+    }
+
+    @Test(expected = MojoExecutionException.class)
     public void whenErrorMessageGenerated_failMojoStep() throws Exception {
         setFailOnError();
-        TestIdlCompiler.defineErrorMessage( "oops" );
+        TestIdlCompiler.defineErrorMessage("oops");
         mojo.execute();
+    }
+
+    @Test(expected = MojoExecutionException.class)
+    public void whenSymbolDefineWithValue_throwException() throws NoSuchFieldException, IllegalAccessException, MojoExecutionException {
+        Source source = createSource();
+        createDefine(source, "symbol1", "value1");
+        mojo.execute();
+    }
+
+    @Test
+    public void whenSymbolsDefined_createSymbolArguments() throws NoSuchFieldException, IllegalAccessException, MojoExecutionException {
+        Source source = createSource();
+        createDefine(source, "symbol1");
+        createDefine(source, "symbol2");
+        mojo.execute();
+        assertArgumentsContains("-d", "symbol1");
+        assertArgumentsContains("-d", "symbol2");
+    }
+
+    private void createDefine(Source source, String aName, String aValue) throws NoSuchFieldException, IllegalAccessException {
+        Define define = createDefine(source);
+        setPrivateFieldValue(define, "symbol", aName);
+        setPrivateFieldValue(define, "value", aValue);
+    }
+
+    private void createDefine(Source source, String aName) throws NoSuchFieldException, IllegalAccessException {
+        Define define = createDefine(source);
+        setPrivateFieldValue(define, "symbol", aName);
+    }
+
+    private Define createDefine(Source source) throws NoSuchFieldException, IllegalAccessException {
+        List<Define> defines = getDefines(source);
+        Define define = new Define();
+        defines.add(define);
+        return define;
+    }
+
+    private List<Define> getDefines(Source source) throws NoSuchFieldException, IllegalAccessException {
+        List<Define> defines = getPrivateFieldValue(source, "defines");
+        if (defines == null)
+            setPrivateFieldValue(source, "defines", defines = new ArrayList<Define>());
+        return defines;
+    }
+
+    @Test
+    public void whenEmitStubsOnly_generateFClientArgument() throws NoSuchFieldException, IllegalAccessException, MojoExecutionException {
+        Source source = createSource();
+        setGenerateStubs(source, true);
+        setGenerateSkeletons(source, false);
+        mojo.execute();
+        assertArgumentsContains("-fclient");
+    }
+
+    @Test
+    public void whenEmitSkeletonsOnly_generateFServerArgument() throws NoSuchFieldException, IllegalAccessException, MojoExecutionException {
+        Source source = createSource();
+        setGenerateStubs(source, false);
+        setGenerateSkeletons(source, true);
+        mojo.execute();
+        assertArgumentsContains("-fserver");
+    }
+
+    @Test
+    public void whenEmitNeitherStubsNorSkeletons_generateFServerTieArgument() throws NoSuchFieldException, IllegalAccessException, MojoExecutionException {
+        Source source = createSource();
+        setGenerateStubs(source, false);
+        setGenerateSkeletons(source, false);
+        mojo.execute();
+        assertArgumentsContains("-fserverTIE");
+    }
+
+    private void setGenerateStubs(Source source, boolean generateStubs) throws NoSuchFieldException, IllegalAccessException {
+        setPrivateFieldValue(source, "emitStubs", Boolean.valueOf(generateStubs));
+    }
+
+    private void setGenerateSkeletons(Source source, boolean generateSkeletons) throws NoSuchFieldException, IllegalAccessException {
+        setPrivateFieldValue(source, "emitSkeletons", Boolean.valueOf(generateSkeletons));
     }
 
     private String getCurrentDir() {
@@ -165,7 +303,7 @@ public class IDLJTestCase {
     }
 
     private void defineSourceDirectory(String path) throws NoSuchFieldException, IllegalAccessException {
-        setPrivateFieldValue(mojo, "sourceDirectory", new File(path));
+        mojo.setSourceDirectory(new File(path));
         testDependenciesFacade.readOnlyDirectories.add(new File(path));
     }
 
@@ -184,6 +322,24 @@ public class IDLJTestCase {
                 throw e;
             else
                 setPrivateFieldValue(obj, theClass.getSuperclass(), fieldName, value);
+        }
+    }
+
+    private <T> T getPrivateFieldValue(Object obj, String fieldName) throws NoSuchFieldException, IllegalAccessException {
+        return getPrivateFieldValue(obj, obj.getClass(), fieldName);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T getPrivateFieldValue(Object obj, Class theClass, String fieldName) throws NoSuchFieldException, IllegalAccessException {
+        try {
+            Field field = theClass.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            return (T) field.get(obj);
+        } catch (NoSuchFieldException e) {
+            if (theClass.equals(Object.class))
+                throw e;
+            else
+                return getPrivateFieldValue(obj, theClass.getSuperclass(), fieldName);
         }
     }
 

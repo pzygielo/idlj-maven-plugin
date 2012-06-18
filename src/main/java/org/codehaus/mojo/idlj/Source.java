@@ -32,7 +32,7 @@ public class Source
 {
 
     /**
-     * Active the generation of java source compatibile with jdk previus 1.4
+     * Active the generation of java source compatible with jdk previous to 1.4
      * 
      * @parameter compatible
      */
