@@ -2,8 +2,9 @@
  Usage
  ------
  Jesse McConnell <jesse.mcconnell@gmail.com>
+ Russell Gold <russ@gold-family.us>
  ------
- Mon Nov 13 2006
+ Tue Jun 19 2012
  ------
 
 Usage
@@ -19,10 +20,64 @@ Usage
 <<<mvn idlj:generate>>>
 +-----
 
+ By default, idlj-maven-plugin uses the built-in idlj compiler. To use the jacorb idl compiler,
+ include a dependency on the jacorb idl compiler:
+
+-----
+<dependency>
+    <groupId>org.jacorb</groupId>
+    <artifactId>idl-compiler</artifactId>
+    <version>3.0</version>
+    <scope>compile</compile>
+</dependency>
+-----
+
+ and specify "jacorb" as the compiler type:
+
+-------------------
+...
+  <configuration>
+    <compiler>jacorb</compiler>
+  </configuration>
+...
+-------------------
+
+
+* Available Configuration Options
+
+* compiler - selects the underlying idl compiler to use (must be either "idlj" - the default or "jacorb")
+
+-------------------
+...
+<compiler>idlj</compiler>
+...
+-------------------
+
+* includeDirs - Specifies which directories to search for included idl files.
+
+-------------------
+...
+<includeDirs>
+  <includeDir>all/includes</include>
+</includeDirs>
+...
+-------------------
+
+* sources - apply options per group of idl files
+
+-------------------
+...
+<sources>
+  <source>
+  ... items to select specific files and configure the group
+  </source>
+</sources>
+...
+-------------------
 
 * Available Configuration Options for each Source tag
 
- * compatible - Forces the creation of Java sources compatibile with JDK:s older than version 1.4. Defaults to <<<true>>>, if not provided
+  * compatible - Forces the creation of Java sources compatibile with JDK:s older than version 1.4. Defaults to <<<true>>>, if not provided
 
 -------------------
 ...
@@ -52,12 +107,37 @@ Usage
 ...
 -------------------
 
- * packagePrefix - Specifies a single, global packageprefix to use for all modules. Defaults to <<<"">>>, if not provided.
+ * packagePrefix - (Jacorb-only) Specifies a single, global packageprefix to use for all modules. Defaults to
+ <<<"">>>,
+ if not provided.
    
 -------------------
 ...
 <source>
   <packagePrefix>com.mycompany</packagePrefix>
+</source>
+...
+-------------------
+
+ * packagePrefixes - The list of package prefixes for certain types.
+
+   * <<<type>>> The simple name of either a top-level module, or an IDL type defined outside of any module
+
+   * <<<prefix>>> The generated Java package name with <<<prefix>>> for all files generated for that type
+
+-------------------
+...
+<source>
+  <packagePrefixes>
+    <packagePrefix>
+      <type>module1</type>
+      <prefix>com.mycompany.module1</prefix>
+    </packagePrefix>
+    <packagePrefix>
+      <type>module2</type>
+      <prefix>com.mycompany.module2</prefix>
+    </packagePrefix>
+  </packagePrefixes>
 </source>
 ...
 -------------------
@@ -87,35 +167,12 @@ Usage
 </source>
 ...
 -------------------
-
- * packagePrefixes - The list of package prefixes for certain types. 
- 
-   * <<<type>>> The simple name of either a top-level module, or an IDL type defined outside of any module
- 
-   * <<<prefix>>> The generated Java package name with <<<prefix>>> for all files generated for that type
- 
--------------------
-...
-<source>
-  <packagePrefixes>
-    <packagePrefixe>
-      <type>module1</type>
-      <prefix>com.mycompany.module1</prefix>
-    </packagePrefixe>
-    <packagePrefixe>
-      <type>module2</type>
-      <prefix>com.mycompany.module2</prefix>
-    </packagePrefixe>
-  </packagePrefixes>
-</source>
-...
-------------------- 
  
  * defines - The list of preprocessor symbols to define.
  
    * <<<symbol>>> The symbol to define
  
-   * <<<value>>> The value of the symbol. This is optional.
+   * <<<value>>> (Jacorb only) The value of the symbol. This is optional. If omitted, defaults to '1'
 
 -------------------
 ...
