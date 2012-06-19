@@ -19,19 +19,17 @@ package org.codehaus.mojo.idlj;
  * under the License.
  */
 
-import java.io.ByteArrayOutputStream;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.codehaus.plexus.util.StringUtils;
+
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.maven.plugin.MojoExecutionException;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * This class implement the <code>CompilerTranslator</code> for the Sun idlj IDL compiler
@@ -266,15 +264,15 @@ public class IdljTranslator
             args.add( 0, "-verbose" );
         }
 
-        invokeCompilerInProcess(compilerClass, args);
+        invokeCompilerInProcess( compilerClass, args );
     }
 
 
     @Override
-    protected int runCompiler( Class<?> compilerClass, String... arguments ) throws NoSuchMethodException,
-            IllegalAccessException, InvocationTargetException
+    protected int runCompiler( Class<?> compilerClass, String... arguments )
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
     {
-        Method compilerMainMethod = compilerClass.getMethod( "main", new Class[]{String[].class} );
+        Method compilerMainMethod = compilerClass.getMethod( "main", String[].class );
         Object retVal = compilerMainMethod.invoke( compilerClass, new Object[]{arguments} );
         getLog().info( "Completed with code " + retVal );
         return ( retVal != null ) && ( retVal instanceof Integer ) ? (Integer) retVal : 0;

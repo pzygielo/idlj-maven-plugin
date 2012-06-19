@@ -80,6 +80,7 @@ public class TestIDLJMojo
     /**
      * Adds the generated source path to the test source directories list so that maven can find the new sources to
      * compile tests.
+     * @param directory the directory from which compilation should occur
      */
     protected void addCompileSourceRoot( File directory )
     {

@@ -69,7 +69,7 @@ public class JacorbTranslator
         // It would be great to use some 3rd party library for this stuff
         if ( !isFork() )
         {
-            invokeCompilerInProcess(compilerClass, args);
+            invokeCompilerInProcess( compilerClass, args );
         }
         else
         {
@@ -102,7 +102,7 @@ public class JacorbTranslator
             binArgs.add( compilerClass.getName() );
 
             // Add java arguments
-            for ( String arg: args )
+            for ( String arg : args )
             {
                 binArgs.add( arg );
             }
@@ -118,8 +118,8 @@ public class JacorbTranslator
             try
             {
                 Process p = Runtime.getRuntime().exec( argArray );
-                redirectStream( p.getErrorStream(), System.err);
-                redirectStream( p.getInputStream(), System.out);
+                redirectStream( p.getErrorStream(), System.err );
+                redirectStream( p.getInputStream(), System.out );
 
                 p.waitFor();
 
@@ -140,10 +140,11 @@ public class JacorbTranslator
     }
 
     @Override
-    protected int runCompiler(Class<?> compilerClass, String... arguments) throws NoSuchMethodException,
-            IllegalAccessException, InvocationTargetException {
-        Method compileMethod = compilerClass.getMethod( "compile", new Class[]{String[].class} );
-        compileMethod.invoke( compilerClass, new Object[] {arguments} );
+    protected int runCompiler( Class<?> compilerClass, String... arguments )
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
+    {
+        Method compileMethod = compilerClass.getMethod( "compile", String[].class );
+        compileMethod.invoke( compilerClass, new Object[]{arguments} );
         return 0;
     }
 
@@ -180,11 +181,11 @@ public class JacorbTranslator
         args.add( "-d" );
         args.add( targetDirectory );
 
-        if ( source.emitSkeletons() != null && !source.emitSkeletons())
+        if ( source.emitSkeletons() != null && !source.emitSkeletons() )
         {
             args.add( "-noskel" );
         }
-        if ( source.emitStubs() != null && !source.emitStubs())
+        if ( source.emitStubs() != null && !source.emitStubs() )
         {
             args.add( "-nostub" );
         }
@@ -197,7 +198,7 @@ public class JacorbTranslator
 
         if ( source.getPackagePrefixes() != null )
         {
-            for ( PackagePrefix prefix  : source.getPackagePrefixes() )
+            for ( PackagePrefix prefix : source.getPackagePrefixes() )
             {
                 args.add( "-i2jpackage" );
                 args.add( prefix.getType() + ":" + prefix.getPrefix() + "." + prefix.getType() );
@@ -243,10 +244,10 @@ public class JacorbTranslator
     /**
      * This methos it's used to redirect an <code>InputeStream</code> to a <code>OutputStream</code>
      *
-     * @param in         the <code>InputStream</code> to read from
-     * @param out        the <code>OutputStream</code> to write into
+     * @param in  the <code>InputStream</code> to read from
+     * @param out the <code>OutputStream</code> to write into
      */
-    public static void redirectStream(final InputStream in, final OutputStream out)
+    public static void redirectStream( final InputStream in, final OutputStream out )
     {
         Thread stdoutTransferThread = new Thread()
         {

@@ -57,7 +57,9 @@ public abstract class AbstractTranslator
     /* A facade to enable unit testing to control compiler access. */
     private static ClassLoaderFacade classLoaderFacade = new ClassLoaderFacadeImpl();
 
-    /** Determines if the compiler can fork a process to run. Not all compilers support this. */
+    /**
+     * Determines if the compiler can fork a process to run. Not all compilers support this.
+     */
     private static boolean fork = true;
 
     /**
@@ -108,22 +110,42 @@ public abstract class AbstractTranslator
         this.failOnError = failOnError;
     }
 
-    protected static boolean isFork() {
+    /**
+     * Returns true if the translator is allowed to create a new forked process.
+     * @return true if forking is permitted
+     */
+    protected static boolean isFork()
+    {
         return fork;
     }
 
+    /**
+     * Specifies the implementation of the classloader facade to use
+     * @param classLoaderFacade a wrapper for class loading.
+     */
     static void setClassLoaderFacade( ClassLoaderFacade classLoaderFacade )
     {
         AbstractTranslator.classLoaderFacade = classLoaderFacade;
         AbstractTranslator.fork = false;
     }
 
+    /**
+     * Returns the object to use for classloading.
+     * @return the appropriate loader facade
+     */
     protected ClassLoaderFacade getClassLoaderFacade()
     {
         return classLoaderFacade;
     }
 
-    protected void invokeCompilerInProcess(Class<?> compilerClass, List<String> args) throws MojoExecutionException {
+    /**
+     * Invokes the configured compiler and throws an exception if anything goes wrong
+     * @param compilerClass the class representing the compiler to invoke
+     * @param args the arguments to pass to the compiler
+     * @throws MojoExecutionException if any error occurs
+     */
+    protected void invokeCompilerInProcess( Class<?> compilerClass, List<String> args ) throws MojoExecutionException
+    {
         String[] arguments = args.toArray( new String[args.size()] );
 
         if ( isDebug() )
@@ -177,8 +199,17 @@ public abstract class AbstractTranslator
         }
     }
 
-    protected abstract int runCompiler(Class<?> compilerClass, String... arguments) throws NoSuchMethodException,
-            IllegalAccessException, InvocationTargetException;
+    /**
+     * Runs the IDL compiler
+     * @param compilerClass the class which implements the compiler
+     * @param arguments the arguments to pass to the compiler
+     * @return the return status (a non-zero value indicates an error)
+     * @throws NoSuchMethodException if the method which should run the compiler does not exist
+     * @throws IllegalAccessException if no constructor is available
+     * @throws InvocationTargetException if an error occurs while invoking the compiler
+     */
+    protected abstract int runCompiler( Class<?> compilerClass, String... arguments )
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException;
 
     private boolean isCompilationFailed( ByteArrayOutputStream err, int exitCode )
     {
@@ -219,13 +250,17 @@ public abstract class AbstractTranslator
     {
         /**
          * Updates the active classloader to include the specified URLs before the original definitions.
+         *
          * @param urls a list of URLs to include when searching for classes.
          */
         void prependUrls( URL... urls );
 
         /**
          * Loads the specified class using the appropriate classloader.
+         *
          * @param idlCompilerClass the name of the class to use for compiling IDL files.
+         * @throws ClassNotFoundException if the specified class doesn't exist
+         * @return the actual compiler class to use
          */
         Class<?> loadClass( String idlCompilerClass ) throws ClassNotFoundException;
     }

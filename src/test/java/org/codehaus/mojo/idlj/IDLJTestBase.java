@@ -106,13 +106,13 @@ public class IDLJTestBase {
     }
 
     private List<PackagePrefix> getPrefixes(Source source) throws NoSuchFieldException, IllegalAccessException {
-        List<PackagePrefix> prefixes = getPrivateFieldValue(source, "packagePrefixes");
+        List<PackagePrefix> prefixes = (List<PackagePrefix>) getPrivateFieldValue(source, "packagePrefixes");
         if (prefixes == null)
             setPrivateFieldValue(source, "packagePrefixes", prefixes = new ArrayList<PackagePrefix>());
         return prefixes;
     }
 
-    protected <T> T getPrivateFieldValue(Object obj, String fieldName) throws NoSuchFieldException, IllegalAccessException {
+    protected Object getPrivateFieldValue(Object obj, String fieldName) throws NoSuchFieldException, IllegalAccessException {
         return getPrivateFieldValue(obj, obj.getClass(), fieldName);
     }
 
@@ -126,7 +126,7 @@ public class IDLJTestBase {
             if (theClass.equals(Object.class))
                 throw e;
             else
-                return getPrivateFieldValue(obj, theClass.getSuperclass(), fieldName);
+                return (T) getPrivateFieldValue(obj, theClass.getSuperclass(), fieldName);
         }
     }
 
@@ -137,7 +137,7 @@ public class IDLJTestBase {
     }
 
     private List<Source> getSources() throws NoSuchFieldException, IllegalAccessException {
-        List<Source> sources = getPrivateFieldValue(mojo, "sources");
+        List<Source> sources = (List<Source>) getPrivateFieldValue(mojo, "sources");
         if (sources == null)
             setPrivateFieldValue(mojo, "sources", sources = new ArrayList<Source>());
         return sources;
@@ -157,7 +157,7 @@ public class IDLJTestBase {
     }
 
     private List<Define> getDefines(Source source) throws NoSuchFieldException, IllegalAccessException {
-        List<Define> defines = getPrivateFieldValue(source, "defines");
+        List<Define> defines = (List<Define>) getPrivateFieldValue(source, "defines");
         if (defines == null)
             setPrivateFieldValue(source, "defines", defines = new ArrayList<Define>());
         return defines;
