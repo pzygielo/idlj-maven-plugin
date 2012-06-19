@@ -72,6 +72,16 @@ public class IDLJTestCase extends IDLJTestBase {
         assertArgumentsContains("-pkgPrefix", "aType2", "aPrefix2");
     }
 
+    @Test
+    public void whenPackageTranslationDefined_createTranslationArguments() throws Exception {
+        Source source = createSource();
+        createTranslation(source, "aType1", "aPackage1");
+        createTranslation(source, "aType2", "aPackage2");
+        mojo.execute();
+        assertArgumentsContains("-pkgTranslate", "aType1", "aPackage1");
+        assertArgumentsContains("-pkgTranslate", "aType2", "aPackage2");
+    }
+
     @Test(expected = MojoExecutionException.class)
     public void whenSymbolDefineWithValue_throwException() throws NoSuchFieldException, IllegalAccessException, MojoExecutionException {
         Source source = createSource();

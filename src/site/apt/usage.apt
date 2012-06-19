@@ -142,6 +142,29 @@ Usage
 ...
 -------------------
 
+ * packageTranslations - The list of package translations for certain types.
+
+   * <<<type>>> The simple name of either a top-level module, or an IDL type defined outside of any module
+
+   * <<<package>>> A java package name to use in place of the module name
+
+-------------------
+...
+<source>
+  <packageTranslations>
+    <packageTranslation>
+      <type>module1</type>
+      <package>com.mycompany.module1</package>
+    </packageTranslation>
+    <packageTranslation>
+      <type>module2</type>
+      <package>com.mycompany.module2</package>
+    </packageTranslation>
+  </packageTranslations>
+</source>
+...
+-------------------
+
  * includes - Specifies which files to include in compilation.
 
 -------------------

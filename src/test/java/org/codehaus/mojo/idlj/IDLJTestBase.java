@@ -51,16 +51,16 @@ public class IDLJTestBase {
     }
 
     private void defineTimestampDirectory(String path) throws NoSuchFieldException, IllegalAccessException {
-        setPrivateFieldValue(mojo, "timestampDirectory", new File(path));
+        setPrivateFieldValue( mojo, "timestampDirectory", new File( path ) );
     }
 
     private void defineOutputDirectory(String path) throws NoSuchFieldException, IllegalAccessException {
-        setPrivateFieldValue(mojo, "outputDirectory", new File(path));
+        setPrivateFieldValue( mojo, "outputDirectory", new File( path ) );
     }
 
     private void defineSourceDirectory(String path) throws NoSuchFieldException, IllegalAccessException {
         mojo.setSourceDirectory(new File(path));
-        testDependenciesFacade.readOnlyDirectories.add(new File(path));
+        testDependenciesFacade.readOnlyDirectories.add( new File( path ) );
     }
 
     protected void setPrivateFieldValue(Object obj, String fieldName, Object value) throws NoSuchFieldException, IllegalAccessException {
@@ -112,12 +112,37 @@ public class IDLJTestBase {
         return prefixes;
     }
 
-    protected Object getPrivateFieldValue(Object obj, String fieldName) throws NoSuchFieldException, IllegalAccessException {
+    protected final void createTranslation(Source source, String aType, String aPackage) throws NoSuchFieldException,
+                                                                                          IllegalAccessException {
+        PackageTranslation translation = createTranslation( source );
+        setPrivateFieldValue(translation, "type", aType);
+        setPrivateFieldValue(translation, "replacementPackage", aPackage);
+    }
+
+    private PackageTranslation createTranslation(Source source) throws NoSuchFieldException, IllegalAccessException {
+        List<PackageTranslation> translations = getTranslations( source );
+        PackageTranslation translation = new PackageTranslation();
+        translations.add(translation);
+        return translation;
+    }
+
+    private List<PackageTranslation> getTranslations(Source source)
+            throws NoSuchFieldException, IllegalAccessException {
+        List<PackageTranslation> translations =
+                (List<PackageTranslation>) getPrivateFieldValue(source, "packageTranslations");
+        if (translations == null)
+            setPrivateFieldValue(source, "packageTranslations", translations = new ArrayList<PackageTranslation>());
+        return translations;
+    }
+
+    protected Object getPrivateFieldValue(Object obj, String fieldName)
+            throws NoSuchFieldException, IllegalAccessException {
         return getPrivateFieldValue(obj, obj.getClass(), fieldName);
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T getPrivateFieldValue(Object obj, Class theClass, String fieldName) throws NoSuchFieldException, IllegalAccessException {
+    private <T> T getPrivateFieldValue(Object obj, Class theClass, String fieldName)
+            throws NoSuchFieldException, IllegalAccessException {
         try {
             Field field = theClass.getDeclaredField(fieldName);
             field.setAccessible(true);
@@ -143,7 +168,8 @@ public class IDLJTestBase {
         return sources;
     }
 
-    protected final void createDefine(Source source, String aName, String aValue) throws NoSuchFieldException, IllegalAccessException {
+    protected final void createDefine(Source source, String aName, String aValue)
+            throws NoSuchFieldException, IllegalAccessException {
         Define define = createDefine(source);
         setPrivateFieldValue(define, "symbol", aName);
         setPrivateFieldValue(define, "value", aValue);
@@ -163,11 +189,13 @@ public class IDLJTestBase {
         return defines;
     }
 
-    protected final void setGenerateStubs(Source source, boolean generateStubs) throws NoSuchFieldException, IllegalAccessException {
+    protected final void setGenerateStubs(Source source, boolean generateStubs)
+            throws NoSuchFieldException, IllegalAccessException {
         setPrivateFieldValue(source, "emitStubs", generateStubs);
     }
 
-    protected final void setGenerateSkeletons(Source source, boolean generateSkeletons) throws NoSuchFieldException, IllegalAccessException {
+    protected final void setGenerateSkeletons(Source source, boolean generateSkeletons)
+            throws NoSuchFieldException, IllegalAccessException {
         setPrivateFieldValue(source, "emitSkeletons", generateSkeletons);
     }
 
@@ -219,7 +247,8 @@ public class IDLJTestBase {
         setPrivateFieldValue(mojo, "includeDirs", dirs);
     }
 
-    protected final void defineAdditionalArguments(Source source, String... additionalArguments) throws NoSuchFieldException, IllegalAccessException {
+    protected final void defineAdditionalArguments(Source source, String... additionalArguments)
+            throws NoSuchFieldException, IllegalAccessException {
         List<String> arguments = Arrays.asList(additionalArguments);
         setPrivateFieldValue(source, "additionalArguments", arguments);
     }

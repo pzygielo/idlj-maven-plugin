@@ -100,6 +100,16 @@ public class IdljTranslator
             }
         }
 
+        if ( source.getPackageTranslations() != null )
+        {
+            for ( PackageTranslation translation : source.getPackageTranslations() )
+            {
+                args.add( "-pkgTranslate" );
+                args.add( translation.getType() );
+                args.add( translation.getReplacementPackage() );
+            }
+        }
+
         if ( source.getDefines() != null )
         {
             for ( Define define : source.getDefines() )

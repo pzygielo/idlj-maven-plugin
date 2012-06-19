@@ -81,6 +81,13 @@ public class Source
     private List<PackagePrefix> packagePrefixes;
 
     /**
+     * The list of package translations for certain types.
+     *
+     * @parameter packageTranslations;
+     */
+    private List<PackageTranslation> packageTranslations;
+
+    /**
      * The list of preprocessor symbols to define.
      */
     private List<Define> defines;
@@ -160,5 +167,10 @@ public class Source
     public List<String> getAdditionalArguments()
     {
         return additionalArguments;
+    }
+
+    public List<PackageTranslation> getPackageTranslations()
+    {
+        return packageTranslations;
     }
 }
