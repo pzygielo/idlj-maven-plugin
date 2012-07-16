@@ -148,10 +148,7 @@ public abstract class AbstractTranslator
     {
         String[] arguments = args.toArray( new String[args.size()] );
 
-        if ( isDebug() )
-        {
-            getLog().info( getCommandLine( compilerClass, arguments ) );
-        }
+        getLog().debug( getCommandLine( compilerClass, arguments ) );
 
         // Local channels
         ByteArrayOutputStream err = new ByteArrayOutputStream();

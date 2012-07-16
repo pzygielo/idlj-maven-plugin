@@ -3,9 +3,6 @@ package org.codehaus.mojo.idlj;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -102,7 +99,7 @@ public class IDLJTestCase extends IDLJTestBase {
     @Test
     public void whenNoOptionsAreSpecified_generateFallArguments() throws Exception {
         mojo.execute();
-        assertArgumentsContains("-fall");
+        assertArgumentsContains("-fallTIE");
     }
 
     @Test

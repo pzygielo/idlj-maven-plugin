@@ -123,11 +123,11 @@ public class IdljTranslator
             }
         }
 
-        if ( source.emitStubs() != null && source.emitStubs() )
+        if ( isOptionEnabled( source.emitStubs() ) )
         {
             if ( source.emitSkeletons() )
             {
-                args.add( "-fall" );
+                args.add( "-fallTIE" );
             }
             else
             {
@@ -136,7 +136,7 @@ public class IdljTranslator
         }
         else
         {
-            if ( source.emitSkeletons() != null && source.emitSkeletons() )
+            if ( isOptionEnabled( source.emitSkeletons() ) )
             {
                 args.add( "-fserver" );
             }
@@ -146,20 +146,9 @@ public class IdljTranslator
             }
         }
 
-        if ( source.compatible() != null && source.compatible() )
+        if ( isOptionEnabled( source.compatible() ) )
         {
-            String version = System.getProperty( "java.specification.version" );
-            getLog().debug( "JDK Version:" + version );
-            // TODO A compiled REGEX should be used instead of the matches()
-            // method
-            if ( version.matches( "^[0-1]\\.[0-3]" ) )
-            {
-                getLog().debug( "OPTION IGNORED: compatible" );
-            }
-            else
-            {
-                args.add( "-oldImplBase" );
-            }
+            args.add( "-oldImplBase" );
         }
 
         if ( source.getAdditionalArguments() != null )
@@ -174,6 +163,11 @@ public class IdljTranslator
 
         Class<?> compilerClass = getCompilerClass();
         invokeCompiler( compilerClass, args );
+    }
+
+    private boolean isOptionEnabled( Boolean option )
+    {
+        return option != null && option;
     }
 
     /**
@@ -284,7 +278,7 @@ public class IdljTranslator
     {
         Method compilerMainMethod = compilerClass.getMethod( "main", String[].class );
         Object retVal = compilerMainMethod.invoke( compilerClass, new Object[]{arguments} );
-        getLog().info( "Completed with code " + retVal );
+        getLog().debug( "Completed with code " + retVal );
         return ( retVal != null ) && ( retVal instanceof Integer ) ? (Integer) retVal : 0;
     }
 
