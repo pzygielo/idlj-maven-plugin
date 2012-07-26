@@ -34,7 +34,21 @@ public class IDLJTestCase extends IDLJTestBase {
     @Test(expected = MojoExecutionException.class)
     public void whenErrorMessageGenerated_failMojoStep() throws Exception {
         setFailOnError();
-        TestIdlCompiler.defineErrorMessage("oops");
+        TestIdlCompiler.defineErrorMessage("(line 30): oops");
+        mojo.execute();
+    }
+
+    @Test
+    public void whenWarningMessageGenerated_dontFailMojoStep() throws Exception {
+        setFailOnError();
+        TestIdlCompiler.defineErrorMessage("(line 60): WARNING: don't worry\nThis happened");
+        mojo.execute();
+    }
+
+    @Test(expected = MojoExecutionException.class)
+    public void whenBothErrorAndWarningMessageGenerated_failMojoStep() throws Exception {
+        setFailOnError();
+        TestIdlCompiler.defineErrorMessage("(line 10): WARNING: don't worry\nThis happened\n  (line 30): oops");
         mojo.execute();
     }
 

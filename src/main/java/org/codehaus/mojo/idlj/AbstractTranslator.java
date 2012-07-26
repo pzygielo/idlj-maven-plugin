@@ -210,7 +210,20 @@ public abstract class AbstractTranslator
 
     private boolean isCompilationFailed( ByteArrayOutputStream err, int exitCode )
     {
-        return exitCode != 0 || isNotEmpty( err );
+        return exitCode != 0 || hasErrors( err );
+    }
+
+    private boolean hasErrors( ByteArrayOutputStream err )
+    {
+        for ( String message : err.toString().split( "\n" ) )
+        {
+            if ( message.contains("(line ") && !message.contains( "WARNING" ) )
+            {
+                getLog().debug( "Failed due to error: <" + message + ">" );
+                return true;
+            }
+        }
+        return false;
     }
 
     private void logOutputMessages( ByteArrayOutputStream err, ByteArrayOutputStream out )
