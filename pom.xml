@@ -10,7 +10,7 @@
   <artifactId>idlj-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>CORBA IDL Compiler Maven Plugin</name>
-  <version>1.2.1</version>
+  <version>1.2.2-SNAPSHOT</version>
   <description>
     This plugin is for processing IDL files into java sources.
   </description>
@@ -105,9 +105,9 @@
   </properties>
 
   <scm>
-    <connection>scm:svn:http://svn.codehaus.org/mojo/tags/idlj-maven-plugin-1.2.1</connection>
-    <developerConnection>scm:svn:https://svn.codehaus.org/mojo/tags/idlj-maven-plugin-1.2.1</developerConnection>
-    <url>http://svn.codehaus.org/mojo/tags/idlj-maven-plugin-1.2.1</url>
+    <connection>scm:svn:http://svn.codehaus.org/mojo/trunk/mojo/idlj-maven-plugin</connection>
+    <developerConnection>scm:svn:https://svn.codehaus.org/mojo/trunk/mojo/idlj-maven-plugin</developerConnection>
+    <url>http://svn.codehaus.org/mojo/trunk/mojo/idlj-maven-plugin</url>
   </scm>
 
   <dependencies>
