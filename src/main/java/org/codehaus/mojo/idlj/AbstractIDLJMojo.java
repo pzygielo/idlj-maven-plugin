@@ -19,14 +19,6 @@ package org.codehaus.mojo.idlj;
  * under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -36,6 +28,14 @@ import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.StaleSourceScanner;
 import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
 import org.codehaus.plexus.util.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * This is abstract class used to decrease the code needed to the creation of the compiler MOJO.
@@ -62,12 +62,12 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
     /**
      * Should the plugin fail the build if there's an error while generating sources from IDLs.
      *
-     * @parameter expression="${failOnError}" default-value="true"
+     * @parameter default-value="true"
      */
     private boolean failOnError;
 
     /**
-     * @parameter expression="${project}"
+     * @parameter property="project"
      * @required
      * @readonly
      */
@@ -76,7 +76,7 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
     /**
      * The granularity in milliseconds of the last modification date for testing whether a source needs recompilation.
      *
-     * @parameter expression="${lastModGranularityMs}" default-value="0"
+     * @parameter property="lastModGranularityMs" default-value="0"
      */
     private int staleMillis;
 
