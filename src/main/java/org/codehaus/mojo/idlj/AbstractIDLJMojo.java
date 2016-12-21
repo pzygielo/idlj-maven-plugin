@@ -188,32 +188,12 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
 
     private CompilerTranslator createTranslator() throws MojoExecutionException
     {
-        CompilerTranslator translator = createAppropriateTranslatorType();
+        CompilerTranslator translator = TranslatorType.selectTranslator(compiler);
 
         translator.setDebug( debug );
         translator.setFailOnError( failOnError );
         translator.setLog( getLog() );
         return translator;
-    }
-
-    private CompilerTranslator createAppropriateTranslatorType() throws MojoExecutionException
-    {
-        if ( compiler == null )
-        {
-            return new IdljTranslator();
-        }
-        else if ( compiler.equals( "idlj" ) )
-        {
-            return new IdljTranslator();
-        }
-        else if ( compiler.equals( "jacorb" ) )
-        {
-            return new JacorbTranslator();
-        }
-        else
-        {
-            throw new MojoExecutionException( "Compiler not supported: " + compiler );
-        }
     }
 
     private void failIfNotWriteable( File directory ) throws MojoExecutionException

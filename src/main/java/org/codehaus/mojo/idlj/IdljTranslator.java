@@ -1,5 +1,4 @@
 package org.codehaus.mojo.idlj;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -26,250 +25,13 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class implement the <code>CompilerTranslator</code> for the Sun idlj IDL compiler
- *
- * @author Anders Hessellund Jensen <ahj@trifork.com>
- * @version $Id$
+ * Parent class for translators that use the IDLJ parameters.
  */
-class IdljTranslator
-        extends AbstractTranslator
-        implements CompilerTranslator
-{
-
-    private static final String AIX_IDLJ_COMPILER_NAME = "com.ibm.idl.toJavaPortable.Compile";
-    private static final String ORACLE_IDLJ_COMPILER_NAME = "com.sun.tools.corba.se.idl.toJavaPortable.Compile";
-
-    /**
-     * Default constructor
-     */
-    IdljTranslator()
-    {
-        super();
-    }
-
-    /**
-     * This method it's used to invoke the compiler
-     *
-     * @param sourceDirectory the path to the sources
-     * @param includeDirs     the <code>File[]</code> of directories where to find the includes
-     * @param targetDirectory the path to the destination of the compilation
-     * @param idlFile         the path to the file to compile
-     * @param source          the source tag available in the configuration tree of the maven plugin
-     * @throws MojoExecutionException the exception is thrown whenever the compilation fails or crashes
-     */
-    public void invokeCompiler( String sourceDirectory, File[] includeDirs, String targetDirectory, String idlFile,
-                                Source source )
-            throws MojoExecutionException
-    {
-        List<String> args = getArguments(sourceDirectory, includeDirs, targetDirectory, idlFile, source);
-
-        Class<?> compilerClass = getCompilerClass();
-        invokeCompiler( compilerClass, args );
-    }
-
-    private List<String> getArguments(String sourceDirectory, File[] includeDirs, String targetDirectory, String idlFile, Source source) throws MojoExecutionException {
-        List<String> args = new ArrayList<>();
-        args.add( "-i" );
-        args.add( sourceDirectory );
-
-        // add idl files from other directories as well
-        if ( includeDirs != null && includeDirs.length > 0 )
-        {
-            for ( File includeDir : includeDirs )
-            {
-                args.add( "-i" );
-                args.add( includeDir.toString() );
-            }
-        }
-
-        args.add( "-td" );
-        args.add( toRelativeAndFixSeparator( new File( System.getProperty( "user.dir" ) ), new File( targetDirectory ),
-                false ) );
-
-        if ( source.getPackagePrefix() != null )
-        {
-            throw new MojoExecutionException( "idlj compiler does not support packagePrefix" );
-        }
-
-        if ( source.getPackagePrefixes() != null )
-        {
-            for ( PackagePrefix prefix : source.getPackagePrefixes() )
-            {
-                args.add( "-pkgPrefix" );
-                args.add( prefix.getType() );
-                args.add( prefix.getPrefix() );
-            }
-        }
-
-        if ( source.getPackageTranslations() != null )
-        {
-            for ( PackageTranslation translation : source.getPackageTranslations() )
-            {
-                args.add( "-pkgTranslate" );
-                args.add( translation.getType() );
-                args.add( translation.getReplacementPackage() );
-            }
-        }
-
-        if ( source.getDefines() != null )
-        {
-            for ( Define define : source.getDefines() )
-            {
-                addSymbolDefinition( args, define );
-            }
-        }
-
-        addEmitOption(args, source);
-
-        if ( isOptionEnabled( source.compatible() ) )
-        {
-            args.add( "-oldImplBase" );
-        }
-
-        if ( source.getAdditionalArguments() != null )
-        {
-            for ( String arg : source.getAdditionalArguments() )
-            {
-                args.add( arg );
-            }
-        }
-
-        args.add( idlFile );
-        return args;
-    }
-
-    private void addSymbolDefinition(List<String> args, Define define) throws MojoExecutionException {
-        if ( define.getValue() != null )
-        {
-            throw new MojoExecutionException( "idlj compiler unable to define symbol values" );
-        }
-        args.add( "-d" );
-        args.add( define.getSymbol() );
-    }
-
-    private void addEmitOption(List<String> args, Source source) {
-        if ( isOptionEnabled( source.emitStubs() ) )
-        {
-            args.add( source.emitSkeletons() ? "-fallTIE" : "-fclient" );
-        }
-        else
-        {
-            args.add( isOptionEnabled( source.emitSkeletons() ) ? "-fserver" : "-fserverTIE" );
-        }
-    }
-
-    private boolean isOptionEnabled( Boolean option )
-    {
-        return option != null && option;
-    }
-
-    /**
-     * @return the <code>Class</code> that implements the idlj compiler
-     * @throws MojoExecutionException if the search for the class fails
-     */
-    private Class<?> getCompilerClass()
-            throws MojoExecutionException
-    {
-        Class<?> idljCompiler;
-        try
-        {
-            idljCompiler = getClassLoaderFacade().loadClass( getIDLCompilerClassName() );
-        }
-        catch ( ClassNotFoundException e )
-        {
-            try
-            {
-                addToolsJarToPath();
-                idljCompiler = getClassLoaderFacade().loadClass( getIDLCompilerClassName() );
-            }
-            catch ( Exception notUsed )
-            {
-                throw new MojoExecutionException( " IDL compiler not available", e );
-            }
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( " IDL compiler not available", e );
-        }
-        return idljCompiler;
-    }
-
-
-    private void addToolsJarToPath() throws MalformedURLException, ClassNotFoundException
-    {
-        File javaHome = new File( System.getProperty( "java.home" ) );
-        File toolsJar = new File( javaHome, getToolsJarPath() );
-        URL toolsJarUrl = toolsJar.toURI().toURL();
-        getClassLoaderFacade().prependUrls( toolsJarUrl );
-
-        // Unfortunately the idlj compiler reads messages using the system class path.
-        // Therefore this really nasty hack is required.
-        System.setProperty( "java.class.path", System.getProperty( "java.class.path" )
-                + System.getProperty( "path.separator" ) + toolsJar.getAbsolutePath() );
-        if ( System.getProperty( "java.vm.name" ).contains( "HotSpot" ) )
-        {
-            getClassLoaderFacade().loadClass( "com.sun.tools.corba.ee.idl.som.cff.FileLocator" );
-        }
-    }
-
-
-    private String getToolsJarPath()
-    {
-        return "../lib/tools.jar";
-    }
-
-
-    private static boolean isAix()
-    {
-        return System.getProperty( "java.vm.vendor" ).contains( "IBM" );
-    }
-
-    /**
-     * @return the name of the class that implements the compiler
-     */
-    private static String getIDLCompilerClassName()
-    {
-        return isAix() ? AIX_IDLJ_COMPILER_NAME : ORACLE_IDLJ_COMPILER_NAME;
-    }
-
-    /**
-     * Invoke the specified compiler with a set of arguments
-     *
-     * @param compilerClass the <code>Class</code> that implements the compiler
-     * @param args          a <code>List</code> that contains the arguments to use for the compiler
-     * @throws MojoExecutionException if the compilation fail or the compiler crashes
-     */
-    private void invokeCompiler( Class<?> compilerClass, List<String> args )
-            throws MojoExecutionException
-    {
-        getLog().debug( "Current dir : " + System.getProperty( "user.dir" ) );
-
-        if ( isDebug() )
-        {
-            args.add( 0, "-verbose" );
-        }
-
-        invokeCompilerInProcess( compilerClass, args );
-    }
-
-
-    @Override
-    protected int runCompiler( Class<?> compilerClass, String... arguments )
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
-    {
-        Method compilerMainMethod = compilerClass.getMethod( "main", String[].class );
-        Object retVal = compilerMainMethod.invoke( compilerClass, new Object[]{arguments} );
-        getLog().debug( "Completed with code " + retVal );
-        return ( retVal != null ) && ( retVal instanceof Integer ) ? (Integer) retVal : 0;
-    }
-
-
+abstract class IdljTranslator extends AbstractTranslator implements CompilerTranslator {
     /**
      * Convert the provided filename from a Windows separator \\ to a unix/java separator /
      *
@@ -364,4 +126,151 @@ class IdljTranslator
         return relative;
     }
 
+    /**
+     * This method it's used to invoke the compiler
+     *
+     * @param sourceDirectory the path to the sources
+     * @param includeDirs     the <code>File[]</code> of directories where to find the includes
+     * @param targetDirectory the path to the destination of the compilation
+     * @param idlFile         the path to the file to compile
+     * @param source          the source tag available in the configuration tree of the maven plugin
+     * @throws MojoExecutionException the exception is thrown whenever the compilation fails or crashes
+     */
+    public void invokeCompiler(String sourceDirectory, File[] includeDirs, String targetDirectory, String idlFile,
+                               Source source )
+            throws MojoExecutionException
+    {
+        List<String> args = getArguments(sourceDirectory, includeDirs, targetDirectory, idlFile, source);
+
+        invokeCompiler(args);
+    }
+
+    abstract void invokeCompiler(List<String> args) throws MojoExecutionException;
+
+    private List<String> getArguments(String sourceDirectory, File[] includeDirs, String targetDirectory,
+                                      String idlFile, Source source) throws MojoExecutionException {
+        List<String> args = new ArrayList<>();
+        args.add( "-i" );
+        args.add( sourceDirectory );
+
+        // add idl files from other directories as well
+        if ( includeDirs != null && includeDirs.length > 0 )
+        {
+            for ( File includeDir : includeDirs )
+            {
+                args.add( "-i" );
+                args.add( includeDir.toString() );
+            }
+        }
+
+        args.add( "-td" );
+        args.add( toRelativeAndFixSeparator( new File( System.getProperty( "user.dir" ) ), new File( targetDirectory ),
+                false ) );
+
+        if ( source.getPackagePrefix() != null )
+        {
+            throw new MojoExecutionException( "idlj compiler does not support packagePrefix" );
+        }
+
+        if ( source.getPackagePrefixes() != null )
+        {
+            for ( PackagePrefix prefix : source.getPackagePrefixes() )
+            {
+                args.add( "-pkgPrefix" );
+                args.add( prefix.getType() );
+                args.add( prefix.getPrefix() );
+            }
+        }
+
+        if ( source.getPackageTranslations() != null )
+        {
+            for ( PackageTranslation translation : source.getPackageTranslations() )
+            {
+                args.add( "-pkgTranslate" );
+                args.add( translation.getType() );
+                args.add( translation.getReplacementPackage() );
+            }
+        }
+
+        if ( source.getDefines() != null )
+        {
+            for ( Define define : source.getDefines() )
+            {
+                addSymbolDefinition( args, define );
+            }
+        }
+
+        addEmitOption(args, source);
+
+        if ( isOptionEnabled( source.compatible() ) )
+        {
+            args.add( "-oldImplBase" );
+        }
+
+        if ( source.getAdditionalArguments() != null )
+        {
+            for ( String arg : source.getAdditionalArguments() )
+            {
+                args.add( arg );
+            }
+        }
+
+        args.add( idlFile );
+        return args;
+    }
+
+    private void addSymbolDefinition(List<String> args, Define define) throws MojoExecutionException {
+        if ( define.getValue() != null )
+        {
+            throw new MojoExecutionException( "idlj compiler unable to define symbol values" );
+        }
+        args.add( "-d" );
+        args.add( define.getSymbol() );
+    }
+
+    private void addEmitOption(List<String> args, Source source) {
+        if ( isOptionEnabled( source.emitStubs() ) )
+        {
+            args.add( source.emitSkeletons() ? "-fallTIE" : "-fclient" );
+        }
+        else
+        {
+            args.add( isOptionEnabled( source.emitSkeletons() ) ? "-fserver" : "-fserverTIE" );
+        }
+    }
+
+    private boolean isOptionEnabled(Boolean option )
+    {
+        return option != null && option;
+    }
+
+    /**
+     * Invoke the specified compiler with a set of arguments
+     *
+     * @param compilerClass the <code>Class</code> that implements the compiler
+     * @param args          a <code>List</code> that contains the arguments to use for the compiler
+     * @throws MojoExecutionException if the compilation fail or the compiler crashes
+     */
+    void invokeCompiler( Class<?> compilerClass, List<String> args )
+            throws MojoExecutionException
+    {
+        getLog().debug( "Current dir : " + System.getProperty( "user.dir" ) );
+
+        if ( isDebug() )
+        {
+            args.add( 0, "-verbose" );
+        }
+
+        invokeCompilerInProcess( compilerClass, args );
+    }
+
+    @Override
+    protected int runCompiler( Class<?> compilerClass, String... arguments )
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
+    {
+        Method compilerMainMethod = compilerClass.getMethod( "main", String[].class );
+        Object retVal = compilerMainMethod.invoke( compilerClass, new Object[]{arguments} );
+        getLog().debug( "Completed with code " + retVal );
+        return ( retVal != null ) && ( retVal instanceof Integer ) ? (Integer) retVal : 0;
+    }
 }

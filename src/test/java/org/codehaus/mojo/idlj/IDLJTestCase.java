@@ -10,17 +10,37 @@ import static org.junit.Assert.assertEquals;
  */
 public class IDLJTestCase extends IDLJTestBase {
 
+    private static final String ORACLE_JDK_IDL_CLASS = "com.sun.tools.corba.se.idl.toJavaPortable.Compile";
+    private static final String IBM_JDK_IDL_CLASS = "com.ibm.idl.toJavaPortable.Compile";
+
     @Test
-    public void whenCompilerNotSpecified_chooseGlassfishCompiler() throws Exception {
+    public void whenDefaultCompilerSpecified_chooseOracleJdkCompiler() throws Exception {
+        defineCompiler("idlj");
+
         mojo.execute();
-        assertEquals( "com.sun.tools.corba.se.idl.toJavaPortable.Compile", getIdlCompilerClass());
+
+        assertEquals(ORACLE_JDK_IDL_CLASS, getIdlCompilerClass());
+    }
+
+    @Test
+    public void whenCompilerNotSpecified_chooseOracleJdkCompiler() throws Exception {
+        mojo.execute();
+
+        assertEquals(ORACLE_JDK_IDL_CLASS, getIdlCompilerClass());
+    }
+
+    @Test(expected = MojoExecutionException.class)
+    public void whenUnknownCompilerSpecified_throwException() throws Exception {
+        defineCompiler("unknown");
+
+        mojo.execute();
     }
 
     @Test
     public void whenVMNameContainsIBM_chooseIBMIDLCompiler() throws Exception {
         System.setProperty("java.vm.vendor", "pretend it is IBM");
         mojo.execute();
-        assertEquals("com.ibm.idl.toJavaPortable.Compile", getIdlCompilerClass());
+        assertEquals(IBM_JDK_IDL_CLASS, getIdlCompilerClass());
     }
 
     @Test(expected = MojoExecutionException.class)
