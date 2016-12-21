@@ -4,7 +4,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Tests access using the Sun IDL compiler
@@ -22,13 +21,6 @@ public class IDLJTestCase extends IDLJTestBase {
         System.setProperty("java.vm.vendor", "pretend it is IBM");
         mojo.execute();
         assertEquals("com.ibm.idl.toJavaPortable.Compile", loaderFacade.getIdlCompilerClass());
-    }
-
-    @Test
-    public void whenVMNameContainsApple_loadClassesJar() throws Exception {
-        System.setProperty( "java.vm.vendor", "pretend it is Apple" );
-        mojo.execute();
-        assertTrue(getPrependedUrls().contains("Classes/classes.jar"));
     }
 
     @Test(expected = MojoExecutionException.class)

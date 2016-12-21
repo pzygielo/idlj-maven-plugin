@@ -180,10 +180,6 @@ public class IdljTranslator
         Class<?> idljCompiler;
         try
         {
-            if ( isMacOSX() )
-            {
-                addToolsJarToPath();
-            }
             idljCompiler = getClassLoaderFacade().loadClass( getIDLCompilerClassName() );
         }
         catch ( ClassNotFoundException e )
@@ -226,15 +222,7 @@ public class IdljTranslator
 
     private String getToolsJarPath()
     {
-        return isMacOSX()
-                ? "../Classes/classes.jar"
-                : "../lib/tools.jar";
-    }
-
-
-    private boolean isMacOSX()
-    {
-        return System.getProperty( "java.vm.vendor" ).contains( "Apple" );
+        return "../lib/tools.jar";
     }
 
 
