@@ -19,7 +19,7 @@ import static org.junit.Assert.fail;
 public class IDLJTestBase {
     private static String[] args;
     private Properties savedProperties;
-    TestClassloaderFacade loaderFacade = new TestClassloaderFacade();
+    private TestClassloaderFacade loaderFacade = new TestClassloaderFacade();
     private TestScanner testScanner = new TestScanner();
     private TestDependenciesFacade testDependenciesFacade = new TestDependenciesFacade();
     private TestLog log = new TestLog();
@@ -79,13 +79,6 @@ public class IDLJTestBase {
             else
                 setPrivateFieldValue(obj, theClass.getSuperclass(), fieldName, value);
         }
-    }
-
-    String getPrependedUrls() {
-        StringBuilder sb = new StringBuilder( );
-        for (URL url : loaderFacade.prependedURLs)
-            sb.append( ':' ).append( url );
-        return sb.toString();
     }
 
     final void defineSinglePrefix(Source source, String aPrefix) throws NoSuchFieldException, IllegalAccessException {
@@ -253,7 +246,11 @@ public class IDLJTestBase {
         setPrivateFieldValue(source, "additionalArguments", arguments);
     }
 
-    static class TestClassloaderFacade implements AbstractTranslator.ClassLoaderFacade {
+    String getIdlCompilerClass() {
+        return loaderFacade.getIdlCompilerClass();
+    }
+
+    private static class TestClassloaderFacade implements AbstractTranslator.ClassLoaderFacade {
 
         private List<URL> prependedURLs = new ArrayList<>();
         private String idlCompilerClass;

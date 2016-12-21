@@ -17,7 +17,7 @@ public class JacorbIdlTestCase extends IDLJTestBase {
     @Test
     public void whenSpecified_chooseJacorbCompiler() throws Exception {
         mojo.execute();
-        assertEquals("org.jacorb.idl.parser", loaderFacade.getIdlCompilerClass());
+        assertEquals("org.jacorb.idl.parser", getIdlCompilerClass());
     }
 
     @Test

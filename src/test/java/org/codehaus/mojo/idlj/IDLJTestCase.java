@@ -13,14 +13,14 @@ public class IDLJTestCase extends IDLJTestBase {
     @Test
     public void whenCompilerNotSpecified_chooseSunCompiler() throws Exception {
         mojo.execute();
-        assertEquals( "com.sun.tools.corba.se.idl.toJavaPortable.Compile", loaderFacade.getIdlCompilerClass() );
+        assertEquals( "com.sun.tools.corba.se.idl.toJavaPortable.Compile", getIdlCompilerClass());
     }
 
     @Test
     public void whenVMNameContainsIBM_chooseIBMIDLCompiler() throws Exception {
         System.setProperty("java.vm.vendor", "pretend it is IBM");
         mojo.execute();
-        assertEquals("com.ibm.idl.toJavaPortable.Compile", loaderFacade.getIdlCompilerClass());
+        assertEquals("com.ibm.idl.toJavaPortable.Compile", getIdlCompilerClass());
     }
 
     @Test(expected = MojoExecutionException.class)
