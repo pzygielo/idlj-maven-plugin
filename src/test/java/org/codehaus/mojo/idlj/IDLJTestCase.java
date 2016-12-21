@@ -13,7 +13,7 @@ public class IDLJTestCase extends IDLJTestBase {
     @Test
     public void whenCompilerNotSpecified_chooseGlassfishCompiler() throws Exception {
         mojo.execute();
-        assertEquals( "com.sun.tools.corba.ee.idl.toJavaPortable.Compile", getIdlCompilerClass());
+        assertEquals( "com.sun.tools.corba.se.idl.toJavaPortable.Compile", getIdlCompilerClass());
     }
 
     @Test
