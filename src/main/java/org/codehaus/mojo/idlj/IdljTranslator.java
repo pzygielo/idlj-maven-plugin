@@ -37,7 +37,7 @@ import java.util.List;
  * @author Anders Hessellund Jensen <ahj@trifork.com>
  * @version $Id$
  */
-public class IdljTranslator
+class IdljTranslator
         extends AbstractTranslator
         implements CompilerTranslator
 {
@@ -48,7 +48,7 @@ public class IdljTranslator
     /**
      * Default constructor
      */
-    public IdljTranslator()
+    IdljTranslator()
     {
         super();
     }
@@ -67,7 +67,14 @@ public class IdljTranslator
                                 Source source )
             throws MojoExecutionException
     {
-        List<String> args = new ArrayList<String>();
+        List<String> args = getArguments(sourceDirectory, includeDirs, targetDirectory, idlFile, source);
+
+        Class<?> compilerClass = getCompilerClass();
+        invokeCompiler( compilerClass, args );
+    }
+
+    private List<String> getArguments(String sourceDirectory, File[] includeDirs, String targetDirectory, String idlFile, Source source) throws MojoExecutionException {
+        List<String> args = new ArrayList<>();
         args.add( "-i" );
         args.add( sourceDirectory );
 
@@ -114,37 +121,11 @@ public class IdljTranslator
         {
             for ( Define define : source.getDefines() )
             {
-                if ( define.getValue() != null )
-                {
-                    throw new MojoExecutionException( "idlj compiler unable to define symbol values" );
-                }
-                args.add( "-d" );
-                args.add( define.getSymbol() );
+                addSymbolDefinition( args, define );
             }
         }
 
-        if ( isOptionEnabled( source.emitStubs() ) )
-        {
-            if ( source.emitSkeletons() )
-            {
-                args.add( "-fallTIE" );
-            }
-            else
-            {
-                args.add( "-fclient" );
-            }
-        }
-        else
-        {
-            if ( isOptionEnabled( source.emitSkeletons() ) )
-            {
-                args.add( "-fserver" );
-            }
-            else
-            {
-                args.add( "-fserverTIE" );
-            }
-        }
+        addEmitOption(args, source);
 
         if ( isOptionEnabled( source.compatible() ) )
         {
@@ -160,9 +141,27 @@ public class IdljTranslator
         }
 
         args.add( idlFile );
+        return args;
+    }
 
-        Class<?> compilerClass = getCompilerClass();
-        invokeCompiler( compilerClass, args );
+    private void addSymbolDefinition(List<String> args, Define define) throws MojoExecutionException {
+        if ( define.getValue() != null )
+        {
+            throw new MojoExecutionException( "idlj compiler unable to define symbol values" );
+        }
+        args.add( "-d" );
+        args.add( define.getSymbol() );
+    }
+
+    private void addEmitOption(List<String> args, Source source) {
+        if ( isOptionEnabled( source.emitStubs() ) )
+        {
+            args.add( source.emitSkeletons() ? "-fallTIE" : "-fclient" );
+        }
+        else
+        {
+            args.add( isOptionEnabled( source.emitSkeletons() ) ? "-fserver" : "-fserverTIE" );
+        }
     }
 
     private boolean isOptionEnabled( Boolean option )
@@ -215,7 +214,7 @@ public class IdljTranslator
                 + System.getProperty( "path.separator" ) + toolsJar.getAbsolutePath() );
         if ( System.getProperty( "java.vm.name" ).contains( "HotSpot" ) )
         {
-            getClassLoaderFacade().loadClass( "com.sun.tools.corba.se.idl.som.cff.FileLocator" );
+            getClassLoaderFacade().loadClass( "com.sun.tools.corba.ee.idl.som.cff.FileLocator" );
         }
     }
 
@@ -277,7 +276,7 @@ public class IdljTranslator
      * @param filename file name to fix separator
      * @return filename with all \\ replaced with /
      */
-    public static String fixSeparator( String filename )
+    private static String fixSeparator(String filename)
     {
         return StringUtils.replace( filename, '\\', '/' );
     }
@@ -289,7 +288,7 @@ public class IdljTranslator
      * @return the computed path
      * @throws MojoExecutionException if the infrastructure detects a problem
      */
-    public static String getCanonicalPath( File file )
+    private static String getCanonicalPath(File file)
             throws MojoExecutionException
     {
         try
@@ -311,7 +310,7 @@ public class IdljTranslator
      * @return the relative path between fromdir to todir
      * @throws MojoExecutionException thrown if an error is detected by the mojo infrastructure
      */
-    public static String toRelativeAndFixSeparator( File fromdir, File todir, boolean replaceSlashesWithDashes )
+    private static String toRelativeAndFixSeparator(File fromdir, File todir, boolean replaceSlashesWithDashes)
             throws MojoExecutionException
     {
         if ( !todir.isAbsolute() )
