@@ -205,6 +205,11 @@ public class IDLJTestBase {
         return System.getProperty("user.dir").replace('\\','/');
     }
 
+    final void assertArgumentsDoesNotContain(String... expectedArgs) {
+        if (contains(args, expectedArgs))
+            fail( toArgumentString( expectedArgs ) + " found in " + toArgumentString(args));
+    }
+
     final void assertArgumentsContains(String... expectedArgs) {
         if (!contains(args, expectedArgs))
             fail( toArgumentString( expectedArgs ) + " not found in " + toArgumentString(args));

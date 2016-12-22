@@ -157,9 +157,6 @@ class JacorbTranslator
     {
         List<String> args = new ArrayList<>();
 
-        // TODO: This should be configurable
-        args.add( "-sloppy_names" );
-
         args.add( "-I" + sourceDirectory );
 
         // add idl files from other directories as well
