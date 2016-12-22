@@ -50,6 +50,17 @@ enum TranslatorType {
             return new BuiltInTranslator();
         }
     },
+    GLASSFISH {
+        @Override
+        boolean select(String compilerSetting) {
+            return compilerSetting.equals("glassfish");
+        }
+
+        @Override
+        CompilerTranslator createTranslator() {
+            return new GlassfishTranslator();
+        }
+    },
     JACORB {
         @Override
         boolean select(String compilerSetting)

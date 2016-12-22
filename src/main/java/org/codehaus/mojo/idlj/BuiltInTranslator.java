@@ -33,7 +33,8 @@ import java.util.List;
  * @version $Id$
  */
 class BuiltInTranslator
-        extends IdljTranslator {
+        extends IdljTranslator
+{
 
     private static final String AIX_IDLJ_COMPILER_NAME = "com.ibm.idl.toJavaPortable.Compile";
     private static final String ORACLE_IDLJ_COMPILER_NAME = "com.sun.tools.corba.se.idl.toJavaPortable.Compile";
