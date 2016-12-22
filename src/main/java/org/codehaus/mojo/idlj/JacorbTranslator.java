@@ -19,14 +19,10 @@ package org.codehaus.mojo.idlj;
  * under the License.
  */
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.codehaus.plexus.util.StringUtils;
+
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -34,16 +30,13 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.codehaus.plexus.util.StringUtils;
-
 /**
  * This class implement the <code>CompilerTranslator</code> for the JacORB IDL compiler
  *
  * @author Anders Hessellund Jensen <ahj@trifork.com>
  * @version $Id$
  */
-public class JacorbTranslator
+class JacorbTranslator
         extends AbstractTranslator
         implements CompilerTranslator
 {
@@ -51,7 +44,7 @@ public class JacorbTranslator
     /**
      * Default constructor
      */
-    public JacorbTranslator()
+    JacorbTranslator()
     {
         super();
     }
@@ -84,7 +77,7 @@ public class JacorbTranslator
             URL[] classPathUrls = cl.getURLs();
 
             // Construct list of arguments
-            List<String> binArgs = new ArrayList<String>();
+            List<String> binArgs = new ArrayList<>();
 
             // First argument is the java binary to run
             binArgs.add( javaBin.getPath() );
@@ -162,10 +155,7 @@ public class JacorbTranslator
                                 Source source )
             throws MojoExecutionException
     {
-        List<String> args = new ArrayList<String>();
-
-        // TODO: This should be configurable
-        args.add( "-sloppy_names" );
+        List<String> args = new ArrayList<>();
 
         args.add( "-I" + sourceDirectory );
 
@@ -247,7 +237,7 @@ public class JacorbTranslator
      * @param in  the <code>InputStream</code> to read from
      * @param out the <code>OutputStream</code> to write into
      */
-    public static void redirectStream( final InputStream in, final OutputStream out )
+    private static void redirectStream(final InputStream in, final OutputStream out)
     {
         Thread stdoutTransferThread = new Thread()
         {

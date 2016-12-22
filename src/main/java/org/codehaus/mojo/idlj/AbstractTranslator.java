@@ -35,7 +35,7 @@ import java.util.List;
  * @author Arnaud Heritier <aheritier AT apache DOT org>
  * @version $Id: AbstractIDLJMojo.java 9189 2009-03-10 21:47:46Z aheritier $
  */
-public abstract class AbstractTranslator
+abstract class AbstractTranslator
         implements CompilerTranslator
 {
 
@@ -81,7 +81,7 @@ public abstract class AbstractTranslator
     /**
      * @return the log
      */
-    public Log getLog()
+    Log getLog()
     {
         return log;
     }
@@ -97,7 +97,7 @@ public abstract class AbstractTranslator
     /**
      * @return the failOnError
      */
-    public boolean isFailOnError()
+    boolean isFailOnError()
     {
         return failOnError;
     }
@@ -114,7 +114,7 @@ public abstract class AbstractTranslator
      * Returns true if the translator is allowed to create a new forked process.
      * @return true if forking is permitted
      */
-    protected static boolean isFork()
+    static boolean isFork()
     {
         return fork;
     }
@@ -133,7 +133,7 @@ public abstract class AbstractTranslator
      * Returns the object to use for classloading.
      * @return the appropriate loader facade
      */
-    protected ClassLoaderFacade getClassLoaderFacade()
+    static ClassLoaderFacade getClassLoaderFacade()
     {
         return classLoaderFacade;
     }
@@ -144,7 +144,7 @@ public abstract class AbstractTranslator
      * @param args the arguments to pass to the compiler
      * @throws MojoExecutionException if any error occurs
      */
-    protected void invokeCompilerInProcess( Class<?> compilerClass, List<String> args ) throws MojoExecutionException
+    void invokeCompilerInProcess(Class<?> compilerClass, List<String> args) throws MojoExecutionException
     {
         String[] arguments = args.toArray( new String[args.size()] );
 
@@ -256,7 +256,7 @@ public abstract class AbstractTranslator
     /**
      * An interface for loading the proper IDL compiler class.
      */
-    public interface ClassLoaderFacade
+    interface ClassLoaderFacade
     {
         /**
          * Updates the active classloader to include the specified URLs before the original definitions.
@@ -278,7 +278,7 @@ public abstract class AbstractTranslator
     /**
      * The implementation of ClassLoaderFacade used at runtime.
      */
-    static class ClassLoaderFacadeImpl implements ClassLoaderFacade
+    private static class ClassLoaderFacadeImpl implements ClassLoaderFacade
     {
         ClassLoader classLoader = getClass().getClassLoader();
 

@@ -17,13 +17,13 @@ public class JacorbIdlTestCase extends IDLJTestBase {
     @Test
     public void whenSpecified_chooseJacorbCompiler() throws Exception {
         mojo.execute();
-        assertEquals("org.jacorb.idl.parser", loaderFacade.getIdlCompilerClass());
+        assertEquals("org.jacorb.idl.parser", getIdlCompilerClass());
     }
 
     @Test
-    public void byDefault_allowSloppyNames() throws Exception {
+    public void byDefault_doNotAllowSloppyNames() throws Exception {
         mojo.execute();
-        assertArgumentsContains("-sloppy_names");
+        assertArgumentsDoesNotContain("-sloppy_names");
     }
 
     @Test
@@ -98,8 +98,9 @@ public class JacorbIdlTestCase extends IDLJTestBase {
     @Test
     public void whenAdditionalArgumentsSpecified_copyToCommand() throws NoSuchFieldException, IllegalAccessException, MojoExecutionException {
         Source source = createSource();
-        defineAdditionalArguments(source, "-arg1", "arg2");
+        defineAdditionalArguments(source, "-arg1", "arg2", "-sloppy_names");
         mojo.execute();
         assertArgumentsContains("-arg1", "arg2");
+        assertArgumentsContains("-sloppy_names");
     }
 }
