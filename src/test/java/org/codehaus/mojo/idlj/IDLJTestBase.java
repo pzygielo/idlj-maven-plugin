@@ -1,5 +1,16 @@
 package org.codehaus.mojo.idlj;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.compiler.util.scan.InclusionScanException;
@@ -7,12 +18,6 @@ import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.mapping.SourceMapping;
 import org.junit.After;
 import org.junit.Before;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.net.URL;
-import java.util.*;
 
 import static org.junit.Assert.fail;
 
@@ -255,10 +260,22 @@ public class IDLJTestBase {
         return loaderFacade.getIdlCompilerClass();
     }
 
+    interface ClassNotFoundFilter {
+        boolean throwException(URL... prependedUrls);
+    }
+
+    static class NullClassNotFoundFilter implements ClassNotFoundFilter {
+        @Override
+        public boolean throwException(URL... prependedUrls) {
+            return false;
+        }
+    }
+
     private static class TestClassloaderFacade implements AbstractTranslator.ClassLoaderFacade {
 
         private List<URL> prependedURLs = new ArrayList<>();
         private String idlCompilerClass;
+        private ClassNotFoundFilter filter = new NullClassNotFoundFilter();
 
         public void prependUrls(URL... urls) {
             prependedURLs.addAll(Arrays.asList(urls));
@@ -266,12 +283,25 @@ public class IDLJTestBase {
 
         public Class loadClass(String className) throws ClassNotFoundException {
             idlCompilerClass = className;
+            if (filter.throwException(prependedURLs.toArray(new URL[prependedURLs.size()])))
+            {
+                throw new ClassNotFoundException(className);
+            }
             return TestIdlCompiler.class;
         }
 
         String getIdlCompilerClass() {
             return idlCompilerClass;
         }
+    }
+
+    /**
+     * Specifies a filter to determine whether to throw CNFE when the translator attempts to look up a compiler.
+     * @param filter the new filter
+     */
+    void setClassNotFoundFilter(ClassNotFoundFilter filter)
+    {
+        loaderFacade.filter = filter;
     }
 
     static class TestIdlCompiler {

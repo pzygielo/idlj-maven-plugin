@@ -20,11 +20,9 @@ package org.codehaus.mojo.idlj;
  */
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 
 /**
@@ -43,12 +41,5 @@ public class GlassfishIdljTestCase extends IdljCommonTests {
         mojo.execute();
 
         assertThat(getIdlCompilerClass(), equalTo(GLASSFISH_IDLJ_COMPILER_NAME));
-    }
-
-    @Test @Ignore
-    public void whenGlassfishCompilerSelected_classpathContainsIdljJar() throws Exception {
-        mojo.execute();
-
-        assertThat(System.getProperty("java.class.path"), containsString("idlj.jar"));
     }
 }

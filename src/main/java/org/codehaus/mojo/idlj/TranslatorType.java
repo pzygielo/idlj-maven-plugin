@@ -29,19 +29,7 @@ enum TranslatorType {
         @Override
         boolean select(String compilerSetting)
         {
-            return (compilerSetting == null || compilerSetting.equals( "idlj" )) && canLoadTranslator();
-        }
-
-        private boolean canLoadTranslator() {
-            try
-            {
-                BuiltInTranslator.getCompilerClass();
-                return true;
-            }
-            catch (MojoExecutionException e)
-            {
-                return false;
-            }
+            return (compilerSetting == null || compilerSetting.equals( "idlj" ));
         }
 
         @Override

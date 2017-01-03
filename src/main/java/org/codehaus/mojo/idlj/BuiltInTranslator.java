@@ -19,12 +19,12 @@ package org.codehaus.mojo.idlj;
  * under the License.
  */
 
-import org.apache.maven.plugin.MojoExecutionException;
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+
+import org.apache.maven.plugin.MojoExecutionException;
 
 /**
  * This class implement the <code>CompilerTranslator</code> for the Sun idlj IDL compiler
@@ -38,6 +38,8 @@ class BuiltInTranslator
 
     private static final String AIX_IDLJ_COMPILER_NAME = "com.ibm.idl.toJavaPortable.Compile";
     private static final String ORACLE_IDLJ_COMPILER_NAME = "com.sun.tools.corba.se.idl.toJavaPortable.Compile";
+    static final String USE_GLASSFISH_IDL = " Built-in IDL compiler not available in JDK9. Use the glassfish compiler instead.";
+    static final String IDL_COMPILER_NOT_AVAILABLE = " IDL compiler not available";
 
     /**
      * Default constructor
@@ -58,31 +60,41 @@ class BuiltInTranslator
      * @return the <code>Class</code> that implements the idlj compiler
      * @throws MojoExecutionException if the search for the class fails
      */
-    static Class<?> getCompilerClass()
+    private static Class<?> getCompilerClass()
             throws MojoExecutionException
     {
-        Class<?> idljCompiler;
         try
         {
-            idljCompiler = getClassLoaderFacade().loadClass( getIDLCompilerClassName() );
+            return getClassLoaderFacade().loadClass( getIDLCompilerClassName() );
         }
         catch ( ClassNotFoundException e )
         {
             try
             {
                 addToolsJarToPath();
-                idljCompiler = getClassLoaderFacade().loadClass( getIDLCompilerClassName() );
+                return getClassLoaderFacade().loadClass( getIDLCompilerClassName() );
             }
-            catch ( Exception notUsed )
+            catch ( Exception e2 )
             {
-                throw new MojoExecutionException( " IDL compiler not available", e );
+                throw new MojoExecutionException( getSecondTryMessage( e2 ), e );
             }
         }
         catch ( Exception e )
         {
-            throw new MojoExecutionException( " IDL compiler not available", e );
+            throw new MojoExecutionException( IDL_COMPILER_NOT_AVAILABLE, e );
         }
-        return idljCompiler;
+    }
+
+    private static String getSecondTryMessage( Exception e ) {
+        return builtInCompilerHidden( e ) ? USE_GLASSFISH_IDL : IDL_COMPILER_NOT_AVAILABLE;
+    }
+
+    private static boolean builtInCompilerHidden( Exception e ) {
+        return (e instanceof ClassNotFoundException) && isJigsawPresent();
+    }
+
+    private static boolean isJigsawPresent() {
+        return !System.getProperty("java.version").startsWith("1.");
     }
 
 

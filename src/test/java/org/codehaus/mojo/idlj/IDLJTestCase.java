@@ -19,10 +19,23 @@ package org.codehaus.mojo.idlj;
  * under the License.
  */
 
+import com.meterware.simplestub.Memento;
+import com.meterware.simplestub.SystemPropertySupport;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.maven.plugin.MojoExecutionException;
+import org.hamcrest.Matchers;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Tests access using the Built-in IDL compiler
@@ -31,6 +44,23 @@ public class IDLJTestCase extends IdljCommonTests {
 
     private static final String ORACLE_JDK_IDL_CLASS = "com.sun.tools.corba.se.idl.toJavaPortable.Compile";
     private static final String IBM_JDK_IDL_CLASS = "com.ibm.idl.toJavaPortable.Compile";
+
+    private List<Memento> mementos = new ArrayList<>();
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        mementos.add(SystemPropertySupport.preserve("java.vm.vendor"));
+        mementos.add(SystemPropertySupport.preserve("java.version"));
+    }
+
+    @Override
+    @After
+    public void tearDown() {
+        super.tearDown();
+        for (Memento memento : mementos) memento.revert();
+    }
 
     @Test
     public void whenDefaultCompilerSpecified_chooseOracleJdkCompiler() throws Exception {
@@ -62,4 +92,75 @@ public class IDLJTestCase extends IdljCommonTests {
         assertEquals(IBM_JDK_IDL_CLASS, getIdlCompilerClass());
     }
 
+    @Test(expected = MojoExecutionException.class)
+    public void whenCompilerNotFound_throwException() throws Exception {
+        setClassNotFoundFilter(new ClassNotFoundFilter() {
+            @Override
+            public boolean throwException(URL... prependedUrls) {
+                return true;
+            }
+        });
+
+        mojo.execute();
+    }
+
+    private int iteration = 0;
+    private boolean foundToolsJar = false;
+
+    @Test
+    public void whenCompilerNotFound_tryAgainWithToolsJar() throws Exception {
+        setClassNotFoundFilter(new ClassNotFoundFilter() {
+            @Override
+            public boolean throwException(URL... prependedUrls) {
+                if (iteration++ > 0)
+                    foundToolsJar = containsToolsJar(prependedUrls);
+                return true;
+            }
+        });
+
+        try {
+            mojo.execute();
+        } catch (MojoExecutionException ignored) {
+        }
+
+        assertTrue(foundToolsJar);
+    }
+
+    private boolean containsToolsJar(URL[] prependedUrls) {
+        for (URL url : prependedUrls)
+            if (!url.getPath().contains("tools.jar")) return true;
+
+        return true;
+    }
+
+    @Test
+    public void whenCompilerInToolsJar_locateCompiler() throws Exception {
+        setClassNotFoundFilter(new ClassNotFoundFilter() {
+            @Override
+            public boolean throwException(URL... prependedUrls) {
+                return !containsToolsJar(prependedUrls);
+            }
+        });
+
+        mojo.execute();
+    }
+
+    @Test
+    public void whenModuleSystemPresent_errorRecommendsGlassfish() throws Exception {
+        setClassNotFoundFilter(new ClassNotFoundFilter() {
+            @Override
+            public boolean throwException(URL... prependedUrls) {
+                return true;
+            }
+        });
+
+        System.setProperty("java.version", "9.0");
+
+        try {
+            mojo.execute();
+            fail("Did not report compiler class not found");
+        } catch (MojoExecutionException e) {
+            assertThat(e.getMessage(), Matchers.containsString("Use the glassfish compiler"));
+        }
+    }
 }
