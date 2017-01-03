@@ -100,7 +100,7 @@
   </licenses>
 
   <properties>
-    <mavenVersion>2.0.6</mavenVersion>
+    <mavenVersion>2.2.1</mavenVersion>
   </properties>
 
   <scm>
@@ -128,22 +128,12 @@
       <dependency>
           <groupId>org.codehaus.plexus</groupId>
           <artifactId>plexus-utils</artifactId>
-          <version>1.4.1</version>
+          <version>3.0.20</version>
       </dependency>
       <dependency>
-          <groupId>plexus</groupId>
+          <groupId>org.codehaus.plexus</groupId>
           <artifactId>plexus-compiler-api</artifactId>
-          <version>1.5</version>
-          <exclusions>
-              <exclusion>
-                  <artifactId>plexus-container-default</artifactId>
-                  <groupId>plexus</groupId>
-              </exclusion>
-              <exclusion>
-                  <artifactId>plexus-utils</artifactId>
-                  <groupId>plexus</groupId>
-              </exclusion>
-          </exclusions>
+          <version>2.5</version>
       </dependency>
 
       <dependency>
