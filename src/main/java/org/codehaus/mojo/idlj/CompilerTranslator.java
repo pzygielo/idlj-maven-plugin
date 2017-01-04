@@ -19,10 +19,10 @@ package org.codehaus.mojo.idlj;
  * under the License.
  */
 
-import java.io.File;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
+
+import java.io.File;
 
 /**
  * This is the interface to implement in order to add a new compiler backend to this plugin
@@ -40,7 +40,7 @@ public interface CompilerTranslator
      * @param includeDirs     the <code>File[]</code> of directories where to find the includes
      * @param targetDirectory the path to the destination of the compilation
      * @param idlFile         the path to the file to compile
-     * @param source          //TODO ???
+     * @param source          the source set on which to run the compiler
      * @throws MojoExecutionException the exeception is thrown whenever the compilation fails or crashes
      */
     void invokeCompiler( String sourceDirectory, File[] includeDirs,

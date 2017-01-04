@@ -93,7 +93,12 @@ class BuiltInTranslator
 
     private static boolean builtInCompilerHidden( Exception e )
     {
-        return ( e instanceof ClassNotFoundException ) && isJigsawPresent( );
+        return compilerNotFound( e ) && isJigsawPresent();
+    }
+
+    private static boolean compilerNotFound( Exception e )
+    {
+        return e instanceof ClassNotFoundException;
     }
 
     private static boolean isJigsawPresent()

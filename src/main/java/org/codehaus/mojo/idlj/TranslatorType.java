@@ -31,7 +31,7 @@ enum TranslatorType
         @Override
         boolean select( String compilerSetting )
         {
-            return ( compilerSetting == null || compilerSetting.equals( "idlj" ) );
+            return compilerSetting == null || compilerSetting.equals( "idlj" );
         }
 
         @Override

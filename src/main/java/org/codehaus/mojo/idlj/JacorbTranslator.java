@@ -155,7 +155,7 @@ class JacorbTranslator
      * @param includeDirs     the <code>File[]</code> of directories where to find the includes
      * @param targetDirectory the path to the destination of the compilation
      * @param idlFile         the path to the file to compile
-     * @param source          //TODO ???
+     * @param source          the source set on which to run the compiler
      * @throws MojoExecutionException the exeception is thrown whenever the compilation fails or crashes
      */
     public void invokeCompiler( String sourceDirectory, File[] includeDirs, String targetDirectory, String idlFile,
