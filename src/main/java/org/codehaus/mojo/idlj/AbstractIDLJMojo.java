@@ -95,7 +95,7 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
     private File timestampDirectory;
 
     /**
-     * The compiler to use. Current options are Suns idlj compiler and JacORB. Should be either "idlj" or "jacorb".
+     * The compiler to use. Current options are the JDK idlj compiler, Glassfish and JacORB. Should be either "idlj", "glassfish", or "jacorb".
      *
      * @parameter default-value="idlj"
      */

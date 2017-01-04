@@ -4,7 +4,7 @@
  Jesse McConnell <jesse.mcconnell@gmail.com>
  Russell Gold <russ@gold-family.us>
  ------
- Tue Jun 19 2012
+ Wed Jan 4 2017
  ------
 
 Usage
@@ -20,14 +20,24 @@ Usage
 <<<mvn idlj:generate>>>
 +-----
 
- By default, idlj-maven-plugin uses the built-in idlj compiler. To use the jacorb idl compiler,
- include a dependency on the jacorb idl compiler:
+ By default, idlj-maven-plugin uses the built-in idlj compiler. To use the glassfish idl compiler (required for JDK 9
+ or higher), specify "glassfish" as the compiler type:
+
+-------------------
+...
+  <configuration>
+    <compiler>glassfish</compiler>
+  </configuration>
+...
+-------------------
+
+ To use the jacorb idl compiler, include a dependency on the jacorb idl compiler:
 
 -----
 <dependency>
     <groupId>org.jacorb</groupId>
     <artifactId>idl-compiler</artifactId>
-    <version>3.0</version>
+    <version>3.8</version>
     <scope>compile</compile>
 </dependency>
 -----
@@ -45,7 +55,7 @@ Usage
 
 * Available Configuration Options
 
-* compiler - selects the underlying idl compiler to use (must be either "idlj" - the default or "jacorb")
+* compiler - selects the underlying idl compiler to use (must be either "idlj" - the default, "glassfish", or "jacorb")
 
 -------------------
 ...
