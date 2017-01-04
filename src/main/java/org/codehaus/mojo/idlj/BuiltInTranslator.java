@@ -19,12 +19,12 @@ package org.codehaus.mojo.idlj;
  * under the License.
  */
 
+import org.apache.maven.plugin.MojoExecutionException;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
-
-import org.apache.maven.plugin.MojoExecutionException;
 
 /**
  * This class implement the <code>CompilerTranslator</code> for the Sun idlj IDL compiler
@@ -38,8 +38,9 @@ class BuiltInTranslator
 
     private static final String AIX_IDLJ_COMPILER_NAME = "com.ibm.idl.toJavaPortable.Compile";
     private static final String ORACLE_IDLJ_COMPILER_NAME = "com.sun.tools.corba.se.idl.toJavaPortable.Compile";
-    static final String USE_GLASSFISH_IDL = " Built-in IDL compiler not available in JDK9. Use the glassfish compiler instead.";
-    static final String IDL_COMPILER_NOT_AVAILABLE = " IDL compiler not available";
+    private static final String USE_GLASSFISH_IDL =
+                                    " Built-in IDL compiler not available in JDK9. Use the glassfish compiler instead.";
+    private static final String IDL_COMPILER_NOT_AVAILABLE = " IDL compiler not available";
 
     /**
      * Default constructor
@@ -50,7 +51,7 @@ class BuiltInTranslator
     }
 
     @Override
-    void invokeCompiler(List<String> args ) throws MojoExecutionException
+    void invokeCompiler( List<String> args ) throws MojoExecutionException
     {
         Class<?> compilerClass = getCompilerClass();
         invokeCompiler( compilerClass, args );
@@ -85,23 +86,26 @@ class BuiltInTranslator
         }
     }
 
-    private static String getSecondTryMessage( Exception e ) {
+    private static String getSecondTryMessage( Exception e )
+    {
         return builtInCompilerHidden( e ) ? USE_GLASSFISH_IDL : IDL_COMPILER_NOT_AVAILABLE;
     }
 
-    private static boolean builtInCompilerHidden( Exception e ) {
-        return (e instanceof ClassNotFoundException) && isJigsawPresent();
+    private static boolean builtInCompilerHidden( Exception e )
+    {
+        return ( e instanceof ClassNotFoundException ) && isJigsawPresent( );
     }
 
-    private static boolean isJigsawPresent() {
-        return !System.getProperty("java.version").startsWith("1.");
+    private static boolean isJigsawPresent()
+    {
+        return !System.getProperty( "java.version" ).startsWith( "1." );
     }
 
 
     private static void addToolsJarToPath() throws MalformedURLException, ClassNotFoundException
     {
         File javaHome = new File( System.getProperty( "java.home" ) );
-        File toolsJar = new File( javaHome, "../lib/tools.jar");
+        File toolsJar = new File( javaHome, "../lib/tools.jar" );
         URL toolsJarUrl = toolsJar.toURI().toURL();
         getClassLoaderFacade().prependUrls( toolsJarUrl );
 

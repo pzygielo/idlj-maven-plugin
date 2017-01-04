@@ -41,7 +41,8 @@ class GlassfishTranslator
 
     private Class<?> getCompilerClass() throws MojoExecutionException
     {
-        try {
+        try
+        {
             return getClassLoaderFacade().loadClass( GLASSFISH_IDLJ_COMPILER_NAME );
         }
         catch ( ClassNotFoundException e )

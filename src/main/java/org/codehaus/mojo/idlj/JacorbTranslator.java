@@ -22,7 +22,14 @@ package org.codehaus.mojo.idlj;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.util.StringUtils;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -237,7 +244,7 @@ class JacorbTranslator
      * @param in  the <code>InputStream</code> to read from
      * @param out the <code>OutputStream</code> to write into
      */
-    private static void redirectStream(final InputStream in, final OutputStream out)
+    private static void redirectStream( final InputStream in, final OutputStream out )
     {
         Thread stdoutTransferThread = new Thread()
         {

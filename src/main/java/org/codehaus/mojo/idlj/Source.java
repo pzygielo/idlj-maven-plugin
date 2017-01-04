@@ -169,6 +169,9 @@ public class Source
         return additionalArguments;
     }
 
+    /**
+     * @return a <code>List</code> of <code>PackageTranslation</code> that map IDL module names to package names
+     */
     public List<PackageTranslation> getPackageTranslations()
     {
         return packageTranslations;

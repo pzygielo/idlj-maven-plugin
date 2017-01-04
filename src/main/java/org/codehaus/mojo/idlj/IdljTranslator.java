@@ -1,4 +1,5 @@
 package org.codehaus.mojo.idlj;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -31,14 +32,15 @@ import java.util.List;
 /**
  * Parent class for translators that use the IDLJ parameters.
  */
-abstract class IdljTranslator extends AbstractTranslator implements CompilerTranslator {
+abstract class IdljTranslator extends AbstractTranslator implements CompilerTranslator
+{
     /**
      * Convert the provided filename from a Windows separator \\ to a unix/java separator /
      *
      * @param filename file name to fix separator
      * @return filename with all \\ replaced with /
      */
-    private static String fixSeparator(String filename)
+    private static String fixSeparator( String filename )
     {
         return StringUtils.replace( filename, '\\', '/' );
     }
@@ -50,7 +52,7 @@ abstract class IdljTranslator extends AbstractTranslator implements CompilerTran
      * @return the computed path
      * @throws MojoExecutionException if the infrastructure detects a problem
      */
-    private static String getCanonicalPath(File file)
+    private static String getCanonicalPath( File file )
             throws MojoExecutionException
     {
         try
@@ -72,7 +74,7 @@ abstract class IdljTranslator extends AbstractTranslator implements CompilerTran
      * @return the relative path between fromdir to todir
      * @throws MojoExecutionException thrown if an error is detected by the mojo infrastructure
      */
-    private static String toRelativeAndFixSeparator(File fromdir, File todir, boolean replaceSlashesWithDashes)
+    private static String toRelativeAndFixSeparator( File fromdir, File todir, boolean replaceSlashesWithDashes )
             throws MojoExecutionException
     {
         if ( !todir.isAbsolute() )
@@ -136,19 +138,20 @@ abstract class IdljTranslator extends AbstractTranslator implements CompilerTran
      * @param source          the source tag available in the configuration tree of the maven plugin
      * @throws MojoExecutionException the exception is thrown whenever the compilation fails or crashes
      */
-    public void invokeCompiler(String sourceDirectory, File[] includeDirs, String targetDirectory, String idlFile,
-                               Source source )
+    public void invokeCompiler( String sourceDirectory, File[] includeDirs, String targetDirectory, String idlFile,
+                                Source source )
             throws MojoExecutionException
     {
-        List<String> args = getArguments(sourceDirectory, includeDirs, targetDirectory, idlFile, source);
+        List<String> args = getArguments( sourceDirectory, includeDirs, targetDirectory, idlFile, source );
 
-        invokeCompiler(args);
+        invokeCompiler( args );
     }
 
-    abstract void invokeCompiler(List<String> args) throws MojoExecutionException;
+    abstract void invokeCompiler( List<String> args ) throws MojoExecutionException;
 
-    private List<String> getArguments(String sourceDirectory, File[] includeDirs, String targetDirectory,
-                                      String idlFile, Source source) throws MojoExecutionException {
+    private List<String> getArguments( String sourceDirectory, File[] includeDirs, String targetDirectory,
+                                       String idlFile, Source source ) throws MojoExecutionException
+    {
         List<String> args = new ArrayList<>();
         args.add( "-i" );
         args.add( sourceDirectory );
@@ -200,7 +203,7 @@ abstract class IdljTranslator extends AbstractTranslator implements CompilerTran
             }
         }
 
-        addEmitOption(args, source);
+        addEmitOption( args, source );
 
         if ( isOptionEnabled( source.compatible() ) )
         {
@@ -219,7 +222,8 @@ abstract class IdljTranslator extends AbstractTranslator implements CompilerTran
         return args;
     }
 
-    private void addSymbolDefinition(List<String> args, Define define) throws MojoExecutionException {
+    private void addSymbolDefinition( List<String> args, Define define ) throws MojoExecutionException
+    {
         if ( define.getValue() != null )
         {
             throw new MojoExecutionException( "idlj compiler unable to define symbol values" );
@@ -228,7 +232,8 @@ abstract class IdljTranslator extends AbstractTranslator implements CompilerTran
         args.add( define.getSymbol() );
     }
 
-    private void addEmitOption(List<String> args, Source source) {
+    private void addEmitOption( List<String> args, Source source )
+    {
         if ( isOptionEnabled( source.emitStubs() ) )
         {
             args.add( source.emitSkeletons() ? "-fallTIE" : "-fclient" );
@@ -239,7 +244,7 @@ abstract class IdljTranslator extends AbstractTranslator implements CompilerTran
         }
     }
 
-    private boolean isOptionEnabled(Boolean option )
+    private boolean isOptionEnabled( Boolean option )
     {
         return option != null && option;
     }

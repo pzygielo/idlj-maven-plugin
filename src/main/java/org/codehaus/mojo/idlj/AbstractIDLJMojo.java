@@ -95,7 +95,8 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
     private File timestampDirectory;
 
     /**
-     * The compiler to use. Current options are the JDK idlj compiler, Glassfish and JacORB. Should be either "idlj", "glassfish", or "jacorb".
+     * The compiler to use. Current options are the JDK idlj compiler, Glassfish and JacORB.
+     * Should be either "idlj", "glassfish", or "jacorb".
      *
      * @parameter default-value="idlj"
      */
@@ -188,7 +189,7 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
 
     private CompilerTranslator createTranslator() throws MojoExecutionException
     {
-        CompilerTranslator translator = TranslatorType.selectTranslator(compiler);
+        CompilerTranslator translator = TranslatorType.selectTranslator( compiler );
 
         translator.setDebug( debug );
         translator.setFailOnError( failOnError );

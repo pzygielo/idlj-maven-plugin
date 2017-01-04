@@ -19,15 +19,15 @@ package org.codehaus.mojo.idlj;
  * under the License.
  */
 
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
-
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 
 /**
  * Shared capabilities for translators.
@@ -144,7 +144,7 @@ abstract class AbstractTranslator
      * @param args the arguments to pass to the compiler
      * @throws MojoExecutionException if any error occurs
      */
-    void invokeCompilerInProcess(Class<?> compilerClass, List<String> args) throws MojoExecutionException
+    void invokeCompilerInProcess( Class<?> compilerClass, List<String> args ) throws MojoExecutionException
     {
         String[] arguments = args.toArray( new String[args.size()] );
 
@@ -217,7 +217,7 @@ abstract class AbstractTranslator
     {
         for ( String message : err.toString().split( "\n" ) )
         {
-            if ( message.contains("(line ") && !message.contains( "WARNING" ) )
+            if ( message.contains( "(line " ) && !message.contains( "WARNING" ) )
             {
                 getLog().debug( "Failed due to error: <" + message + ">" );
                 return true;

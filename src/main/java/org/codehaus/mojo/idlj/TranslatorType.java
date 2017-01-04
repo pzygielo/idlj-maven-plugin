@@ -24,12 +24,14 @@ import org.apache.maven.plugin.MojoExecutionException;
 /**
  * A selector for the types of IDL translators supported
  */
-enum TranslatorType {
-    BUILT_IN {
+enum TranslatorType
+{
+    BUILT_IN
+    {
         @Override
-        boolean select(String compilerSetting)
+        boolean select( String compilerSetting )
         {
-            return (compilerSetting == null || compilerSetting.equals( "idlj" ));
+            return ( compilerSetting == null || compilerSetting.equals( "idlj" ) );
         }
 
         @Override
@@ -38,22 +40,26 @@ enum TranslatorType {
             return new BuiltInTranslator();
         }
     },
-    GLASSFISH {
+    GLASSFISH
+    {
         @Override
-        boolean select(String compilerSetting) {
-            return compilerSetting.equals("glassfish");
+        boolean select( String compilerSetting )
+        {
+            return compilerSetting.equals( "glassfish" );
         }
 
         @Override
-        CompilerTranslator createTranslator() {
+        CompilerTranslator createTranslator()
+        {
             return new GlassfishTranslator();
         }
     },
-    JACORB {
+    JACORB
+    {
         @Override
-        boolean select(String compilerSetting)
+        boolean select( String compilerSetting )
         {
-            return compilerSetting.equals("jacorb");
+            return compilerSetting.equals( "jacorb" );
         }
 
         @Override
@@ -63,18 +69,20 @@ enum TranslatorType {
         }
     };
 
-    static CompilerTranslator selectTranslator(String compiler) throws MojoExecutionException
+    static CompilerTranslator selectTranslator( String compiler ) throws MojoExecutionException
     {
-        for (TranslatorType type : TranslatorType.values())
-            if (type.select(compiler))
+        for ( TranslatorType type : TranslatorType.values() )
+        {
+            if ( type.select( compiler ) )
             {
                 return type.createTranslator();
             }
+        }
 
-        throw new MojoExecutionException("Compiler not supported: " + compiler);
+        throw new MojoExecutionException( "Compiler not supported: " + compiler );
     }
 
-    abstract boolean select(String compilerSetting);
+    abstract boolean select( String compilerSetting );
 
     abstract CompilerTranslator createTranslator();
 }
