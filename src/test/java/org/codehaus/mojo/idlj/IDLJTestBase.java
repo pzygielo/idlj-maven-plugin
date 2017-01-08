@@ -1,5 +1,13 @@
 package org.codehaus.mojo.idlj;
 
+import org.apache.maven.model.Model;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.compiler.util.scan.InclusionScanException;
+import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
+import org.codehaus.plexus.compiler.util.scan.mapping.SourceMapping;
+import org.junit.After;
+import org.junit.Before;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -10,14 +18,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-
-import org.apache.maven.model.Model;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.compiler.util.scan.InclusionScanException;
-import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
-import org.codehaus.plexus.compiler.util.scan.mapping.SourceMapping;
-import org.junit.After;
-import org.junit.Before;
 
 import static org.junit.Assert.fail;
 
@@ -264,7 +264,7 @@ public class IDLJTestBase {
         boolean throwException(URL... prependedUrls);
     }
 
-    static class NullClassNotFoundFilter implements ClassNotFoundFilter {
+    private static class NullClassNotFoundFilter implements ClassNotFoundFilter {
         @Override
         public boolean throwException(URL... prependedUrls) {
             return false;
@@ -276,12 +276,14 @@ public class IDLJTestBase {
         private List<URL> prependedURLs = new ArrayList<>();
         private String idlCompilerClass;
         private ClassNotFoundFilter filter = new NullClassNotFoundFilter();
+        private boolean toolsJarSpecified;
 
         public void prependUrls(URL... urls) {
             prependedURLs.addAll(Arrays.asList(urls));
         }
 
         public Class loadClass(String className) throws ClassNotFoundException {
+            toolsJarSpecified = containsToolsJar( prependedURLs );
             idlCompilerClass = className;
             if (filter.throwException(prependedURLs.toArray(new URL[prependedURLs.size()])))
             {
@@ -293,6 +295,23 @@ public class IDLJTestBase {
         String getIdlCompilerClass() {
             return idlCompilerClass;
         }
+
+        public boolean isToolsJarSpecified()
+        {
+            return toolsJarSpecified;
+        }
+
+        private boolean containsToolsJar( List<URL> prependedUrls) {
+            for (URL url : prependedUrls)
+                if (!url.getPath().contains("tools.jar")) return true;
+
+            return true;
+        }
+    }
+
+    boolean isToolsJarSpecified()
+    {
+        return loaderFacade.isToolsJarSpecified();
     }
 
     /**

@@ -20,8 +20,8 @@ Usage
 <<<mvn idlj:generate>>>
 +-----
 
- By default, idlj-maven-plugin uses the built-in idlj compiler. To use the glassfish idl compiler (required for JDK 9
- or higher), specify "glassfish" as the compiler type:
+ By default, idlj-maven-plugin uses the built-in idlj compiler, if available. As of Java 9, uses the glassfish idl compiler.
+ To use the glassfish idl compiler explicitly, specify "glassfish" as the compiler type:
 
 -------------------
 ...
@@ -55,7 +55,7 @@ Usage
 
 * Available Configuration Options
 
-* compiler - selects the underlying idl compiler to use (must be either "idlj" - the default, "glassfish", or "jacorb")
+* compiler - Selects the underlying idl compiler to use (must be either "idlj" - the default, "glassfish", or "jacorb").
 
 -------------------
 ...

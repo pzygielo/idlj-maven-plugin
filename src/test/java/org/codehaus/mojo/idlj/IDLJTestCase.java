@@ -21,16 +21,15 @@ package org.codehaus.mojo.idlj;
 
 import com.meterware.simplestub.Memento;
 import com.meterware.simplestub.SystemPropertySupport;
-
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -44,6 +43,7 @@ public class IDLJTestCase extends IdljCommonTests {
 
     private static final String ORACLE_JDK_IDL_CLASS = "com.sun.tools.corba.se.idl.toJavaPortable.Compile";
     private static final String IBM_JDK_IDL_CLASS = "com.ibm.idl.toJavaPortable.Compile";
+    private static final String GLASSFISH_IDL_CLASS = "com.sun.tools.corba.ee.idl.toJavaPortable.Compile";
 
     private List<Memento> mementos = new ArrayList<>();
 
@@ -63,7 +63,7 @@ public class IDLJTestCase extends IdljCommonTests {
     }
 
     @Test
-    public void whenDefaultCompilerSpecified_chooseOracleJdkCompiler() throws Exception {
+    public void whenJdkCompilerSpecified_chooseOracleJdkCompiler() throws Exception {
         defineCompiler("idlj");
 
         mojo.execute();
@@ -72,10 +72,28 @@ public class IDLJTestCase extends IdljCommonTests {
     }
 
     @Test
-    public void whenCompilerNotSpecified_chooseOracleJdkCompiler() throws Exception {
+    public void whenGlassfishCompilerSpecified_chooseGlassfishCompiler() throws Exception {
+        defineCompiler("glassfish");
+
+        mojo.execute();
+
+        assertEquals(GLASSFISH_IDL_CLASS, getIdlCompilerClass());
+    }
+
+    @Test
+    public void whenCompilerNotSpecifiedAndNoModuleSystem_chooseOracleJdkCompiler() throws Exception {
         mojo.execute();
 
         assertEquals(ORACLE_JDK_IDL_CLASS, getIdlCompilerClass());
+    }
+
+    @Test
+    public void whenCompilerNotSpecifiedAndModuleSystemPresent_chooseGlassfishCompiler() throws Exception {
+        System.setProperty("java.version", "9.0");
+
+        mojo.execute();
+
+        assertEquals(GLASSFISH_IDL_CLASS, getIdlCompilerClass());
     }
 
     @Test(expected = MojoExecutionException.class)
@@ -94,36 +112,31 @@ public class IDLJTestCase extends IdljCommonTests {
 
     @Test(expected = MojoExecutionException.class)
     public void whenCompilerNotFound_throwException() throws Exception {
-        setClassNotFoundFilter(new ClassNotFoundFilter() {
-            @Override
-            public boolean throwException(URL... prependedUrls) {
-                return true;
-            }
-        });
+        declareAllClassesNotFound();
 
         mojo.execute();
     }
 
-    private int iteration = 0;
-    private boolean foundToolsJar = false;
-
-    @Test
-    public void whenCompilerNotFound_tryAgainWithToolsJar() throws Exception {
+    private void declareAllClassesNotFound()
+    {
         setClassNotFoundFilter(new ClassNotFoundFilter() {
             @Override
             public boolean throwException(URL... prependedUrls) {
-                if (iteration++ > 0)
-                    foundToolsJar = containsToolsJar(prependedUrls);
                 return true;
             }
         });
+    }
+
+    @Test
+    public void whenCompilerNotFound_tryAgainWithToolsJar() throws Exception {
+        declareAllClassesNotFound();
 
         try {
             mojo.execute();
         } catch (MojoExecutionException ignored) {
         }
 
-        assertTrue(foundToolsJar);
+        assertTrue(isToolsJarSpecified());
     }
 
     private boolean containsToolsJar(URL[] prependedUrls) {
@@ -146,13 +159,9 @@ public class IDLJTestCase extends IdljCommonTests {
     }
 
     @Test
-    public void whenModuleSystemPresent_errorRecommendsGlassfish() throws Exception {
-        setClassNotFoundFilter(new ClassNotFoundFilter() {
-            @Override
-            public boolean throwException(URL... prependedUrls) {
-                return true;
-            }
-        });
+    public void whenBuiltInCompilerSelectedAndModuleSystemPresent_errorRecommendsGlassfish() throws Exception {
+        defineCompiler("idlj");
+        declareAllClassesNotFound();
 
         System.setProperty("java.version", "9.0");
 

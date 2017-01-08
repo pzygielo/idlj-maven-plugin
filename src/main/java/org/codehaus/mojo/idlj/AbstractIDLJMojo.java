@@ -96,9 +96,10 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
 
     /**
      * The compiler to use. Current options are the JDK idlj compiler, Glassfish and JacORB.
-     * Should be either "idlj", "glassfish", or "jacorb".
+     * Should be either "idlj", "glassfish", or "jacorb". If not specified, will select idlj or glassfish,
+     * based on Java version
      *
-     * @parameter default-value="idlj"
+     * @parameter
      */
     private String compiler;
 

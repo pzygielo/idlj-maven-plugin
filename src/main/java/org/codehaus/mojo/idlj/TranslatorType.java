@@ -26,12 +26,33 @@ import org.apache.maven.plugin.MojoExecutionException;
  */
 enum TranslatorType
 {
+    DEFAULT
+    {
+        @Override
+        boolean select( String compilerSetting )
+        {
+            return compilerSetting == null;
+        }
+
+        @Override
+        CompilerTranslator createTranslator()
+        {
+            if (JavaModuleSystemPresent())
+            {
+                return new GlassfishTranslator();
+            }
+            else
+            {
+                return new BuiltInTranslator();
+            }
+        }
+    },
     BUILT_IN
     {
         @Override
         boolean select( String compilerSetting )
         {
-            return compilerSetting == null || compilerSetting.equals( "idlj" );
+            return compilerSetting.equals( "idlj" );
         }
 
         @Override
@@ -68,6 +89,11 @@ enum TranslatorType
             return new JacorbTranslator();
         }
     };
+
+    private static boolean JavaModuleSystemPresent()
+    {
+        return !System.getProperty( "java.version" ).startsWith( "1." );
+    }
 
     static CompilerTranslator selectTranslator( String compiler ) throws MojoExecutionException
     {
