@@ -42,7 +42,7 @@ Usage
 </dependency>
 -----
 
- and specify "jacorb" as the compiler type:
+ (or any desired version) and specify "jacorb" as the compiler type:
 
 -------------------
 ...
