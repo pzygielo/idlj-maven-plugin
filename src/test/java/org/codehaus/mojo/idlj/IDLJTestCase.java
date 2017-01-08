@@ -35,6 +35,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 
 /**
  * Tests access using the Built-in IDL compiler
@@ -82,9 +83,24 @@ public class IDLJTestCase extends IdljCommonTests {
 
     @Test
     public void whenCompilerNotSpecifiedAndNoModuleSystem_chooseOracleJdkCompiler() throws Exception {
+        assumeTrue( isBuiltInOrbPresent());
+
         mojo.execute();
 
         assertEquals(ORACLE_JDK_IDL_CLASS, getIdlCompilerClass());
+    }
+
+    private boolean isBuiltInOrbPresent()
+    {
+        try
+        {
+            Class.forName( "javax.rmi.PortableRemoteObject" );
+            return true;
+        }
+        catch ( ClassNotFoundException e )
+        {
+            return false;
+        }
     }
 
     @Test
@@ -105,6 +121,8 @@ public class IDLJTestCase extends IdljCommonTests {
 
     @Test
     public void whenVMNameContainsIBM_chooseIBMIDLCompiler() throws Exception {
+        assumeTrue( isBuiltInOrbPresent());
+
         System.setProperty("java.vm.vendor", "pretend it is IBM");
         mojo.execute();
         assertEquals(IBM_JDK_IDL_CLASS, getIdlCompilerClass());
