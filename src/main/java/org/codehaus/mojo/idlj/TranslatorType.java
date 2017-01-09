@@ -37,7 +37,7 @@ enum TranslatorType
         @Override
         CompilerTranslator createTranslator()
         {
-            if (JavaModuleSystemPresent())
+            if ( isJavaModuleSystemPresent() )
             {
                 return new GlassfishTranslator();
             }
@@ -90,7 +90,7 @@ enum TranslatorType
         }
     };
 
-    private static boolean JavaModuleSystemPresent()
+    private static boolean isJavaModuleSystemPresent()
     {
         return !System.getProperty( "java.version" ).startsWith( "1." );
     }

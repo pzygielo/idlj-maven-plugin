@@ -83,7 +83,7 @@ public class IDLJTestCase extends IdljCommonTests {
 
     @Test
     public void whenCompilerNotSpecifiedAndNoModuleSystem_chooseOracleJdkCompiler() throws Exception {
-        assumeTrue( isBuiltInOrbPresent());
+        assumeTrue( isBuiltInOrbPresent() );
 
         mojo.execute();
 
