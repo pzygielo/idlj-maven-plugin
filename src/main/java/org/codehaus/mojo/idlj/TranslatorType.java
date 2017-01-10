@@ -37,14 +37,7 @@ enum TranslatorType
         @Override
         CompilerTranslator createTranslator()
         {
-            if ( isJavaModuleSystemPresent() )
-            {
-                return new GlassfishTranslator();
-            }
-            else
-            {
-                return new BuiltInTranslator();
-            }
+            return isJavaModuleSystemPresent() ?  new GlassfishTranslator() : new BuiltInTranslator();
         }
     },
     BUILT_IN
