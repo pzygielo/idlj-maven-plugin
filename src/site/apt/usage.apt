@@ -34,12 +34,16 @@ Usage
  To use the jacorb idl compiler, include a dependency on the jacorb idl compiler:
 
 -----
-<dependency>
-    <groupId>org.jacorb</groupId>
-    <artifactId>idl-compiler</artifactId>
-    <version>3.8</version>
-    <scope>compile</compile>
-</dependency>
+<plugin>
+...
+  <dependencies>
+    <dependency>
+      <groupId>org.jacorb</groupId>
+      <artifactId>jacorb-idl-compiler</artifactId>
+      <version>3.9</version>
+    </dependency>
+  </dependencies>
+...
 -----
 
  (or any desired version) and specify "jacorb" as the compiler type:
