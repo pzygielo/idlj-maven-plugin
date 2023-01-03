@@ -298,8 +298,8 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
         }
         catch ( InclusionScanException e )
         {
-            throw new MojoExecutionException( "Error scanning source root: \'" + sourceDir
-                    + "\' for stale CORBA IDL files to reprocess.", e );
+            throw new MojoExecutionException( "Error scanning source root: '" + sourceDir
+                    + "' for stale CORBA IDL files to reprocess.", e );
         }
     }
 
