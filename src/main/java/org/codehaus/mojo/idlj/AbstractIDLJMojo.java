@@ -317,7 +317,7 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
     {
         if ( isExistingDirectory( sourceDir ) )
         {
-            return (Set<File>) scanner.getIncludedSources( sourceDir, timestampDirectory );
+            return scanner.getIncludedSources( sourceDir, timestampDirectory );
         }
         else
         {
