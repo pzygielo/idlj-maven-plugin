@@ -7,6 +7,11 @@ on:
 
 jobs:
   build:
+    name: Build with JDK ${{ matrix.jdk }}
+    strategy:
+      matrix:
+        jdk:
+        - 8
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -15,7 +20,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: 8
+          java-version: ${{ matrix.jdk }}
           cache: 'maven'
       - name: Verify with Maven
         run: ./mvnw -ntp -P run-its verify
