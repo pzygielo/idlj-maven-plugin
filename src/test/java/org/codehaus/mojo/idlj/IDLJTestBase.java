@@ -411,7 +411,7 @@ public class IDLJTestBase {
         }
     }
 
-    private class TestDependenciesFacade implements AbstractIDLJMojo.DependenciesFacade {
+    private class TestDependenciesFacade implements DependenciesFacade {
         List<File> sourceFiles = new ArrayList<>();
         List<File> targetFiles = new ArrayList<>();
         List<File> writeableDirectories = new ArrayList<>();

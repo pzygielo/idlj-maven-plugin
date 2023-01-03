@@ -360,26 +360,6 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
     }
 
     // ----------------------------------------------------------------------------------------------------
-    // An interface for dependencies on the file system.
-    // ----------------------------------------------------------------------------------------------------
-
-    interface DependenciesFacade
-    {
-        SourceInclusionScanner createSourceInclusionScanner( int updatedWithinMsecs, Set<String> includes,
-                                                             Set<String> excludes );
-
-        void copyFile( File sourceFile, File targetFile ) throws IOException;
-
-        boolean exists( File outputDirectory );
-
-        void createDirectory( File directory );
-
-        boolean isWriteable( File directory );
-
-        boolean isDirectory( File file );
-    }
-
-    // ----------------------------------------------------------------------------------------------------
     // Standard file system dependencies.
     // ----------------------------------------------------------------------------------------------------
 
