@@ -256,14 +256,14 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
                                    idlFile.toString(), source );
     }
 
-    private void copyToTimestampDirectory( File idlFile ) throws MojoExecutionException, IOException
+    private void copyToTimestampDirectory( File idlFile ) throws IOException
     {
         URI relativeURI = getSourceDirectory().toURI().relativize( idlFile.toURI() );
         File timestampFile = new File( timestampDirectory.toURI().resolve( relativeURI ) );
         dependencies.copyFile( idlFile, timestampFile );
     }
 
-    private void reportProcessingNeeded( Set<File> staleGrammars ) throws MojoExecutionException
+    private void reportProcessingNeeded( Set<File> staleGrammars )
     {
         if ( staleGrammars.size() > 0 )
         {
