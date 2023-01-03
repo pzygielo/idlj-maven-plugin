@@ -31,6 +31,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.codehaus.mojo.idlj.TranslatorType.BUILT_IN;
 import static org.codehaus.mojo.idlj.TranslatorType.isJavaModuleSystemPresent;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -124,7 +125,7 @@ public class IDLJTestCase extends IdljCommonTests {
 
     @Test
     public void whenVMNameContainsIBM_chooseIBMIDLCompiler() throws Exception {
-        assumeTrue( isBuiltInOrbPresent());
+        defineCompiler(BUILT_IN.getSelector());
 
         System.setProperty("java.vm.vendor", "pretend it is IBM");
         mojo.execute();

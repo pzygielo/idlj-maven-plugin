@@ -24,6 +24,21 @@
 
   <name>A test with the helloworld sample from sun</name>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.glassfish.corba</groupId>
+        <artifactId>glassfish-corba-omgapi</artifactId>
+        <version>@glassfish.corba.version@</version>
+      </dependency>
+      <dependency>
+        <groupId>org.glassfish.corba</groupId>
+        <artifactId>glassfish-corba-orb</artifactId>
+        <version>@glassfish.corba.version@</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <build>
     <plugins>
       <plugin>
@@ -45,4 +60,22 @@
     </plugins>
   </build>
 
+  <profiles>
+    <profile>
+      <id>corba-for-jdk9plus</id>
+      <activation>
+        <jdk>[9,)</jdk>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.glassfish.corba</groupId>
+          <artifactId>glassfish-corba-omgapi</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>org.glassfish.corba</groupId>
+          <artifactId>glassfish-corba-orb</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 </project>
