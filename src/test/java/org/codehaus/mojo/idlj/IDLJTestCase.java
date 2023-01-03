@@ -31,10 +31,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.codehaus.mojo.idlj.TranslatorType.isJavaModuleSystemPresent;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
 
 /**
@@ -83,6 +85,7 @@ public class IDLJTestCase extends IdljCommonTests {
 
     @Test
     public void whenCompilerNotSpecifiedAndNoModuleSystem_chooseOracleJdkCompiler() throws Exception {
+        assumeFalse( isJavaModuleSystemPresent() );
         assumeTrue( isBuiltInOrbPresent() );
 
         mojo.execute();

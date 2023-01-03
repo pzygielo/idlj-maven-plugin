@@ -48,7 +48,7 @@ enum TranslatorType
         return selector;
     }
 
-    private static boolean isJavaModuleSystemPresent()
+    static boolean isJavaModuleSystemPresent()
     {
         return !System.getProperty( "java.version" ).startsWith( "1." );
     }
