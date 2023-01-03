@@ -51,9 +51,8 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
 {
     /**
      * A <code>List</code> of <code>Source</code> configurations to compile.
-     *
-     * @parameter
      */
+    @Parameter
     private List<Source> sources;
 
     /**
