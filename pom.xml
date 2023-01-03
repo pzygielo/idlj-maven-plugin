@@ -140,7 +140,7 @@
       <dependency>
           <groupId>org.glassfish.corba</groupId>
           <artifactId>idlj</artifactId>
-          <version>4.0.2-b007</version>
+          <version>4.2.4</version>
       </dependency>
 
       <dependency>
