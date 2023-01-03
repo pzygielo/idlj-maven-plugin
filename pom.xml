@@ -146,7 +146,7 @@
       <dependency>
           <groupId>org.jacorb</groupId>
           <artifactId>jacorb-idl-compiler</artifactId>
-          <version>3.8</version>
+          <version>3.9</version>
           <optional>true</optional>
       </dependency>
 
