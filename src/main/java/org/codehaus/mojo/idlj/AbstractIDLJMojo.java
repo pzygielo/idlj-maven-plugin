@@ -21,6 +21,8 @@ package org.codehaus.mojo.idlj;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.compiler.util.scan.InclusionScanException;
@@ -54,53 +56,43 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
 
     /**
      * Activate more detailed debug messages.
-     *
-     * @parameter debug
      */
+    @Parameter
     private boolean debug;
 
     /**
      * Should the plugin fail the build if there's an error while generating sources from IDLs.
-     *
-     * @parameter default-value="true"
      */
+    @Parameter(defaultValue = "true")
     private boolean failOnError;
 
-    /**
-     * @parameter property="project"
-     * @required
-     * @readonly
-     */
+    @Parameter(property = "project", readonly = true)
     private MavenProject project;
 
     /**
      * The granularity in milliseconds of the last modification date for testing whether a source needs recompilation.
-     *
-     * @parameter property="lastModGranularityMs" default-value="0"
      */
+    @Parameter(property = "lastModGranularityMs", defaultValue = "0")
     private int staleMillis;
 
     /**
      * The maven project helper class for adding resources.
-     *
-     * @component role="org.apache.maven.project.MavenProjectHelper"
      */
+    @Component(role = MavenProjectHelper.class)
     private MavenProjectHelper projectHelper;
 
     /**
      * The directory to store the processed grammars. Used so that grammars are not constantly regenerated.
-     *
-     * @parameter default-value="${project.build.directory}/idlj-timestamp"
      */
+    @Parameter(defaultValue = "${project.build.directory}/idlj-timestamp")
     private File timestampDirectory;
 
     /**
      * The compiler to use. Current options are the JDK idlj compiler, Glassfish and JacORB.
      * Should be either "idlj", "glassfish", or "jacorb". If not specified, will select idlj or glassfish,
      * based on Java version
-     *
-     * @parameter
      */
+    @Parameter
     private String compiler;
 
     /**

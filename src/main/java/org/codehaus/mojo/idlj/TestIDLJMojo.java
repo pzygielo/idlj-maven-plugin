@@ -19,6 +19,10 @@ package org.codehaus.mojo.idlj;
  * under the License.
  */
 
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+
 import java.io.File;
 
 /**
@@ -26,31 +30,27 @@ import java.io.File;
  *
  * @author maguro <adc@apache.org>
  * @version $Id$
- * @goal generate-test
- * @phase generate-test-sources
  */
+@Mojo(name = "generate-test", defaultPhase = LifecyclePhase.GENERATE_TEST_SOURCES)
 public class TestIDLJMojo
         extends AbstractIDLJMojo
 {
     /**
      * The source directory containing *.idl files.
-     *
-     * @parameter default-value="${basedir}/src/test/idl"
      */
+    @Parameter(defaultValue = "${basedir}/src/test/idl")
     private File sourceDirectory;
 
     /**
      * Additional include directories containing additional *.idl files required for compilation.
-     *
-     * @parameter
      */
+    @Parameter
     private File[] includeDirs;
 
     /**
      * The directory to output the generated sources to.
-     *
-     * @parameter default-value="${project.build.directory}/generated-test-sources/idl"
      */
+    @Parameter(defaultValue = "${project.build.directory}/generated-test-sources/idl")
     private File outputDirectory;
 
     /**
