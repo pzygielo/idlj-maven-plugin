@@ -21,10 +21,8 @@ package org.codehaus.mojo.idlj;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.compiler.util.scan.InclusionScanException;
 import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.StaleSourceScanner;
@@ -81,12 +79,6 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
      */
     @Parameter(property = "lastModGranularityMs", defaultValue = "0")
     private int staleMillis;
-
-    /**
-     * The maven project helper class for adding resources.
-     */
-    @Component(role = MavenProjectHelper.class)
-    private MavenProjectHelper projectHelper;
 
     /**
      * The directory to store the processed grammars. Used so that grammars are not constantly regenerated.
@@ -365,14 +357,6 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
     protected MavenProject getProject()
     {
         return project;
-    }
-
-    /**
-     * @return the current <code>MavenProjectHelper</code> instance
-     */
-    protected MavenProjectHelper getProjectHelper()
-    {
-        return projectHelper;
     }
 
     // ----------------------------------------------------------------------------------------------------
