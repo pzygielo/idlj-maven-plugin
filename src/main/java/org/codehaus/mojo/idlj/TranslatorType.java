@@ -26,62 +26,47 @@ import org.apache.maven.plugin.MojoExecutionException;
  */
 enum TranslatorType
 {
-    DEFAULT
+    DEFAULT("auto")
     {
-        @Override
-        boolean select( String compilerSetting )
-        {
-            return compilerSetting == null;
-        }
-
         @Override
         CompilerTranslator createTranslator()
         {
             return isJavaModuleSystemPresent() ?  new GlassfishTranslator() : new BuiltInTranslator();
         }
     },
-    BUILT_IN
+    BUILT_IN("idlj")
     {
-        @Override
-        boolean select( String compilerSetting )
-        {
-            return compilerSetting.equals( "idlj" );
-        }
-
         @Override
         CompilerTranslator createTranslator()
         {
             return new BuiltInTranslator();
         }
     },
-    GLASSFISH
-    {
-        @Override
-        boolean select( String compilerSetting )
-        {
-            return compilerSetting.equals( "glassfish" );
-        }
-
+    GLASSFISH("glassfish") {
         @Override
         CompilerTranslator createTranslator()
         {
             return new GlassfishTranslator();
         }
     },
-    JACORB
-    {
-        @Override
-        boolean select( String compilerSetting )
-        {
-            return compilerSetting.equals( "jacorb" );
-        }
-
+    JACORB("jacorb") {
         @Override
         CompilerTranslator createTranslator()
         {
             return new JacorbTranslator();
         }
     };
+
+    private final String selector;
+
+    TranslatorType(String selector) {
+        assert selector != null;
+        this.selector = selector;
+    }
+
+    String getSelector() {
+        return selector;
+    }
 
     private static boolean isJavaModuleSystemPresent()
     {
@@ -101,7 +86,9 @@ enum TranslatorType
         throw new MojoExecutionException( "Compiler not supported: " + compiler );
     }
 
-    abstract boolean select( String compilerSetting );
+    final boolean select( String compilerSetting ) {
+        return selector.equals(compilerSetting);
+    }
 
     abstract CompilerTranslator createTranslator();
 }

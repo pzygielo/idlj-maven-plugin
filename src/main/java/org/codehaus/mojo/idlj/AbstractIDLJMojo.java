@@ -39,6 +39,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.codehaus.mojo.idlj.TranslatorType.DEFAULT;
+
 /**
  * This is abstract class used to decrease the code needed to the creation of the compiler MOJO.
  *
@@ -92,7 +94,7 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
      * Should be either "idlj", "glassfish", or "jacorb". If not specified, will select idlj or glassfish,
      * based on Java version
      */
-    @Parameter
+    @Parameter(defaultValue = "auto")
     private String compiler;
 
     /**
@@ -116,7 +118,13 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
 
     AbstractIDLJMojo( DependenciesFacade dependencies )
     {
+        this(dependencies, DEFAULT);
+    }
+
+    AbstractIDLJMojo(DependenciesFacade dependencies, TranslatorType translatorType)
+    {
         this.dependencies = dependencies;
+        this.compiler = translatorType.getSelector();
     }
 
     /**
