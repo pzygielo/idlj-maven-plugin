@@ -39,7 +39,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.codehaus.mojo.idlj.TranslatorType.DEFAULT;
+import static org.codehaus.mojo.idlj.TranslatorType.AUTO;
 
 /**
  * This is abstract class used to decrease the code needed to the creation of the compiler MOJO.
@@ -118,7 +118,7 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
 
     AbstractIDLJMojo( DependenciesFacade dependencies )
     {
-        this(dependencies, DEFAULT);
+        this(dependencies, AUTO);
     }
 
     AbstractIDLJMojo(DependenciesFacade dependencies, TranslatorType translatorType)

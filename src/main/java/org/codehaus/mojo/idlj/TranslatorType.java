@@ -26,7 +26,7 @@ import org.apache.maven.plugin.MojoExecutionException;
  */
 enum TranslatorType
 {
-    DEFAULT("auto")
+    AUTO("auto")
     {
         @Override
         CompilerTranslator createTranslator()
