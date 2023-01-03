@@ -170,20 +170,6 @@
       </dependency>
   </dependencies>
 
-  <repositories>
-    <repository>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <id>ossrh-snapshots</id>
-      <name>ossrh-snapshots</name>
-      <url>file:///dev/null</url>
-    </repository>
-  </repositories>
-
   <profiles>
     <profile>
       <id>run-its</id>
