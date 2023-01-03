@@ -70,11 +70,10 @@ abstract class IdljTranslator extends AbstractTranslator implements CompilerTran
      *
      * @param fromdir                  not sure
      * @param todir                    what these are
-     * @param replaceSlashesWithDashes true if we need to replace slashes with dashes to accomodate the OS
      * @return the relative path between fromdir to todir
      * @throws MojoExecutionException thrown if an error is detected by the mojo infrastructure
      */
-    private static String toRelativeAndFixSeparator( File fromdir, File todir, boolean replaceSlashesWithDashes )
+    private static String toRelativeAndFixSeparator( File fromdir, File todir )
             throws MojoExecutionException
     {
         if ( !todir.isAbsolute() )
@@ -115,15 +114,6 @@ abstract class IdljTranslator extends AbstractTranslator implements CompilerTran
         }
 
         relative = fixSeparator( relative );
-
-        if ( replaceSlashesWithDashes )
-        {
-            relative = StringUtils.replace( relative, '/', '-' );
-            relative = StringUtils.replace( relative, ':', '-' ); // remove ":"
-            // for absolute
-            // paths in
-            // windows
-        }
 
         return relative;
     }
@@ -167,8 +157,7 @@ abstract class IdljTranslator extends AbstractTranslator implements CompilerTran
         }
 
         args.add( "-td" );
-        args.add( toRelativeAndFixSeparator( new File( System.getProperty( "user.dir" ) ), new File( targetDirectory ),
-                false ) );
+        args.add( toRelativeAndFixSeparator( new File( System.getProperty( "user.dir" ) ), new File( targetDirectory ) ) );
 
         if ( source.getPackagePrefix() != null )
         {
