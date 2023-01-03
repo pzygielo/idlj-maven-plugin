@@ -322,7 +322,7 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
         else
         {
             getLog().debug( "sourceDir isn't a directory" );
-            return new HashSet<File>();
+            return new HashSet<>();
         }
     }
 
@@ -346,7 +346,7 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
         getLog().debug( comment + ": " + set );
         if ( set == null )
         {
-            set = new HashSet<String>();
+            set = new HashSet<>();
             Collections.addAll( set, defaultValues );
         }
         return set;
