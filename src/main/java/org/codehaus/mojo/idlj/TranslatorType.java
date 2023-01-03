@@ -21,47 +21,27 @@ package org.codehaus.mojo.idlj;
 
 import org.apache.maven.plugin.MojoExecutionException;
 
+import java.util.function.Supplier;
+
 /**
  * A selector for the types of IDL translators supported
  */
 enum TranslatorType
 {
-    AUTO("auto")
-    {
-        @Override
-        CompilerTranslator createTranslator()
-        {
-            return isJavaModuleSystemPresent() ?  new GlassfishTranslator() : new BuiltInTranslator();
-        }
-    },
-    BUILT_IN("idlj")
-    {
-        @Override
-        CompilerTranslator createTranslator()
-        {
-            return new BuiltInTranslator();
-        }
-    },
-    GLASSFISH("glassfish") {
-        @Override
-        CompilerTranslator createTranslator()
-        {
-            return new GlassfishTranslator();
-        }
-    },
-    JACORB("jacorb") {
-        @Override
-        CompilerTranslator createTranslator()
-        {
-            return new JacorbTranslator();
-        }
-    };
+    AUTO("auto", () -> isJavaModuleSystemPresent() ?  new GlassfishTranslator() : new BuiltInTranslator()),
+    BUILT_IN("idlj", BuiltInTranslator::new),
+    GLASSFISH("glassfish", GlassfishTranslator::new),
+    JACORB("jacorb", JacorbTranslator::new);
 
     private final String selector;
 
-    TranslatorType(String selector) {
+    private final Supplier<CompilerTranslator> compilerTranslatorSupplier;
+
+    TranslatorType(String selector, Supplier<CompilerTranslator> compilerTranslatorSupplier) {
         assert selector != null;
+        assert compilerTranslatorSupplier != null;
         this.selector = selector;
+        this.compilerTranslatorSupplier = compilerTranslatorSupplier;
     }
 
     String getSelector() {
@@ -90,5 +70,7 @@ enum TranslatorType
         return selector.equals(compilerSetting);
     }
 
-    abstract CompilerTranslator createTranslator();
+    final CompilerTranslator createTranslator() {
+        return compilerTranslatorSupplier.get();
+    }
 }
