@@ -56,6 +56,12 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
     private List<Source> sources;
 
     /**
+     * Additional include directories containing additional *.idl files required for compilation.
+     */
+    @Parameter
+    private File[] includeDirs;
+
+    /**
      * Activate more detailed debug messages.
      */
     @Parameter
@@ -132,14 +138,17 @@ public abstract class AbstractIDLJMojo extends AbstractMojo
     protected abstract File getSourceDirectory();
 
     /**
-     * @return the <code>File[]</code> of the directories to use as include directories for the compilation
-     */
-    protected abstract File[] getIncludeDirs();
-
-    /**
      * @return the path of the directory that will contains the results of the compilation
      */
     protected abstract File getOutputDirectory();
+
+    /**
+     * @return a <code>List</code> of directory to use as <i>include</i>
+     */
+    final File[] getIncludeDirs()
+    {
+        return includeDirs;
+    }
 
     /**
      * Execute the goal of the MOJO that is: compiling the IDL files

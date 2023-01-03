@@ -42,12 +42,6 @@ public class TestIDLJMojo
     private File sourceDirectory;
 
     /**
-     * Additional include directories containing additional *.idl files required for compilation.
-     */
-    @Parameter
-    private File[] includeDirs;
-
-    /**
      * The directory to output the generated sources to.
      */
     @Parameter(defaultValue = "${project.build.directory}/generated-test-sources/idl")
@@ -67,14 +61,6 @@ public class TestIDLJMojo
     protected File getOutputDirectory()
     {
         return outputDirectory;
-    }
-
-    /**
-     * @return a <code>List</code> of directory to use as <i>include</i>
-     */
-    protected File[] getIncludeDirs()
-    {
-        return includeDirs;
     }
 
     /**
