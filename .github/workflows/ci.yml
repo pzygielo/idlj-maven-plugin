@@ -18,5 +18,5 @@ jobs:
           java-version: 8
           cache: 'maven'
       - name: Verify with Maven
-        run: ./mvnw -P run-its verify
+        run: ./mvnw -ntp -P run-its verify
 
