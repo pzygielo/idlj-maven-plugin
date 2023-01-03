@@ -26,6 +26,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
+import static org.codehaus.mojo.idlj.TranslatorType.isJavaModuleSystemPresent;
+
 /**
  * This class implement the <code>CompilerTranslator</code> for the Sun idlj IDL compiler
  *
@@ -93,19 +95,13 @@ class BuiltInTranslator
 
     private static boolean builtInCompilerHidden( Exception e )
     {
-        return compilerNotFound( e ) && isJigsawPresent();
+        return compilerNotFound( e ) && isJavaModuleSystemPresent();
     }
 
     private static boolean compilerNotFound( Exception e )
     {
         return e instanceof ClassNotFoundException;
     }
-
-    private static boolean isJigsawPresent()
-    {
-        return !System.getProperty( "java.version" ).startsWith( "1." );
-    }
-
 
     private static void addToolsJarToPath() throws MalformedURLException, ClassNotFoundException
     {
