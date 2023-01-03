@@ -13,6 +13,7 @@ jobs:
         jdk:
         - 8
         - 11
+        - 17
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
