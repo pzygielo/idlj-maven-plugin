@@ -101,7 +101,7 @@
 
   <properties>
     <mavenVersion>3.2.5</mavenVersion>
-    <glassfish.corba.version>4.2.4</glassfish.corba.version>
+    <glassfish.corba.version>4.2.5</glassfish.corba.version>
   </properties>
 
   <scm>
