@@ -19,11 +19,11 @@ package org.codehaus.mojo.idlj;
  * under the License.
  */
 
+import java.io.File;
+
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-
-import java.io.File;
 
 /**
  * Process CORBA IDL test files in IDLJ.
@@ -32,9 +32,7 @@ import java.io.File;
  * @version $Id$
  */
 @Mojo(name = "generate-test", defaultPhase = LifecyclePhase.GENERATE_TEST_SOURCES)
-public class TestIDLJMojo
-        extends AbstractIDLJMojo
-{
+public class TestIDLJMojo extends AbstractIDLJMojo {
     /**
      * The source directory containing *.idl files.
      */
@@ -50,16 +48,14 @@ public class TestIDLJMojo
     /**
      * @return the directory that contains the source
      */
-    protected File getSourceDirectory()
-    {
+    protected File getSourceDirectory() {
         return sourceDirectory;
     }
 
     /**
      * @return the directory that will contain the generated code
      */
-    protected File getOutputDirectory()
-    {
+    protected File getOutputDirectory() {
         return outputDirectory;
     }
 
@@ -68,8 +64,7 @@ public class TestIDLJMojo
      * compile tests.
      * @param directory the directory from which compilation should occur
      */
-    protected void addCompileSourceRoot( File directory )
-    {
-        getProject().addTestCompileSourceRoot( directory.getAbsolutePath() );
+    protected void addCompileSourceRoot(File directory) {
+        getProject().addTestCompileSourceRoot(directory.getAbsolutePath());
     }
 }

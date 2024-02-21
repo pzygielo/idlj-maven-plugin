@@ -19,35 +19,28 @@ package org.codehaus.mojo.idlj;
  * under the License.
  */
 
-import org.apache.maven.plugin.MojoExecutionException;
-
 import java.util.List;
+
+import org.apache.maven.plugin.MojoExecutionException;
 
 /**
  * This class implements the <code>CompilerTranslator</code> for the Glassfish idlj compiler
  *
  * @author Russell Gold <russell.gold@oracle.com>
  */
-class GlassfishTranslator
-        extends IdljTranslator
-{
+class GlassfishTranslator extends IdljTranslator {
     private static final String GLASSFISH_IDLJ_COMPILER_NAME = "com.sun.tools.corba.ee.idl.toJavaPortable.Compile";
 
     @Override
-    void invokeCompiler( List<String> args ) throws MojoExecutionException
-    {
-        invokeCompilerInProcess( getCompilerClass(), args );
+    void invokeCompiler(List<String> args) throws MojoExecutionException {
+        invokeCompilerInProcess(getCompilerClass(), args);
     }
 
-    private Class<?> getCompilerClass() throws MojoExecutionException
-    {
-        try
-        {
-            return getClassLoaderFacade().loadClass( GLASSFISH_IDLJ_COMPILER_NAME );
-        }
-        catch ( ClassNotFoundException e )
-        {
-            throw new MojoExecutionException( " IDL compiler not available", e );
+    private Class<?> getCompilerClass() throws MojoExecutionException {
+        try {
+            return getClassLoaderFacade().loadClass(GLASSFISH_IDLJ_COMPILER_NAME);
+        } catch (ClassNotFoundException e) {
+            throw new MojoExecutionException(" IDL compiler not available", e);
         }
     }
 }

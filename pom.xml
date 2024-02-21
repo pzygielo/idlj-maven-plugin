@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.codehaus.mojo</groupId>
     <artifactId>mojo-parent</artifactId>
@@ -8,46 +8,44 @@
     <relativePath />
   </parent>
   <artifactId>idlj-maven-plugin</artifactId>
+  <version>1.2.3-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>CORBA IDL Compiler Maven Plugin</name>
-  <version>1.2.3-SNAPSHOT</version>
-  <description>
-    This plugin is for processing IDL files into java sources.
-  </description>
-  <prerequisites>
-    <maven>${mavenVersion}</maven>
-  </prerequisites>
-
-  <issueManagement>
-    <system>github</system>
-    <url>https://github.com/mojohaus/idlj-maven-plugin/issues/</url>
-  </issueManagement>
+  <description>This plugin is for processing IDL files into java sources.</description>
 
   <inceptionYear>2005</inceptionYear>
 
+  <licenses>
+    <license>
+      <name>Apache License 2</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
   <developers>
-      <developer>
-        <id>russgold</id>
-        <name>Russell Gold</name>
-        <email>russell.gold@oracle.com</email>
-        <organization>Oracle Corp.</organization>
-        <organizationUrl>http://www.oracle.com</organizationUrl>
-        <roles>
-          <role>Maintainer</role>
-        </roles>
-        <timezone>EST</timezone>
-      </developer>
-      <developer>
-        <id>kbravo</id>
-        <name>Kris Bravo</name>
-        <email>m2@corridor-software.us</email>
-        <organization>Corridor Software, Inc.</organization>
-        <organizationUrl>http://www.corridor-software.us</organizationUrl>
-        <roles>
-          <role>Maintainer</role>
-        </roles>
-        <timezone>EST</timezone>
-      </developer>
+    <developer>
+      <id>russgold</id>
+      <name>Russell Gold</name>
+      <email>russell.gold@oracle.com</email>
+      <organization>Oracle Corp.</organization>
+      <organizationUrl>http://www.oracle.com</organizationUrl>
+      <roles>
+        <role>Maintainer</role>
+      </roles>
+      <timezone>EST</timezone>
+    </developer>
+    <developer>
+      <id>kbravo</id>
+      <name>Kris Bravo</name>
+      <email>m2@corridor-software.us</email>
+      <organization>Corridor Software, Inc.</organization>
+      <organizationUrl>http://www.corridor-software.us</organizationUrl>
+      <roles>
+        <role>Maintainer</role>
+      </roles>
+      <timezone>EST</timezone>
+    </developer>
     <developer>
       <id>maguro</id>
       <name>Alan D. Cabrera</name>
@@ -90,27 +88,27 @@
       </roles>
     </contributor>
   </contributors>
+  <prerequisites>
+    <maven>${mavenVersion}</maven>
+  </prerequisites>
 
-  <licenses>
-    <license>
-      <name>Apache License 2</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
+  <scm>
+    <connection>scm:git:https://github.com/mojohaus/idlj-maven-plugin.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/mojohaus/idlj-maven-plugin.git</developerConnection>
+    <tag>HEAD</tag>
+    <url>https://github.com/mojohaus/idlj-maven-plugin</url>
+  </scm>
+
+  <issueManagement>
+    <system>github</system>
+    <url>https://github.com/mojohaus/idlj-maven-plugin/issues/</url>
+  </issueManagement>
 
   <properties>
     <mavenVersion>3.9.6</mavenVersion>
     <glassfish.corba.version>4.2.5</glassfish.corba.version>
     <maven.compiler.release>8</maven.compiler.release>
   </properties>
-
-  <scm>
-    <connection>scm:git:https://github.com/mojohaus/idlj-maven-plugin.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/mojohaus/idlj-maven-plugin.git</developerConnection>
-    <url>https://github.com/mojohaus/idlj-maven-plugin</url>
-    <tag>HEAD</tag>
-  </scm>
 
   <dependencyManagement>
     <dependencies>
@@ -128,81 +126,81 @@
   </dependencyManagement>
 
   <dependencies>
-      <dependency>
-          <groupId>org.apache.maven</groupId>
-          <artifactId>maven-model</artifactId>
-          <version>${mavenVersion}</version>
-          <scope>provided</scope>
-      </dependency>
-      <dependency>
-          <groupId>org.apache.maven</groupId>
-          <artifactId>maven-core</artifactId>
-          <version>${mavenVersion}</version>
-          <scope>provided</scope>
-      </dependency>
-      <dependency>
-          <groupId>org.apache.maven</groupId>
-          <artifactId>maven-plugin-api</artifactId>
-          <version>${mavenVersion}</version>
-          <scope>provided</scope>
-      </dependency>
-      <dependency>
-          <groupId>org.apache.maven.plugin-tools</groupId>
-          <artifactId>maven-plugin-annotations</artifactId>
-          <scope>provided</scope>
-      </dependency>
-      <dependency>
-          <groupId>org.codehaus.plexus</groupId>
-          <artifactId>plexus-utils</artifactId>
-          <version>4.0.0</version>
-      </dependency>
-      <dependency>
-          <groupId>org.codehaus.plexus</groupId>
-          <artifactId>plexus-compiler-api</artifactId>
-          <version>2.14.2</version>
-      </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-model</artifactId>
+      <version>${mavenVersion}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-core</artifactId>
+      <version>${mavenVersion}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-api</artifactId>
+      <version>${mavenVersion}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.plugin-tools</groupId>
+      <artifactId>maven-plugin-annotations</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+      <version>4.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-compiler-api</artifactId>
+      <version>2.14.2</version>
+    </dependency>
 
-      <dependency>
-          <groupId>org.glassfish.corba</groupId>
-          <artifactId>idlj</artifactId>
-          <version>${glassfish.corba.version}</version>
-      </dependency>
+    <dependency>
+      <groupId>org.glassfish.corba</groupId>
+      <artifactId>idlj</artifactId>
+      <version>${glassfish.corba.version}</version>
+    </dependency>
 
-      <dependency>
-          <groupId>org.jacorb</groupId>
-          <artifactId>jacorb-idl-compiler</artifactId>
-          <version>3.9</version>
-          <optional>true</optional>
-      </dependency>
+    <dependency>
+      <groupId>org.jacorb</groupId>
+      <artifactId>jacorb-idl-compiler</artifactId>
+      <version>3.9</version>
+      <optional>true</optional>
+    </dependency>
 
-      <dependency>
-          <groupId>org.hamcrest</groupId>
-          <artifactId>hamcrest-all</artifactId>
-          <version>1.3</version>
-          <scope>test</scope>
-      </dependency>
-      <dependency>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-          <version>4.13.2</version>
-          <scope>test</scope>
-      </dependency>
-      <dependency>
-          <groupId>com.meterware.simplestub</groupId>
-          <artifactId>simplestub</artifactId>
-          <version>1.3.3</version>
-          <scope>test</scope>
-      </dependency>
-      <dependency>
-          <groupId>org.glassfish.corba</groupId>
-          <artifactId>glassfish-corba-omgapi</artifactId>
-          <scope>test</scope>
-      </dependency>
-      <dependency>
-          <groupId>org.glassfish.corba</groupId>
-          <artifactId>glassfish-corba-orb</artifactId>
-          <scope>test</scope>
-      </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-all</artifactId>
+      <version>1.3</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.meterware.simplestub</groupId>
+      <artifactId>simplestub</artifactId>
+      <version>1.3.3</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.corba</groupId>
+      <artifactId>glassfish-corba-omgapi</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.corba</groupId>
+      <artifactId>glassfish-corba-orb</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -220,7 +218,7 @@
         <executions>
           <execution>
             <goals>
-                <goal>enforce</goal>
+              <goal>enforce</goal>
             </goals>
           </execution>
         </executions>

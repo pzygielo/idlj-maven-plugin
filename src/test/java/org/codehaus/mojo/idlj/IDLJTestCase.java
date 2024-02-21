@@ -19,6 +19,10 @@ package org.codehaus.mojo.idlj;
  * under the License.
  */
 
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.meterware.simplestub.Memento;
 import com.meterware.simplestub.SystemPropertySupport;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -26,10 +30,6 @@ import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.codehaus.mojo.idlj.TranslatorType.BUILT_IN;
 import static org.codehaus.mojo.idlj.TranslatorType.isJavaModuleSystemPresent;
@@ -86,23 +86,19 @@ public class IDLJTestCase extends IdljCommonTests {
 
     @Test
     public void whenCompilerNotSpecifiedAndNoModuleSystem_chooseOracleJdkCompiler() throws Exception {
-        assumeFalse( isJavaModuleSystemPresent() );
-        assumeTrue( isBuiltInOrbPresent() );
+        assumeFalse(isJavaModuleSystemPresent());
+        assumeTrue(isBuiltInOrbPresent());
 
         mojo.execute();
 
         assertEquals(ORACLE_JDK_IDL_CLASS, getIdlCompilerClass());
     }
 
-    private boolean isBuiltInOrbPresent()
-    {
-        try
-        {
-            Class.forName( "javax.rmi.PortableRemoteObject" );
+    private boolean isBuiltInOrbPresent() {
+        try {
+            Class.forName("javax.rmi.PortableRemoteObject");
             return true;
-        }
-        catch ( ClassNotFoundException e )
-        {
+        } catch (ClassNotFoundException e) {
             return false;
         }
     }
@@ -139,8 +135,7 @@ public class IDLJTestCase extends IdljCommonTests {
         mojo.execute();
     }
 
-    private void declareAllClassesNotFound()
-    {
+    private void declareAllClassesNotFound() {
         setClassNotFoundFilter(new ClassNotFoundFilter() {
             @Override
             public boolean throwException(URL... prependedUrls) {
@@ -162,8 +157,7 @@ public class IDLJTestCase extends IdljCommonTests {
     }
 
     private boolean containsToolsJar(URL[] prependedUrls) {
-        for (URL url : prependedUrls)
-            if (!url.getPath().contains("tools.jar")) return true;
+        for (URL url : prependedUrls) if (!url.getPath().contains("tools.jar")) return true;
 
         return true;
     }

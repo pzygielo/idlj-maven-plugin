@@ -13,7 +13,6 @@ public class JacorbIdlTestCase extends IDLJTestBase {
         defineCompiler("jacorb");
     }
 
-
     @Test
     public void whenSpecified_chooseJacorbCompiler() throws Exception {
         mojo.execute();
@@ -58,7 +57,8 @@ public class JacorbIdlTestCase extends IDLJTestBase {
     }
 
     @Test
-    public void whenSymbolsDefinedWithoutValues_createSymbolArguments() throws NoSuchFieldException, IllegalAccessException, MojoExecutionException {
+    public void whenSymbolsDefinedWithoutValues_createSymbolArguments()
+            throws NoSuchFieldException, IllegalAccessException, MojoExecutionException {
         Source source = createSource();
         createDefine(source, "symbol1");
         createDefine(source, "symbol2");
@@ -68,7 +68,8 @@ public class JacorbIdlTestCase extends IDLJTestBase {
     }
 
     @Test
-    public void whenSymbolsDefinedWithValues_createSymbolArguments() throws NoSuchFieldException, IllegalAccessException, MojoExecutionException {
+    public void whenSymbolsDefinedWithValues_createSymbolArguments()
+            throws NoSuchFieldException, IllegalAccessException, MojoExecutionException {
         Source source = createSource();
         createDefine(source, "symbol1", "value1");
         createDefine(source, "symbol2", "value2");
@@ -78,7 +79,8 @@ public class JacorbIdlTestCase extends IDLJTestBase {
     }
 
     @Test
-    public void whenEmitStubsOnly_generateNoSkelArgument() throws NoSuchFieldException, IllegalAccessException, MojoExecutionException {
+    public void whenEmitStubsOnly_generateNoSkelArgument()
+            throws NoSuchFieldException, IllegalAccessException, MojoExecutionException {
         Source source = createSource();
         setGenerateStubs(source, true);
         setGenerateSkeletons(source, false);
@@ -87,7 +89,8 @@ public class JacorbIdlTestCase extends IDLJTestBase {
     }
 
     @Test
-    public void whenEmitSkeletonsOnly_generateNoStubArgument() throws NoSuchFieldException, IllegalAccessException, MojoExecutionException {
+    public void whenEmitSkeletonsOnly_generateNoStubArgument()
+            throws NoSuchFieldException, IllegalAccessException, MojoExecutionException {
         Source source = createSource();
         setGenerateStubs(source, false);
         setGenerateSkeletons(source, true);
@@ -96,7 +99,8 @@ public class JacorbIdlTestCase extends IDLJTestBase {
     }
 
     @Test
-    public void whenAdditionalArgumentsSpecified_copyToCommand() throws NoSuchFieldException, IllegalAccessException, MojoExecutionException {
+    public void whenAdditionalArgumentsSpecified_copyToCommand()
+            throws NoSuchFieldException, IllegalAccessException, MojoExecutionException {
         Source source = createSource();
         defineAdditionalArguments(source, "-arg1", "arg2", "-sloppy_names");
         mojo.execute();

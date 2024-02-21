@@ -70,14 +70,16 @@ public class IdljCommonTests extends IDLJTestBase {
     }
 
     @Test(expected = MojoExecutionException.class)
-    public void whenSymbolDefineWithValue_throwException() throws NoSuchFieldException, IllegalAccessException, MojoExecutionException {
+    public void whenSymbolDefineWithValue_throwException()
+            throws NoSuchFieldException, IllegalAccessException, MojoExecutionException {
         Source source = createSource();
         createDefine(source, "symbol1", "value1");
         mojo.execute();
     }
 
     @Test
-    public void whenSymbolsDefined_createSymbolArguments() throws NoSuchFieldException, IllegalAccessException, MojoExecutionException {
+    public void whenSymbolsDefined_createSymbolArguments()
+            throws NoSuchFieldException, IllegalAccessException, MojoExecutionException {
         Source source = createSource();
         createDefine(source, "symbol1");
         createDefine(source, "symbol2");
@@ -93,7 +95,8 @@ public class IdljCommonTests extends IDLJTestBase {
     }
 
     @Test
-    public void whenEmitStubsOnly_generateFClientArgument() throws NoSuchFieldException, IllegalAccessException, MojoExecutionException {
+    public void whenEmitStubsOnly_generateFClientArgument()
+            throws NoSuchFieldException, IllegalAccessException, MojoExecutionException {
         Source source = createSource();
         setGenerateStubs(source, true);
         setGenerateSkeletons(source, false);
@@ -102,7 +105,8 @@ public class IdljCommonTests extends IDLJTestBase {
     }
 
     @Test
-    public void whenEmitSkeletonsOnly_generateFServerArgument() throws NoSuchFieldException, IllegalAccessException, MojoExecutionException {
+    public void whenEmitSkeletonsOnly_generateFServerArgument()
+            throws NoSuchFieldException, IllegalAccessException, MojoExecutionException {
         Source source = createSource();
         setGenerateStubs(source, false);
         setGenerateSkeletons(source, true);
@@ -111,7 +115,8 @@ public class IdljCommonTests extends IDLJTestBase {
     }
 
     @Test
-    public void whenEmitNeitherStubsNorSkeletons_generateFServerTieArgument() throws NoSuchFieldException, IllegalAccessException, MojoExecutionException {
+    public void whenEmitNeitherStubsNorSkeletons_generateFServerTieArgument()
+            throws NoSuchFieldException, IllegalAccessException, MojoExecutionException {
         Source source = createSource();
         setGenerateStubs(source, false);
         setGenerateSkeletons(source, false);
@@ -120,7 +125,8 @@ public class IdljCommonTests extends IDLJTestBase {
     }
 
     @Test
-    public void whenAdditionalArgumentsSpecified_copyToCommand() throws NoSuchFieldException, IllegalAccessException, MojoExecutionException {
+    public void whenAdditionalArgumentsSpecified_copyToCommand()
+            throws NoSuchFieldException, IllegalAccessException, MojoExecutionException {
         Source source = createSource();
         defineAdditionalArguments(source, "-arg1", "arg2");
         mojo.execute();

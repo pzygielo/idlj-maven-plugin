@@ -19,11 +19,11 @@ package org.codehaus.mojo.idlj;
  * under the License.
  */
 
+import java.io.File;
+
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-
-import java.io.File;
 
 /**
  * Process CORBA IDL files in IDLJ.
@@ -32,9 +32,7 @@ import java.io.File;
  * @version $Id$
  */
 @Mojo(name = "generate", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
-public class IDLJMojo
-        extends AbstractIDLJMojo
-{
+public class IDLJMojo extends AbstractIDLJMojo {
     /**
      * The source directory containing *.idl files.
      */
@@ -47,32 +45,26 @@ public class IDLJMojo
     @Parameter(defaultValue = "${project.build.directory}/generated-sources/idl")
     private File outputDirectory;
 
-
     /**
      * Constructs a standard IDL translation Mojo.
      */
-    public IDLJMojo()
-    {
-    }
+    public IDLJMojo() {}
 
-    IDLJMojo( DependenciesFacade dependenciesFacade )
-    {
-        super( dependenciesFacade );
+    IDLJMojo(DependenciesFacade dependenciesFacade) {
+        super(dependenciesFacade);
     }
 
     /**
      * @return the source directory that contains the IDL files
      */
-    protected File getSourceDirectory()
-    {
+    protected File getSourceDirectory() {
         return sourceDirectory;
     }
 
     /**
      * @return the path of the directory that will contains the results of the compilation
      */
-    protected File getOutputDirectory()
-    {
+    protected File getOutputDirectory() {
         return outputDirectory;
     }
 
@@ -81,8 +73,7 @@ public class IDLJMojo
      *
      * @param dir the path of directory that contains the IDL files
      */
-    protected void setSourceDirectory( File dir )
-    {
+    protected void setSourceDirectory(File dir) {
         this.sourceDirectory = dir;
     }
 
@@ -91,9 +82,7 @@ public class IDLJMojo
      *
      * @param directory a directory containing generated java files to be compiled.
      */
-    protected void addCompileSourceRoot( File directory )
-    {
-        getProject().addCompileSourceRoot( directory.getPath() );
+    protected void addCompileSourceRoot(File directory) {
+        getProject().addCompileSourceRoot(directory.getPath());
     }
-
 }

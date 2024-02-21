@@ -1,13 +1,5 @@
 package org.codehaus.mojo.idlj;
 
-import org.apache.maven.model.Model;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.compiler.util.scan.InclusionScanException;
-import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
-import org.codehaus.plexus.compiler.util.scan.mapping.SourceMapping;
-import org.junit.After;
-import org.junit.Before;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -18,6 +10,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+
+import org.apache.maven.model.Model;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.compiler.util.scan.InclusionScanException;
+import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
+import org.codehaus.plexus.compiler.util.scan.mapping.SourceMapping;
+import org.junit.After;
+import org.junit.Before;
 
 import static org.junit.Assert.fail;
 
@@ -48,7 +48,7 @@ public class IDLJTestBase {
 
     @After
     public void tearDown() {
-        System.setProperties( savedProperties );
+        System.setProperties(savedProperties);
     }
 
     private void ignoreMavenProject() throws NoSuchFieldException, IllegalAccessException {
@@ -56,33 +56,33 @@ public class IDLJTestBase {
     }
 
     private void defineTimestampDirectory(String path) throws NoSuchFieldException, IllegalAccessException {
-        setPrivateFieldValue( mojo, "timestampDirectory", new File( path ) );
+        setPrivateFieldValue(mojo, "timestampDirectory", new File(path));
     }
 
     private void defineOutputDirectory(String path) throws NoSuchFieldException, IllegalAccessException {
-        setPrivateFieldValue( mojo, "outputDirectory", new File( path ) );
+        setPrivateFieldValue(mojo, "outputDirectory", new File(path));
     }
 
     private void defineSourceDirectory(String path) throws NoSuchFieldException, IllegalAccessException {
         mojo.setSourceDirectory(new File(path));
-        testDependenciesFacade.readOnlyDirectories.add( new File( path ) );
+        testDependenciesFacade.readOnlyDirectories.add(new File(path));
     }
 
-    private void setPrivateFieldValue(Object obj, String fieldName, Object value) throws NoSuchFieldException, IllegalAccessException {
+    private void setPrivateFieldValue(Object obj, String fieldName, Object value)
+            throws NoSuchFieldException, IllegalAccessException {
         Class theClass = obj.getClass();
         setPrivateFieldValue(obj, theClass, fieldName, value);
     }
 
-    private void setPrivateFieldValue(Object obj, Class theClass, String fieldName, Object value) throws NoSuchFieldException, IllegalAccessException {
+    private void setPrivateFieldValue(Object obj, Class theClass, String fieldName, Object value)
+            throws NoSuchFieldException, IllegalAccessException {
         try {
             Field field = theClass.getDeclaredField(fieldName);
             field.setAccessible(true);
             field.set(obj, value);
         } catch (NoSuchFieldException e) {
-            if (theClass.equals(Object.class))
-                throw e;
-            else
-                setPrivateFieldValue(obj, theClass.getSuperclass(), fieldName, value);
+            if (theClass.equals(Object.class)) throw e;
+            else setPrivateFieldValue(obj, theClass.getSuperclass(), fieldName, value);
         }
     }
 
@@ -90,7 +90,8 @@ public class IDLJTestBase {
         setPrivateFieldValue(source, "packagePrefix", aPrefix);
     }
 
-    final void createPrefix(Source source, String aType, String aPrefix) throws NoSuchFieldException, IllegalAccessException {
+    final void createPrefix(Source source, String aType, String aPrefix)
+            throws NoSuchFieldException, IllegalAccessException {
         PackagePrefix prefix = createPrefix(source);
         setPrivateFieldValue(prefix, "type", aType);
         setPrivateFieldValue(prefix, "prefix", aPrefix);
@@ -105,20 +106,19 @@ public class IDLJTestBase {
 
     private List<PackagePrefix> getPrefixes(Source source) throws NoSuchFieldException, IllegalAccessException {
         List<PackagePrefix> prefixes = getPrivateFieldValue(source, "packagePrefixes");
-        if (prefixes == null)
-            setPrivateFieldValue(source, "packagePrefixes", prefixes = new ArrayList<>());
+        if (prefixes == null) setPrivateFieldValue(source, "packagePrefixes", prefixes = new ArrayList<>());
         return prefixes;
     }
 
-    final void createTranslation(Source source, String aType, String aPackage) throws NoSuchFieldException,
-                                                                                          IllegalAccessException {
-        PackageTranslation translation = createTranslation( source );
+    final void createTranslation(Source source, String aType, String aPackage)
+            throws NoSuchFieldException, IllegalAccessException {
+        PackageTranslation translation = createTranslation(source);
         setPrivateFieldValue(translation, "type", aType);
         setPrivateFieldValue(translation, "replacementPackage", aPackage);
     }
 
     private PackageTranslation createTranslation(Source source) throws NoSuchFieldException, IllegalAccessException {
-        List<PackageTranslation> translations = getTranslations( source );
+        List<PackageTranslation> translations = getTranslations(source);
         PackageTranslation translation = new PackageTranslation();
         translations.add(translation);
         return translation;
@@ -126,10 +126,8 @@ public class IDLJTestBase {
 
     private List<PackageTranslation> getTranslations(Source source)
             throws NoSuchFieldException, IllegalAccessException {
-        List<PackageTranslation> translations =
-                getPrivateFieldValue(source, "packageTranslations");
-        if (translations == null)
-            setPrivateFieldValue(source, "packageTranslations", translations = new ArrayList<>());
+        List<PackageTranslation> translations = getPrivateFieldValue(source, "packageTranslations");
+        if (translations == null) setPrivateFieldValue(source, "packageTranslations", translations = new ArrayList<>());
         return translations;
     }
 
@@ -146,10 +144,8 @@ public class IDLJTestBase {
             field.setAccessible(true);
             return (T) field.get(obj);
         } catch (NoSuchFieldException e) {
-            if (theClass.equals(Object.class))
-                throw e;
-            else
-                return (T) getPrivateFieldValue(obj, theClass.getSuperclass(), fieldName);
+            if (theClass.equals(Object.class)) throw e;
+            else return (T) getPrivateFieldValue(obj, theClass.getSuperclass(), fieldName);
         }
     }
 
@@ -161,8 +157,7 @@ public class IDLJTestBase {
 
     private List<Source> getSources() throws NoSuchFieldException, IllegalAccessException {
         List<Source> sources = getPrivateFieldValue(mojo, "sources");
-        if (sources == null)
-            setPrivateFieldValue(mojo, "sources", sources = new ArrayList<>());
+        if (sources == null) setPrivateFieldValue(mojo, "sources", sources = new ArrayList<>());
         return sources;
     }
 
@@ -182,8 +177,7 @@ public class IDLJTestBase {
 
     private List<Define> getDefines(Source source) throws NoSuchFieldException, IllegalAccessException {
         List<Define> defines = getPrivateFieldValue(source, "defines");
-        if (defines == null)
-            setPrivateFieldValue(source, "defines", defines = new ArrayList<>());
+        if (defines == null) setPrivateFieldValue(source, "defines", defines = new ArrayList<>());
         return defines;
     }
 
@@ -207,17 +201,16 @@ public class IDLJTestBase {
     }
 
     final String getCurrentDir() {
-        return System.getProperty("user.dir").replace('\\','/');
+        return System.getProperty("user.dir").replace('\\', '/');
     }
 
     final void assertArgumentsDoesNotContain(String... expectedArgs) {
-        if (contains(args, expectedArgs))
-            fail( toArgumentString( expectedArgs ) + " found in " + toArgumentString(args));
+        if (contains(args, expectedArgs)) fail(toArgumentString(expectedArgs) + " found in " + toArgumentString(args));
     }
 
     final void assertArgumentsContains(String... expectedArgs) {
         if (!contains(args, expectedArgs))
-            fail( toArgumentString( expectedArgs ) + " not found in " + toArgumentString(args));
+            fail(toArgumentString(expectedArgs) + " not found in " + toArgumentString(args));
     }
 
     private boolean contains(String[] container, String[] candidate) {
@@ -226,16 +219,14 @@ public class IDLJTestBase {
         return false;
     }
 
-    private boolean isSubArrayAt( String[] container, int start, String[] candidate ) {
-        for (int j = 0; j < candidate.length; j++)
-            if (!container[start+j].equals( candidate[j])) return false;
+    private boolean isSubArrayAt(String[] container, int start, String[] candidate) {
+        for (int j = 0; j < candidate.length; j++) if (!container[start + j].equals(candidate[j])) return false;
         return true;
     }
 
     private String toArgumentString(String... args) {
         StringBuilder sb = new StringBuilder();
-        for (String arg : args)
-            sb.append( arg ).append( ' ' );
+        for (String arg : args) sb.append(arg).append(' ');
         return sb.toString().trim();
     }
 
@@ -244,9 +235,8 @@ public class IDLJTestBase {
     }
 
     final void defineIncludePaths(String... paths) throws NoSuchFieldException, IllegalAccessException {
-        File[] dirs = new File[ paths.length ];
-        for (int i = 0; i < dirs.length; i++)
-            dirs[i] = new File( paths[i] );
+        File[] dirs = new File[paths.length];
+        for (int i = 0; i < dirs.length; i++) dirs[i] = new File(paths[i]);
         setPrivateFieldValue(mojo, "includeDirs", dirs);
     }
 
@@ -283,10 +273,9 @@ public class IDLJTestBase {
         }
 
         public Class loadClass(String className) throws ClassNotFoundException {
-            toolsJarSpecified = containsToolsJar( prependedURLs );
+            toolsJarSpecified = containsToolsJar(prependedURLs);
             idlCompilerClass = className;
-            if (filter.throwException(prependedURLs.toArray(new URL[prependedURLs.size()])))
-            {
+            if (filter.throwException(prependedURLs.toArray(new URL[prependedURLs.size()]))) {
                 throw new ClassNotFoundException(className);
             }
             return TestIdlCompiler.class;
@@ -296,21 +285,18 @@ public class IDLJTestBase {
             return idlCompilerClass;
         }
 
-        public boolean isToolsJarSpecified()
-        {
+        public boolean isToolsJarSpecified() {
             return toolsJarSpecified;
         }
 
-        private boolean containsToolsJar( List<URL> prependedUrls) {
-            for (URL url : prependedUrls)
-                if (!url.getPath().contains("tools.jar")) return true;
+        private boolean containsToolsJar(List<URL> prependedUrls) {
+            for (URL url : prependedUrls) if (!url.getPath().contains("tools.jar")) return true;
 
             return true;
         }
     }
 
-    boolean isToolsJarSpecified()
-    {
+    boolean isToolsJarSpecified() {
         return loaderFacade.isToolsJarSpecified();
     }
 
@@ -318,8 +304,7 @@ public class IDLJTestBase {
      * Specifies a filter to determine whether to throw CNFE when the translator attempts to look up a compiler.
      * @param filter the new filter
      */
-    void setClassNotFoundFilter(ClassNotFoundFilter filter)
-    {
+    void setClassNotFoundFilter(ClassNotFoundFilter filter) {
         loaderFacade.filter = filter;
     }
 
@@ -327,15 +312,13 @@ public class IDLJTestBase {
         private static String errorMessage;
 
         public static void main(String... args) {
-            IDLJTestBase.args = new String[ args.length];
-            for (int i = 0; i < args.length; i++)
-                IDLJTestBase.args[i] = args[i].replace('\\','/');
+            IDLJTestBase.args = new String[args.length];
+            for (int i = 0; i < args.length; i++) IDLJTestBase.args[i] = args[i].replace('\\', '/');
 
-            if ( errorMessage != null )
-                System.err.println( errorMessage );
+            if (errorMessage != null) System.err.println(errorMessage);
         }
 
-        @SuppressWarnings("unused")  // used via reflection
+        @SuppressWarnings("unused") // used via reflection
         public static void compile(String... args) {
             main(args);
         }
@@ -349,8 +332,7 @@ public class IDLJTestBase {
 
         private Set<File> includedSources = new HashSet<>();
 
-        public void addSourceMapping(SourceMapping sourceMapping) {
-        }
+        public void addSourceMapping(SourceMapping sourceMapping) {}
 
         public Set getIncludedSources(File sourceDir, File targetDir) throws InclusionScanException {
             return includedSources;
@@ -362,53 +344,41 @@ public class IDLJTestBase {
             return false;
         }
 
-        public void debug(CharSequence charSequence) {
-        }
+        public void debug(CharSequence charSequence) {}
 
-        public void debug(CharSequence charSequence, Throwable throwable) {
-        }
+        public void debug(CharSequence charSequence, Throwable throwable) {}
 
-        public void debug(Throwable throwable) {
-        }
+        public void debug(Throwable throwable) {}
 
         public boolean isInfoEnabled() {
             return false;
         }
 
-        public void info(CharSequence charSequence) {
-        }
+        public void info(CharSequence charSequence) {}
 
-        public void info(CharSequence charSequence, Throwable throwable) {
-        }
+        public void info(CharSequence charSequence, Throwable throwable) {}
 
-        public void info(Throwable throwable) {
-        }
+        public void info(Throwable throwable) {}
 
         public boolean isWarnEnabled() {
             return false;
         }
 
-        public void warn(CharSequence charSequence) {
-        }
+        public void warn(CharSequence charSequence) {}
 
-        public void warn(CharSequence charSequence, Throwable throwable) {
-        }
+        public void warn(CharSequence charSequence, Throwable throwable) {}
 
-        public void warn(Throwable throwable) {
-        }
+        public void warn(Throwable throwable) {}
 
         public boolean isErrorEnabled() {
             return false;
         }
 
-        public void error(CharSequence charSequence) {
-        }
+        public void error(CharSequence charSequence) {}
 
-        public void error(CharSequence charSequence, Throwable throwable) {
-        }
+        public void error(CharSequence charSequence, Throwable throwable) {}
 
-        public void error(Throwable throwable) {
-        }
+        public void error(Throwable throwable) {}
     }
 
     private class TestDependenciesFacade implements DependenciesFacade {

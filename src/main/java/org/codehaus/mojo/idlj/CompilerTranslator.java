@@ -19,10 +19,10 @@ package org.codehaus.mojo.idlj;
  * under the License.
  */
 
+import java.io.File;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
-
-import java.io.File;
 
 /**
  * This is the interface to implement in order to add a new compiler backend to this plugin
@@ -30,8 +30,7 @@ import java.io.File;
  * @author Anders Hessellund Jensen <ahj@trifork.com>
  * @version $Id$
  */
-public interface CompilerTranslator
-{
+public interface CompilerTranslator {
 
     /**
      * This method it's used to invoke the compiler
@@ -43,8 +42,8 @@ public interface CompilerTranslator
      * @param source          the source set on which to run the compiler
      * @throws MojoExecutionException the exeception is thrown whenever the compilation fails or crashes
      */
-    void invokeCompiler( String sourceDirectory, File[] includeDirs,
-                         String targetDirectory, String idlFile, Source source )
+    void invokeCompiler(
+            String sourceDirectory, File[] includeDirs, String targetDirectory, String idlFile, Source source)
             throws MojoExecutionException;
 
     /**
@@ -52,19 +51,19 @@ public interface CompilerTranslator
      *
      * @param debug the debug to set
      */
-    void setDebug( boolean debug );
+    void setDebug(boolean debug);
 
     /**
      * The <code>Log</code> that will used for the messages
      *
      * @param log the log to set
      */
-    void setLog( Log log );
+    void setLog(Log log);
 
     /**
      * Set to true to fail the build if an error occur while compiling the IDL.
      *
      * @param failOnError the failOnError to set
      */
-    void setFailOnError( boolean failOnError );
+    void setFailOnError(boolean failOnError);
 }

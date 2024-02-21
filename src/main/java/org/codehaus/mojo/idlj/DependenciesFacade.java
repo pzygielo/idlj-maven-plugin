@@ -1,23 +1,22 @@
 package org.codehaus.mojo.idlj;
 
-import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-interface DependenciesFacade
-{
-    SourceInclusionScanner createSourceInclusionScanner(int updatedWithinMsecs, Set<String> includes,
-                                                        Set<String> excludes );
+import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
 
-    void copyFile(File sourceFile, File targetFile ) throws IOException;
+interface DependenciesFacade {
+    SourceInclusionScanner createSourceInclusionScanner(
+            int updatedWithinMsecs, Set<String> includes, Set<String> excludes);
 
-    boolean exists( File outputDirectory );
+    void copyFile(File sourceFile, File targetFile) throws IOException;
 
-    void createDirectory( File directory );
+    boolean exists(File outputDirectory);
 
-    boolean isWriteable( File directory );
+    void createDirectory(File directory);
 
-    boolean isDirectory( File file );
+    boolean isWriteable(File directory);
+
+    boolean isDirectory(File file);
 }

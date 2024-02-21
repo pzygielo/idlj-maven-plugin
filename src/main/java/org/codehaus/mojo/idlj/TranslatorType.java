@@ -19,16 +19,15 @@ package org.codehaus.mojo.idlj;
  * under the License.
  */
 
-import org.apache.maven.plugin.MojoExecutionException;
-
 import java.util.function.Supplier;
+
+import org.apache.maven.plugin.MojoExecutionException;
 
 /**
  * A selector for the types of IDL translators supported
  */
-enum TranslatorType
-{
-    AUTO("auto", () -> isJavaModuleSystemPresent() ?  new GlassfishTranslator() : new BuiltInTranslator()),
+enum TranslatorType {
+    AUTO("auto", () -> isJavaModuleSystemPresent() ? new GlassfishTranslator() : new BuiltInTranslator()),
     BUILT_IN("idlj", BuiltInTranslator::new),
     GLASSFISH("glassfish", GlassfishTranslator::new),
     JACORB("jacorb", JacorbTranslator::new);
@@ -48,25 +47,21 @@ enum TranslatorType
         return selector;
     }
 
-    static boolean isJavaModuleSystemPresent()
-    {
-        return !System.getProperty( "java.version" ).startsWith( "1." );
+    static boolean isJavaModuleSystemPresent() {
+        return !System.getProperty("java.version").startsWith("1.");
     }
 
-    static CompilerTranslator selectTranslator( String compiler ) throws MojoExecutionException
-    {
-        for ( TranslatorType type : TranslatorType.values() )
-        {
-            if ( type.select( compiler ) )
-            {
+    static CompilerTranslator selectTranslator(String compiler) throws MojoExecutionException {
+        for (TranslatorType type : TranslatorType.values()) {
+            if (type.select(compiler)) {
                 return type.createTranslator();
             }
         }
 
-        throw new MojoExecutionException( "Compiler not supported: " + compiler );
+        throw new MojoExecutionException("Compiler not supported: " + compiler);
     }
 
-    final boolean select( String compilerSetting ) {
+    final boolean select(String compilerSetting) {
         return selector.equals(compilerSetting);
     }
 

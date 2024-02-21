@@ -19,9 +19,6 @@ package org.codehaus.mojo.idlj;
  * under the License.
  */
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.codehaus.plexus.util.StringUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -29,20 +26,21 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.maven.plugin.MojoExecutionException;
+import org.codehaus.plexus.util.StringUtils;
+
 /**
  * Parent class for translators that use the IDLJ parameters.
  */
-abstract class IdljTranslator extends AbstractTranslator implements CompilerTranslator
-{
+abstract class IdljTranslator extends AbstractTranslator implements CompilerTranslator {
     /**
      * Convert the provided filename from a Windows separator \\ to a unix/java separator /
      *
      * @param filename file name to fix separator
      * @return filename with all \\ replaced with /
      */
-    private static String fixSeparator( String filename )
-    {
-        return StringUtils.replace( filename, '\\', '/' );
+    private static String fixSeparator(String filename) {
+        return StringUtils.replace(filename, '\\', '/');
     }
 
     /**
@@ -52,16 +50,11 @@ abstract class IdljTranslator extends AbstractTranslator implements CompilerTran
      * @return the computed path
      * @throws MojoExecutionException if the infrastructure detects a problem
      */
-    private static String getCanonicalPath( File file )
-            throws MojoExecutionException
-    {
-        try
-        {
+    private static String getCanonicalPath(File file) throws MojoExecutionException {
+        try {
             return file.getCanonicalPath();
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Can't canonicalize system path: " + file.getAbsolutePath(), e );
+        } catch (IOException e) {
+            throw new MojoExecutionException("Can't canonicalize system path: " + file.getAbsolutePath(), e);
         }
     }
 
@@ -73,25 +66,19 @@ abstract class IdljTranslator extends AbstractTranslator implements CompilerTran
      * @return the relative path between fromdir to todir
      * @throws MojoExecutionException thrown if an error is detected by the mojo infrastructure
      */
-    private static String toRelativeAndFixSeparator( File fromdir, File todir )
-            throws MojoExecutionException
-    {
-        if ( !todir.isAbsolute() )
-        {
-            todir = new File( fromdir, todir.getPath() );
+    private static String toRelativeAndFixSeparator(File fromdir, File todir) throws MojoExecutionException {
+        if (!todir.isAbsolute()) {
+            todir = new File(fromdir, todir.getPath());
         }
 
-        String basedirPath = getCanonicalPath( fromdir );
-        String absolutePath = getCanonicalPath( todir );
+        String basedirPath = getCanonicalPath(fromdir);
+        String absolutePath = getCanonicalPath(todir);
 
         String relative;
 
-        if ( absolutePath.equals( basedirPath ) )
-        {
-            relative = "."; //$NON-NLS-1$
-        }
-        else if ( absolutePath.startsWith( basedirPath ) )
-        {
+        if (absolutePath.equals(basedirPath)) {
+            relative = "."; // $NON-NLS-1$
+        } else if (absolutePath.startsWith(basedirPath)) {
             // MECLIPSE-261
             // The canonical form of a windows root dir ends in a slash, whereas
             // the canonical form of any other file
@@ -102,18 +89,15 @@ abstract class IdljTranslator extends AbstractTranslator implements CompilerTran
             // since it is contained within
             // basedirPath.
             int length = basedirPath.length() + 1;
-            if ( basedirPath.endsWith( "\\" ) )
-            {
+            if (basedirPath.endsWith("\\")) {
                 length--;
             }
-            relative = absolutePath.substring( length );
-        }
-        else
-        {
+            relative = absolutePath.substring(length);
+        } else {
             relative = absolutePath;
         }
 
-        relative = fixSeparator( relative );
+        relative = fixSeparator(relative);
 
         return relative;
     }
@@ -128,113 +112,93 @@ abstract class IdljTranslator extends AbstractTranslator implements CompilerTran
      * @param source          the source tag available in the configuration tree of the maven plugin
      * @throws MojoExecutionException the exception is thrown whenever the compilation fails or crashes
      */
-    public void invokeCompiler( String sourceDirectory, File[] includeDirs, String targetDirectory, String idlFile,
-                                Source source )
-            throws MojoExecutionException
-    {
-        List<String> args = getArguments( sourceDirectory, includeDirs, targetDirectory, idlFile, source );
+    public void invokeCompiler(
+            String sourceDirectory, File[] includeDirs, String targetDirectory, String idlFile, Source source)
+            throws MojoExecutionException {
+        List<String> args = getArguments(sourceDirectory, includeDirs, targetDirectory, idlFile, source);
 
-        invokeCompiler( args );
+        invokeCompiler(args);
     }
 
-    abstract void invokeCompiler( List<String> args ) throws MojoExecutionException;
+    abstract void invokeCompiler(List<String> args) throws MojoExecutionException;
 
-    private List<String> getArguments( String sourceDirectory, File[] includeDirs, String targetDirectory,
-                                       String idlFile, Source source ) throws MojoExecutionException
-    {
+    private List<String> getArguments(
+            String sourceDirectory, File[] includeDirs, String targetDirectory, String idlFile, Source source)
+            throws MojoExecutionException {
         List<String> args = new ArrayList<>();
-        args.add( "-i" );
-        args.add( sourceDirectory );
+        args.add("-i");
+        args.add(sourceDirectory);
 
         // add idl files from other directories as well
-        if ( includeDirs != null && includeDirs.length > 0 )
-        {
-            for ( File includeDir : includeDirs )
-            {
-                args.add( "-i" );
-                args.add( includeDir.toString() );
+        if (includeDirs != null && includeDirs.length > 0) {
+            for (File includeDir : includeDirs) {
+                args.add("-i");
+                args.add(includeDir.toString());
             }
         }
 
-        args.add( "-td" );
-        args.add( toRelativeAndFixSeparator( new File( System.getProperty( "user.dir" ) ), new File( targetDirectory ) ) );
+        args.add("-td");
+        args.add(toRelativeAndFixSeparator(new File(System.getProperty("user.dir")), new File(targetDirectory)));
 
-        if ( source.getPackagePrefix() != null )
-        {
-            throw new MojoExecutionException( "idlj compiler does not support packagePrefix" );
+        if (source.getPackagePrefix() != null) {
+            throw new MojoExecutionException("idlj compiler does not support packagePrefix");
         }
 
-        if ( source.getPackagePrefixes() != null )
-        {
-            for ( PackagePrefix prefix : source.getPackagePrefixes() )
-            {
-                args.add( "-pkgPrefix" );
-                args.add( prefix.getType() );
-                args.add( prefix.getPrefix() );
+        if (source.getPackagePrefixes() != null) {
+            for (PackagePrefix prefix : source.getPackagePrefixes()) {
+                args.add("-pkgPrefix");
+                args.add(prefix.getType());
+                args.add(prefix.getPrefix());
             }
         }
 
-        if ( source.getPackageTranslations() != null )
-        {
-            for ( PackageTranslation translation : source.getPackageTranslations() )
-            {
-                args.add( "-pkgTranslate" );
-                args.add( translation.getType() );
-                args.add( translation.getReplacementPackage() );
+        if (source.getPackageTranslations() != null) {
+            for (PackageTranslation translation : source.getPackageTranslations()) {
+                args.add("-pkgTranslate");
+                args.add(translation.getType());
+                args.add(translation.getReplacementPackage());
             }
         }
 
-        if ( source.getDefines() != null )
-        {
-            for ( Define define : source.getDefines() )
-            {
-                addSymbolDefinition( args, define );
+        if (source.getDefines() != null) {
+            for (Define define : source.getDefines()) {
+                addSymbolDefinition(args, define);
             }
         }
 
-        addEmitOption( args, source );
+        addEmitOption(args, source);
 
-        if ( isOptionEnabled( source.compatible() ) )
-        {
-            args.add( "-oldImplBase" );
+        if (isOptionEnabled(source.compatible())) {
+            args.add("-oldImplBase");
         }
 
-        if ( source.getAdditionalArguments() != null )
-        {
-            for ( String arg : source.getAdditionalArguments() )
-            {
-                args.add( arg );
+        if (source.getAdditionalArguments() != null) {
+            for (String arg : source.getAdditionalArguments()) {
+                args.add(arg);
             }
         }
 
-        args.add( idlFile );
+        args.add(idlFile);
         return args;
     }
 
-    private void addSymbolDefinition( List<String> args, Define define ) throws MojoExecutionException
-    {
-        if ( define.getValue() != null )
-        {
-            throw new MojoExecutionException( "idlj compiler unable to define symbol values" );
+    private void addSymbolDefinition(List<String> args, Define define) throws MojoExecutionException {
+        if (define.getValue() != null) {
+            throw new MojoExecutionException("idlj compiler unable to define symbol values");
         }
-        args.add( "-d" );
-        args.add( define.getSymbol() );
+        args.add("-d");
+        args.add(define.getSymbol());
     }
 
-    private void addEmitOption( List<String> args, Source source )
-    {
-        if ( isOptionEnabled( source.emitStubs() ) )
-        {
-            args.add( source.emitSkeletons() ? "-fallTIE" : "-fclient" );
-        }
-        else
-        {
-            args.add( isOptionEnabled( source.emitSkeletons() ) ? "-fserver" : "-fserverTIE" );
+    private void addEmitOption(List<String> args, Source source) {
+        if (isOptionEnabled(source.emitStubs())) {
+            args.add(source.emitSkeletons() ? "-fallTIE" : "-fclient");
+        } else {
+            args.add(isOptionEnabled(source.emitSkeletons()) ? "-fserver" : "-fserverTIE");
         }
     }
 
-    private boolean isOptionEnabled( Boolean option )
-    {
+    private boolean isOptionEnabled(Boolean option) {
         return option != null && option;
     }
 
@@ -245,26 +209,22 @@ abstract class IdljTranslator extends AbstractTranslator implements CompilerTran
      * @param args          a <code>List</code> that contains the arguments to use for the compiler
      * @throws MojoExecutionException if the compilation fail or the compiler crashes
      */
-    void invokeCompiler( Class<?> compilerClass, List<String> args )
-            throws MojoExecutionException
-    {
-        getLog().debug( "Current dir : " + System.getProperty( "user.dir" ) );
+    void invokeCompiler(Class<?> compilerClass, List<String> args) throws MojoExecutionException {
+        getLog().debug("Current dir : " + System.getProperty("user.dir"));
 
-        if ( isDebug() )
-        {
-            args.add( 0, "-verbose" );
+        if (isDebug()) {
+            args.add(0, "-verbose");
         }
 
-        invokeCompilerInProcess( compilerClass, args );
+        invokeCompilerInProcess(compilerClass, args);
     }
 
     @Override
-    protected int runCompiler( Class<?> compilerClass, String... arguments )
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
-    {
-        Method compilerMainMethod = compilerClass.getMethod( "main", String[].class );
-        Object retVal = compilerMainMethod.invoke( compilerClass, new Object[]{arguments} );
-        getLog().debug( "Completed with code " + retVal );
-        return ( retVal != null ) && ( retVal instanceof Integer ) ? (Integer) retVal : 0;
+    protected int runCompiler(Class<?> compilerClass, String... arguments)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        Method compilerMainMethod = compilerClass.getMethod("main", String[].class);
+        Object retVal = compilerMainMethod.invoke(compilerClass, new Object[] {arguments});
+        getLog().debug("Completed with code " + retVal);
+        return (retVal != null) && (retVal instanceof Integer) ? (Integer) retVal : 0;
     }
 }

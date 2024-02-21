@@ -19,12 +19,12 @@ package org.codehaus.mojo.idlj;
  * under the License.
  */
 
-import org.apache.maven.plugin.MojoExecutionException;
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+
+import org.apache.maven.plugin.MojoExecutionException;
 
 import static org.codehaus.mojo.idlj.TranslatorType.isJavaModuleSystemPresent;
 
@@ -34,104 +34,84 @@ import static org.codehaus.mojo.idlj.TranslatorType.isJavaModuleSystemPresent;
  * @author Anders Hessellund Jensen <ahj@trifork.com>
  * @version $Id$
  */
-class BuiltInTranslator
-        extends IdljTranslator
-{
+class BuiltInTranslator extends IdljTranslator {
 
     private static final String AIX_IDLJ_COMPILER_NAME = "com.ibm.idl.toJavaPortable.Compile";
     private static final String ORACLE_IDLJ_COMPILER_NAME = "com.sun.tools.corba.se.idl.toJavaPortable.Compile";
     private static final String USE_GLASSFISH_IDL =
-                                    " Built-in IDL compiler not available in JDK9. Use the glassfish compiler instead.";
+            " Built-in IDL compiler not available in JDK9. Use the glassfish compiler instead.";
     private static final String IDL_COMPILER_NOT_AVAILABLE = " IDL compiler not available";
 
     /**
      * Default constructor
      */
-    BuiltInTranslator()
-    {
+    BuiltInTranslator() {
         super();
     }
 
     @Override
-    void invokeCompiler( List<String> args ) throws MojoExecutionException
-    {
+    void invokeCompiler(List<String> args) throws MojoExecutionException {
         Class<?> compilerClass = getCompilerClass();
-        invokeCompiler( compilerClass, args );
+        invokeCompiler(compilerClass, args);
     }
 
     /**
      * @return the <code>Class</code> that implements the idlj compiler
      * @throws MojoExecutionException if the search for the class fails
      */
-    private static Class<?> getCompilerClass()
-            throws MojoExecutionException
-    {
-        try
-        {
-            return getClassLoaderFacade().loadClass( getIDLCompilerClassName() );
-        }
-        catch ( ClassNotFoundException e )
-        {
-            try
-            {
+    private static Class<?> getCompilerClass() throws MojoExecutionException {
+        try {
+            return getClassLoaderFacade().loadClass(getIDLCompilerClassName());
+        } catch (ClassNotFoundException e) {
+            try {
                 addToolsJarToPath();
-                return getClassLoaderFacade().loadClass( getIDLCompilerClassName() );
+                return getClassLoaderFacade().loadClass(getIDLCompilerClassName());
+            } catch (Exception e2) {
+                throw new MojoExecutionException(getSecondTryMessage(e2), e);
             }
-            catch ( Exception e2 )
-            {
-                throw new MojoExecutionException( getSecondTryMessage( e2 ), e );
-            }
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( IDL_COMPILER_NOT_AVAILABLE, e );
+        } catch (Exception e) {
+            throw new MojoExecutionException(IDL_COMPILER_NOT_AVAILABLE, e);
         }
     }
 
-    private static String getSecondTryMessage( Exception e )
-    {
-        return builtInCompilerHidden( e ) ? USE_GLASSFISH_IDL : IDL_COMPILER_NOT_AVAILABLE;
+    private static String getSecondTryMessage(Exception e) {
+        return builtInCompilerHidden(e) ? USE_GLASSFISH_IDL : IDL_COMPILER_NOT_AVAILABLE;
     }
 
-    private static boolean builtInCompilerHidden( Exception e )
-    {
-        return compilerNotFound( e ) && isJavaModuleSystemPresent();
+    private static boolean builtInCompilerHidden(Exception e) {
+        return compilerNotFound(e) && isJavaModuleSystemPresent();
     }
 
-    private static boolean compilerNotFound( Exception e )
-    {
+    private static boolean compilerNotFound(Exception e) {
         return e instanceof ClassNotFoundException;
     }
 
-    private static void addToolsJarToPath() throws MalformedURLException, ClassNotFoundException
-    {
-        File javaHome = new File( System.getProperty( "java.home" ) );
-        File toolsJar = new File( javaHome, "../lib/tools.jar" );
+    private static void addToolsJarToPath() throws MalformedURLException, ClassNotFoundException {
+        File javaHome = new File(System.getProperty("java.home"));
+        File toolsJar = new File(javaHome, "../lib/tools.jar");
         URL toolsJarUrl = toolsJar.toURI().toURL();
-        getClassLoaderFacade().prependUrls( toolsJarUrl );
+        getClassLoaderFacade().prependUrls(toolsJarUrl);
 
         // Unfortunately the idlj compiler reads messages using the system class path.
         // Therefore this really nasty hack is required.
-        System.setProperty( "java.class.path", System.getProperty( "java.class.path" )
-                + System.getProperty( "path.separator" ) + toolsJar.getAbsolutePath() );
-        if ( System.getProperty( "java.vm.name" ).contains( "HotSpot" ) )
-        {
-            getClassLoaderFacade().loadClass( "com.sun.tools.corba.se.idl.som.cff.FileLocator" );
+        System.setProperty(
+                "java.class.path",
+                System.getProperty("java.class.path")
+                        + System.getProperty("path.separator")
+                        + toolsJar.getAbsolutePath());
+        if (System.getProperty("java.vm.name").contains("HotSpot")) {
+            getClassLoaderFacade().loadClass("com.sun.tools.corba.se.idl.som.cff.FileLocator");
         }
     }
-
 
     /**
      * @return the name of the class that implements the compiler
      */
-    private static String getIDLCompilerClassName()
-    {
+    private static String getIDLCompilerClassName() {
         return isAix() ? AIX_IDLJ_COMPILER_NAME : ORACLE_IDLJ_COMPILER_NAME;
     }
 
-
-    private static boolean isAix()
-    {
-        return System.getProperty( "java.vm.vendor" ).contains( "IBM" );
+    private static boolean isAix() {
+        return System.getProperty("java.vm.vendor").contains("IBM");
     }
 }

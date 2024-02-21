@@ -22,8 +22,7 @@ package org.codehaus.mojo.idlj;
 /**
  * Attributes for performing package translation.
  */
-public class PackageTranslation
-{
+public class PackageTranslation {
     /**
      * The simple name of either a top-level module, or an IDL type defined outside of any module
      *
@@ -41,16 +40,14 @@ public class PackageTranslation
     /**
      * @return the name of a top-level module
      */
-    public String getType()
-    {
+    public String getType() {
         return type;
     }
 
     /**
      * @return the package name to replace the module name
      */
-    public String getReplacementPackage()
-    {
+    public String getReplacementPackage() {
         return replacementPackage;
     }
 }

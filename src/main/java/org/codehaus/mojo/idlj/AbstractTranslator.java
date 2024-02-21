@@ -19,9 +19,6 @@ package org.codehaus.mojo.idlj;
  * under the License.
  */
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
@@ -29,15 +26,16 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
 
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
+
 /**
  * Shared capabilities for translators.
  *
  * @author Arnaud Heritier <aheritier AT apache DOT org>
  * @version $Id: AbstractIDLJMojo.java 9189 2009-03-10 21:47:46Z aheritier $
  */
-abstract class AbstractTranslator
-        implements CompilerTranslator
-{
+abstract class AbstractTranslator implements CompilerTranslator {
 
     /**
      * enable/disable debug messages
@@ -65,48 +63,42 @@ abstract class AbstractTranslator
     /**
      * @return the debug
      */
-    public boolean isDebug()
-    {
+    public boolean isDebug() {
         return debug;
     }
 
     /**
      * @param debug the debug to set
      */
-    public void setDebug( boolean debug )
-    {
+    public void setDebug(boolean debug) {
         this.debug = debug;
     }
 
     /**
      * @return the log
      */
-    Log getLog()
-    {
+    Log getLog() {
         return log;
     }
 
     /**
      * @param log the log to set
      */
-    public void setLog( Log log )
-    {
+    public void setLog(Log log) {
         this.log = log;
     }
 
     /**
      * @return the failOnError
      */
-    boolean isFailOnError()
-    {
+    boolean isFailOnError() {
         return failOnError;
     }
 
     /**
      * @param failOnError the failOnError to set
      */
-    public void setFailOnError( boolean failOnError )
-    {
+    public void setFailOnError(boolean failOnError) {
         this.failOnError = failOnError;
     }
 
@@ -114,8 +106,7 @@ abstract class AbstractTranslator
      * Returns true if the translator is allowed to create a new forked process.
      * @return true if forking is permitted
      */
-    static boolean isFork()
-    {
+    static boolean isFork() {
         return fork;
     }
 
@@ -123,8 +114,7 @@ abstract class AbstractTranslator
      * Specifies the implementation of the classloader facade to use
      * @param classLoaderFacade a wrapper for class loading.
      */
-    static void setClassLoaderFacade( ClassLoaderFacade classLoaderFacade )
-    {
+    static void setClassLoaderFacade(ClassLoaderFacade classLoaderFacade) {
         AbstractTranslator.classLoaderFacade = classLoaderFacade;
         AbstractTranslator.fork = false;
     }
@@ -133,8 +123,7 @@ abstract class AbstractTranslator
      * Returns the object to use for classloading.
      * @return the appropriate loader facade
      */
-    static ClassLoaderFacade getClassLoaderFacade()
-    {
+    static ClassLoaderFacade getClassLoaderFacade() {
         return classLoaderFacade;
     }
 
@@ -144,55 +133,44 @@ abstract class AbstractTranslator
      * @param args the arguments to pass to the compiler
      * @throws MojoExecutionException if any error occurs
      */
-    void invokeCompilerInProcess( Class<?> compilerClass, List<String> args ) throws MojoExecutionException
-    {
-        String[] arguments = args.toArray( new String[args.size()] );
+    void invokeCompilerInProcess(Class<?> compilerClass, List<String> args) throws MojoExecutionException {
+        String[] arguments = args.toArray(new String[args.size()]);
 
-        getLog().debug( getCommandLine( compilerClass, arguments ) );
+        getLog().debug(getCommandLine(compilerClass, arguments));
 
         // Local channels
         ByteArrayOutputStream err = new ByteArrayOutputStream();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        int exitCode = runCompilerAndRecordOutput( compilerClass, arguments, err, out );
-        logOutputMessages( err, out );
+        int exitCode = runCompilerAndRecordOutput(compilerClass, arguments, err, out);
+        logOutputMessages(err, out);
 
-        if ( isFailOnError() && isCompilationFailed( err, exitCode ) )
-        {
-            throw new MojoExecutionException( "IDL compilation failed" );
+        if (isFailOnError() && isCompilationFailed(err, exitCode)) {
+            throw new MojoExecutionException("IDL compilation failed");
         }
     }
 
-    private int runCompilerAndRecordOutput( Class<?> compilerClass, String[] arguments, ByteArrayOutputStream err,
-                                            ByteArrayOutputStream out ) throws MojoExecutionException
-    {
+    private int runCompilerAndRecordOutput(
+            Class<?> compilerClass, String[] arguments, ByteArrayOutputStream err, ByteArrayOutputStream out)
+            throws MojoExecutionException {
         // Backup std channels
         PrintStream stdErr = System.err;
         PrintStream stdOut = System.out;
 
-        System.setErr( new PrintStream( err ) );
-        System.setOut( new PrintStream( out ) );
-        try
-        {
-            return runCompiler( compilerClass, arguments );
-        }
-        catch ( NoSuchMethodException e )
-        {
-            throw new MojoExecutionException( "Error: Compiler had no main method" );
-        }
-        catch ( InvocationTargetException e )
-        {
-            throw new MojoExecutionException( "IDL compilation failed", e.getTargetException() );
-        }
-        catch ( Throwable e )
-        {
-            throw new MojoExecutionException( "IDL compilation failed", e );
-        }
-        finally
-        {
+        System.setErr(new PrintStream(err));
+        System.setOut(new PrintStream(out));
+        try {
+            return runCompiler(compilerClass, arguments);
+        } catch (NoSuchMethodException e) {
+            throw new MojoExecutionException("Error: Compiler had no main method");
+        } catch (InvocationTargetException e) {
+            throw new MojoExecutionException("IDL compilation failed", e.getTargetException());
+        } catch (Throwable e) {
+            throw new MojoExecutionException("IDL compilation failed", e);
+        } finally {
             // Restore std channels
-            System.setErr( stdErr );
-            System.setOut( stdOut );
+            System.setErr(stdErr);
+            System.setOut(stdOut);
         }
     }
 
@@ -205,49 +183,39 @@ abstract class AbstractTranslator
      * @throws IllegalAccessException if no constructor is available
      * @throws InvocationTargetException if an error occurs while invoking the compiler
      */
-    protected abstract int runCompiler( Class<?> compilerClass, String... arguments )
+    protected abstract int runCompiler(Class<?> compilerClass, String... arguments)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException;
 
-    private boolean isCompilationFailed( ByteArrayOutputStream err, int exitCode )
-    {
-        return exitCode != 0 || hasErrors( err );
+    private boolean isCompilationFailed(ByteArrayOutputStream err, int exitCode) {
+        return exitCode != 0 || hasErrors(err);
     }
 
-    private boolean hasErrors( ByteArrayOutputStream err )
-    {
-        for ( String message : err.toString().split( "\n" ) )
-        {
-            if ( message.contains( "(line " ) && !message.contains( "WARNING" ) )
-            {
-                getLog().debug( "Failed due to error: <" + message + ">" );
+    private boolean hasErrors(ByteArrayOutputStream err) {
+        for (String message : err.toString().split("\n")) {
+            if (message.contains("(line ") && !message.contains("WARNING")) {
+                getLog().debug("Failed due to error: <" + message + ">");
                 return true;
             }
         }
         return false;
     }
 
-    private void logOutputMessages( ByteArrayOutputStream err, ByteArrayOutputStream out )
-    {
-        if ( isNotEmpty( out ) )
-        {
-            getLog().info( out.toString() );
+    private void logOutputMessages(ByteArrayOutputStream err, ByteArrayOutputStream out) {
+        if (isNotEmpty(out)) {
+            getLog().info(out.toString());
         }
-        if ( isNotEmpty( err ) )
-        {
-            getLog().error( err.toString() );
+        if (isNotEmpty(err)) {
+            getLog().error(err.toString());
         }
     }
 
-    private boolean isNotEmpty( ByteArrayOutputStream outputStream )
-    {
-        return !"".equals( outputStream.toString() );
+    private boolean isNotEmpty(ByteArrayOutputStream outputStream) {
+        return !"".equals(outputStream.toString());
     }
 
-    private String getCommandLine( Class<?> compilerClass, String[] arguments )
-    {
+    private String getCommandLine(Class<?> compilerClass, String[] arguments) {
         String command = compilerClass.getName();
-        for ( String argument : arguments )
-        {
+        for (String argument : arguments) {
             command += " " + argument;
         }
         return command;
@@ -256,14 +224,13 @@ abstract class AbstractTranslator
     /**
      * An interface for loading the proper IDL compiler class.
      */
-    interface ClassLoaderFacade
-    {
+    interface ClassLoaderFacade {
         /**
          * Updates the active classloader to include the specified URLs before the original definitions.
          *
          * @param urls a list of URLs to include when searching for classes.
          */
-        void prependUrls( URL... urls );
+        void prependUrls(URL... urls);
 
         /**
          * Loads the specified class using the appropriate classloader.
@@ -272,25 +239,21 @@ abstract class AbstractTranslator
          * @throws ClassNotFoundException if the specified class doesn't exist
          * @return the actual compiler class to use
          */
-        Class<?> loadClass( String idlCompilerClass ) throws ClassNotFoundException;
+        Class<?> loadClass(String idlCompilerClass) throws ClassNotFoundException;
     }
 
     /**
      * The implementation of ClassLoaderFacade used at runtime.
      */
-    private static class ClassLoaderFacadeImpl implements ClassLoaderFacade
-    {
+    private static class ClassLoaderFacadeImpl implements ClassLoaderFacade {
         ClassLoader classLoader = getClass().getClassLoader();
 
-        public void prependUrls( URL... urls )
-        {
-            classLoader = new URLClassLoader( urls, classLoader );
+        public void prependUrls(URL... urls) {
+            classLoader = new URLClassLoader(urls, classLoader);
         }
 
-        public Class<?> loadClass( String idlCompilerClass ) throws ClassNotFoundException
-        {
-            return classLoader.loadClass( idlCompilerClass );
+        public Class<?> loadClass(String idlCompilerClass) throws ClassNotFoundException {
+            return classLoader.loadClass(idlCompilerClass);
         }
-
     }
 }

@@ -19,9 +19,6 @@ package org.codehaus.mojo.idlj;
  * under the License.
  */
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.codehaus.plexus.util.StringUtils;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -37,22 +34,21 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.maven.plugin.MojoExecutionException;
+import org.codehaus.plexus.util.StringUtils;
+
 /**
  * This class implement the <code>CompilerTranslator</code> for the JacORB IDL compiler
  *
  * @author Anders Hessellund Jensen <ahj@trifork.com>
  * @version $Id$
  */
-class JacorbTranslator
-        extends AbstractTranslator
-        implements CompilerTranslator
-{
+class JacorbTranslator extends AbstractTranslator implements CompilerTranslator {
 
     /**
      * Default constructor
      */
-    JacorbTranslator()
-    {
+    JacorbTranslator() {
         super();
     }
 
@@ -63,21 +59,16 @@ class JacorbTranslator
      * @param args          a <code>List</code> that contains the arguments to use for the compiler
      * @throws MojoExecutionException if the compilation fail or the compiler crashes
      */
-    private void invokeCompiler( Class<?> compilerClass, List<String> args )
-            throws MojoExecutionException
-    {
+    private void invokeCompiler(Class<?> compilerClass, List<String> args) throws MojoExecutionException {
         // It would be great to use some 3rd party library for this stuff
-        if ( !isFork() )
-        {
-            invokeCompilerInProcess( compilerClass, args );
-        }
-        else
-        {
+        if (!isFork()) {
+            invokeCompilerInProcess(compilerClass, args);
+        } else {
 
             // Forks a new java process.
             // Get path to java binary
-            File javaHome = new File( System.getProperty( "java.home" ) );
-            File javaBin = new File( new File( javaHome, "bin" ), "java" );
+            File javaHome = new File(System.getProperty("java.home"));
+            File javaBin = new File(new File(javaHome, "bin"), "java");
 
             // Get current class path
             URLClassLoader cl = (URLClassLoader) this.getClass().getClassLoader();
@@ -87,64 +78,54 @@ class JacorbTranslator
             List<String> binArgs = new ArrayList<>();
 
             // First argument is the java binary to run
-            binArgs.add( javaBin.getPath() );
+            binArgs.add(javaBin.getPath());
 
             // Add the classpath to argument list
-            binArgs.add( "-classpath" );
-            String classPath = "" + new File( classPathUrls[0].getPath().replaceAll( "%20", " " ) );
-            for ( URL url : classPathUrls )
-            {
-                classPath += File.pathSeparator + new File( url.getPath().replaceAll( "%20", " " ) );
+            binArgs.add("-classpath");
+            String classPath = "" + new File(classPathUrls[0].getPath().replaceAll("%20", " "));
+            for (URL url : classPathUrls) {
+                classPath += File.pathSeparator + new File(url.getPath().replaceAll("%20", " "));
             }
-            binArgs.add( classPath );
+            binArgs.add(classPath);
 
             // Add class containing main method to arg list
-            binArgs.add( compilerClass.getName() );
+            binArgs.add(compilerClass.getName());
 
             // Add java arguments
-            for ( String arg : args )
-            {
-                binArgs.add( arg );
+            for (String arg : args) {
+                binArgs.add(arg);
             }
 
             // Convert arg list to array
-            String[] argArray = binArgs.toArray( new String[binArgs.size()] );
+            String[] argArray = binArgs.toArray(new String[binArgs.size()]);
 
-            if ( isDebug() )
-            {
-                getLog().debug( StringUtils.join( argArray, " " ) );
+            if (isDebug()) {
+                getLog().debug(StringUtils.join(argArray, " "));
             }
 
-            try
-            {
-                Process p = Runtime.getRuntime().exec( argArray );
-                redirectStream( p.getErrorStream(), System.err );
-                redirectStream( p.getInputStream(), System.out );
+            try {
+                Process p = Runtime.getRuntime().exec(argArray);
+                redirectStream(p.getErrorStream(), System.err);
+                redirectStream(p.getInputStream(), System.out);
 
                 p.waitFor();
 
-                if ( isFailOnError() && p.exitValue() != 0 )
-                {
-                    throw new MojoExecutionException( "IDL Compilation failure" );
+                if (isFailOnError() && p.exitValue() != 0) {
+                    throw new MojoExecutionException("IDL Compilation failure");
                 }
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Error forking compiler", e );
-            }
-            catch ( InterruptedException e )
-            {
-                throw new MojoExecutionException( "Thread interrupted unexpectedly", e );
+            } catch (IOException e) {
+                throw new MojoExecutionException("Error forking compiler", e);
+            } catch (InterruptedException e) {
+                throw new MojoExecutionException("Thread interrupted unexpectedly", e);
             }
         }
     }
 
     @Override
-    protected int runCompiler( Class<?> compilerClass, String... arguments )
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
-    {
-        Method compileMethod = compilerClass.getMethod( "compile", String[].class );
-        compileMethod.invoke( compilerClass, new Object[]{arguments} );
+    protected int runCompiler(Class<?> compilerClass, String... arguments)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        Method compileMethod = compilerClass.getMethod("compile", String[].class);
+        compileMethod.invoke(compilerClass, new Object[] {arguments});
         return 0;
     }
 
@@ -158,84 +139,68 @@ class JacorbTranslator
      * @param source          the source set on which to run the compiler
      * @throws MojoExecutionException the exeception is thrown whenever the compilation fails or crashes
      */
-    public void invokeCompiler( String sourceDirectory, File[] includeDirs, String targetDirectory, String idlFile,
-                                Source source )
-            throws MojoExecutionException
-    {
+    public void invokeCompiler(
+            String sourceDirectory, File[] includeDirs, String targetDirectory, String idlFile, Source source)
+            throws MojoExecutionException {
         List<String> args = new ArrayList<>();
 
-        args.add( "-I" + sourceDirectory );
+        args.add("-I" + sourceDirectory);
 
         // add idl files from other directories as well
-        if ( includeDirs != null )
-        {
-            for ( File includeDir : includeDirs )
-            {
-                args.add( "-I" + includeDir.getPath() );
+        if (includeDirs != null) {
+            for (File includeDir : includeDirs) {
+                args.add("-I" + includeDir.getPath());
             }
         }
 
-        args.add( "-d" );
-        args.add( targetDirectory );
+        args.add("-d");
+        args.add(targetDirectory);
 
-        if ( source.emitSkeletons() != null && !source.emitSkeletons() )
-        {
-            args.add( "-noskel" );
+        if (source.emitSkeletons() != null && !source.emitSkeletons()) {
+            args.add("-noskel");
         }
-        if ( source.emitStubs() != null && !source.emitStubs() )
-        {
-            args.add( "-nostub" );
+        if (source.emitStubs() != null && !source.emitStubs()) {
+            args.add("-nostub");
         }
 
-        if ( source.getPackagePrefix() != null )
-        {
-            args.add( "-i2jpackage" );
-            args.add( ":" + source.getPackagePrefix() );
+        if (source.getPackagePrefix() != null) {
+            args.add("-i2jpackage");
+            args.add(":" + source.getPackagePrefix());
         }
 
-        if ( source.getPackagePrefixes() != null )
-        {
-            for ( PackagePrefix prefix : source.getPackagePrefixes() )
-            {
-                args.add( "-i2jpackage" );
-                args.add( prefix.getType() + ":" + prefix.getPrefix() + "." + prefix.getType() );
+        if (source.getPackagePrefixes() != null) {
+            for (PackagePrefix prefix : source.getPackagePrefixes()) {
+                args.add("-i2jpackage");
+                args.add(prefix.getType() + ":" + prefix.getPrefix() + "." + prefix.getType());
             }
         }
 
-        if ( source.getDefines() != null )
-        {
-            for ( Define define : source.getDefines() )
-            {
+        if (source.getDefines() != null) {
+            for (Define define : source.getDefines()) {
                 String arg = "-D" + define.getSymbol();
-                if ( define.getValue() != null )
-                {
+                if (define.getValue() != null) {
                     arg += "=" + define.getValue();
                 }
-                args.add( arg );
+                args.add(arg);
             }
         }
 
-        if ( source.getAdditionalArguments() != null )
-        {
-            for ( String addArg : source.getAdditionalArguments() )
-            {
-                args.add( addArg );
+        if (source.getAdditionalArguments() != null) {
+            for (String addArg : source.getAdditionalArguments()) {
+                args.add(addArg);
             }
         }
 
-        args.add( idlFile );
+        args.add(idlFile);
 
         Class<?> compilerClass;
-        try
-        {
-            compilerClass = getClassLoaderFacade().loadClass( "org.jacorb.idl.parser" );
-        }
-        catch ( ClassNotFoundException e )
-        {
-            throw new MojoExecutionException( "JacORB IDL compiler not found", e );
+        try {
+            compilerClass = getClassLoaderFacade().loadClass("org.jacorb.idl.parser");
+        } catch (ClassNotFoundException e) {
+            throw new MojoExecutionException("JacORB IDL compiler not found", e);
         }
 
-        invokeCompiler( compilerClass, args );
+        invokeCompiler(compilerClass, args);
     }
 
     /**
@@ -244,24 +209,17 @@ class JacorbTranslator
      * @param in  the <code>InputStream</code> to read from
      * @param out the <code>OutputStream</code> to write into
      */
-    private static void redirectStream( final InputStream in, final OutputStream out )
-    {
-        Thread stdoutTransferThread = new Thread()
-        {
-            public void run()
-            {
-                PrintWriter pw = new PrintWriter( new OutputStreamWriter( out ), true );
-                try
-                {
-                    BufferedReader reader = new BufferedReader( new InputStreamReader( in ) );
+    private static void redirectStream(final InputStream in, final OutputStream out) {
+        Thread stdoutTransferThread = new Thread() {
+            public void run() {
+                PrintWriter pw = new PrintWriter(new OutputStreamWriter(out), true);
+                try {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
                     String line;
-                    while ( ( line = reader.readLine() ) != null )
-                    {
-                        pw.println( line );
+                    while ((line = reader.readLine()) != null) {
+                        pw.println(line);
                     }
-                }
-                catch ( Throwable e )
-                {
+                } catch (Throwable e) {
                     e.printStackTrace();
                 }
             }
