@@ -105,7 +105,7 @@
   </issueManagement>
 
   <properties>
-    <mavenVersion>3.9.7</mavenVersion>
+    <mavenVersion>3.9.8</mavenVersion>
     <glassfish.corba.version>4.2.5</glassfish.corba.version>
     <maven.compiler.release>8</maven.compiler.release>
   </properties>
