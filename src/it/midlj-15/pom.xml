@@ -13,7 +13,7 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
+        <groupId>io.github.pzygielo</groupId>
         <artifactId>idlj-maven-plugin</artifactId>
         <version>@project.version@</version>
         <executions>
